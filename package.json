@@ -4,7 +4,10 @@
   "description": "LoveLive fun game! Outclass an oimo.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack-dev-server --progress --colors --watch",
+    "clean": "rimraf dist",
+    "build": "npm run clean && webpack",
+    "build:pro": "npm run clean && NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",
