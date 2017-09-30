@@ -1,0 +1,23 @@
+{
+  "name": "oimo-no-mikiri",
+  "version": "0.0.1",
+  "description": "LoveLive fun game! Outclass an oimo.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TatsuyaYamamoto/oimo-no-mikiri.git"
+  },
+  "keywords": [
+    "lovelive",
+    "oimo"
+  ],
+  "author": "Tatsuya Yamamoto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TatsuyaYamamoto/oimo-no-mikiri/issues"
+  },
+  "homepage": "https://github.com/TatsuyaYamamoto/oimo-no-mikiri#readme"
+}
