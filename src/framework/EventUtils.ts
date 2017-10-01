@@ -21,14 +21,15 @@ const cacheEvents = {};
 /**
  * Fire an event has provided type.
  *
- * @param type
+ * @param {string} type
+ * @param {Object} detail
  */
-export function dispatchEvent(type: string): void {
+export function dispatchEvent(type: string, detail?: object): void {
     if (!cacheEvents.hasOwnProperty(type)) {
         console.error('Provided event type is not defined.');
     }
 
-    eventTarget.dispatchEvent(new Event(type));
+    eventTarget.dispatchEvent(new CustomEvent(type, {detail}));
 }
 
 /**
