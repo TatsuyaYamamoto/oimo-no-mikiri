@@ -73,7 +73,9 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleTapTitleEvent = () => {
-
+        this._topStateMachine.change(MenuState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._menuState);
     };
 
     /**
@@ -81,7 +83,9 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleStartSinglePlayEvent = () => {
-
+        this._topStateMachine.change(LevelSelectState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._levelSelectState);
     };
 
     /**

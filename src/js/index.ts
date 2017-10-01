@@ -2,8 +2,10 @@
  * @fileOverview Entry point of the application.
  */
 import config from '../framework/config';
+import {initI18n} from "../framework/i18n";
 
 import ApplicationState from "./fsm/ApplicationState";
+import resources from './resources/string';
 import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE,
@@ -40,6 +42,9 @@ function init() {
     config.defaultLanguage = DEFAULT_LANGUAGE;
     config.basicImageWidth = BASIC_IMAGE_WIDTH;
     config.basicImageHeight = BASIC_IMAGE_HEIGHT;
+
+    // Initialize internationalization.
+    initI18n({resources});
 
     // set application viewer.
     mainElement.appendChild(<HTMLElement>app.view);

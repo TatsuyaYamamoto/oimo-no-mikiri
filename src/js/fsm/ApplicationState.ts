@@ -6,6 +6,8 @@ import {addEvents, removeEvents} from '../../framework/EventUtils';
 
 import InitialViewState from "./views/InitialViewState";
 import GameViewState, {EnterParams as GameViewEnterParams} from "./views/GameViewState";
+import TopViewState from "./views/TopViewState";
+
 import {NPC_LEVELS} from "../Constants";
 
 export enum Events {
@@ -16,6 +18,7 @@ class ApplicationState extends Application {
     private _viewStateMachine: StateMachine;
 
     private _initialViewState: InitialViewState;
+    private _topViewState: TopViewState;
     private _gameViewState: GameViewState;
 
     constructor() {
@@ -37,15 +40,17 @@ class ApplicationState extends Application {
         this._updateStageScale();
 
         this._initialViewState = new InitialViewState();
+        this._topViewState = new TopViewState();
         this._gameViewState = new GameViewState();
 
         this._viewStateMachine = new StateMachine({
             [InitialViewState.TAG]: this._initialViewState,
+            [TopViewState.TAG]: this._topViewState,
             [GameViewState.TAG]: this._gameViewState
         });
 
         addEvents({
-            [Events.INITIALIZED]: this._goGameViewState,
+            [Events.INITIALIZED]: this._handleInitializedEvent,
         });
 
         window.addEventListener('resize', this.onResize);
@@ -92,6 +97,16 @@ class ApplicationState extends Application {
      */
     private _updateStageScale = () => {
         this.stage.scale.x = this.stage.scale.y = getScale();
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleInitializedEvent = () => {
+        this._viewStateMachine.change(TopViewState.TAG);
+        this.stage.removeChildren();
+        this.stage.addChild(this._topViewState);
     };
 
     /**
