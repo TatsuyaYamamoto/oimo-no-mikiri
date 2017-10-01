@@ -18,10 +18,13 @@ export enum Events {
     FIXED_RESULT = 'GameViewState@FIXED_RESULT',
 }
 
+export interface EnterParams extends Deliverable {
+    level: NPC_LEVELS,
+    roundLength: number,
+}
+
 class GameViewState extends ViewContainer {
     public static TAG = GameViewState.name;
-
-    private static TOTAL_ROUND = 5;
 
     private _gameStateMachine: StateMachine;
     private _readyState: ReadyState;
@@ -30,6 +33,7 @@ class GameViewState extends ViewContainer {
     private _gameOverState: GameOverState;
 
     private _gameLevel: NPC_LEVELS = null;
+    private _roundLength: number;
     private _roundNumber: number = null;
     private _isFalseStarted: boolean = null;
     private _results = {};
@@ -47,10 +51,11 @@ class GameViewState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(params: Deliverable): void {
+    onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._gameLevel = NPC_LEVELS.MIDDLE;
+        this._gameLevel = params.level;
+        this._roundLength = params.roundLength;
         this._roundNumber = 1;
         this._isFalseStarted = false;
 
@@ -96,7 +101,7 @@ class GameViewState extends ViewContainer {
      */
     private _handleRequestReadyEvent = () => {
         console.log("round number", this._roundNumber);
-        if (this._roundNumber > GameViewState.TOTAL_ROUND) {
+        if (this._roundNumber > this._roundLength) {
             dispatchEvent(Events.FIXED_RESULT);
         } else {
             this._gameStateMachine.change(ReadyState.TAG);

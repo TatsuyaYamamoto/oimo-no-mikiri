@@ -5,7 +5,8 @@ import {getCurrentViewSize, getScale} from "../../framework/utils";
 import {addEvents, removeEvents} from '../../framework/EventUtils';
 
 import InitialViewState from "./views/InitialViewState";
-import PlayViewState from "./views/GameViewState";
+import GameViewState, {EnterParams as GameViewEnterParams} from "./views/GameViewState";
+import {NPC_LEVELS} from "../Constants";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -15,7 +16,7 @@ class ApplicationState extends Application {
     private _viewStateMachine: StateMachine;
 
     private _initialViewState: InitialViewState;
-    private _playViewState: PlayViewState;
+    private _gameViewState: GameViewState;
 
     constructor() {
         super(getCurrentViewSize());
@@ -36,11 +37,11 @@ class ApplicationState extends Application {
         this._updateStageScale();
 
         this._initialViewState = new InitialViewState();
-        this._playViewState = new PlayViewState();
+        this._gameViewState = new GameViewState();
 
         this._viewStateMachine = new StateMachine({
             [InitialViewState.TAG]: this._initialViewState,
-            [PlayViewState.TAG]: this._playViewState
+            [GameViewState.TAG]: this._gameViewState
         });
 
         addEvents({
@@ -98,9 +99,16 @@ class ApplicationState extends Application {
      * @private
      */
     private _goGameViewState = () => {
-        this._viewStateMachine.change(PlayViewState.TAG);
+        this._viewStateMachine.change(GameViewState.TAG, () => {
+            const params: GameViewEnterParams = {
+                level: NPC_LEVELS.MIDDLE,
+                roundLength: 5,
+            };
+
+            return params;
+        });
         this.stage.removeChildren();
-        this.stage.addChild(this._playViewState);
+        this.stage.addChild(this._gameViewState);
     }
 }
 
