@@ -9,6 +9,7 @@ import PlayViewState from "./views/GameViewState";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
+    GAME_OVER = "ApplicationState@GAME_OVER",
 }
 
 class ApplicationState extends Application {

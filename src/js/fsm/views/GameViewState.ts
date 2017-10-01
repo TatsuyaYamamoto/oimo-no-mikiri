@@ -1,10 +1,13 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
-import {addEvents, removeEvents} from "../../../framework/EventUtils";
+import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
 import ReadyState from "../game/ReadyState";
 import ActionState from "../game/ActionState";
 import ResultState from "../game/ResultState";
+
+import {Events as ApplicationEvents} from '../ApplicationState';
+import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
     REQUEST_READY = 'GameViewState@REQUEST_READY',
@@ -21,6 +24,10 @@ class GameViewState extends ViewContainer {
     private _actionState: ActionState;
     private _resultState: ResultState;
 
+    private _gameLevel: NPC_LEVELS = null;
+    private _roundNumber: number = null;
+    private _isFalseStarted: boolean = null;
+
     /**
      * @override
      */
@@ -35,6 +42,10 @@ class GameViewState extends ViewContainer {
      */
     onEnter(): void {
         super.onEnter();
+
+        this._gameLevel = NPC_LEVELS.MIDDLE;
+        this._roundNumber = 1;
+        this._isFalseStarted = false;
 
         this._readyState = new ReadyState();
         this._actionState = new ActionState();
@@ -52,6 +63,7 @@ class GameViewState extends ViewContainer {
             [Events.REQUEST_READY]: this._handleRequestReadyEvent,
             [Events.IS_READY]: this._handleIsReadyEvent,
             [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
+            [Events.FALSE_START]: this._handleFalseStartEvent,
         });
     }
 
@@ -89,8 +101,22 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionSuccessEvent = () => {
+        this._isFalseStarted = false;
         this._gameStateMachine.change(ResultState.TAG);
     };
+
+    /**
+     *
+     * @private
+     */
+    private _handleFalseStartEvent = () => {
+        if (this._isFalseStarted) {
+            dispatchEvent(ApplicationEvents.GAME_OVER);
+        } else {
+            this._isFalseStarted = true;
+            this._gameStateMachine.change(ReadyState.TAG);
+        }
+    }
 }
 
 export default GameViewState;
