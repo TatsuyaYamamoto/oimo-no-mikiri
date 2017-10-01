@@ -2,27 +2,33 @@
  * Parameters for game tuning.
  */
 export const GAME_PARAMETERS = {
-    reaction_tate: {
+    /**
+     * NPC's reaction rate after turning action active.
+     * These values' unit is in seconds.
+     *
+     * @see http://dic.nicovideo.jp/a/%E5%88%B9%E9%82%A3%E3%81%AE%E8%A6%8B%E6%96%AC%E3%82%8A
+     */
+    reaction_rate: {
         low: {
-            1: 81,
-            2: 49,
-            3: 20,
-            4: 15,
-            5: 10
+            1: 81 / 60,
+            2: 49 / 60,
+            3: 20 / 60,
+            4: 15 / 60,
+            5: 10 / 60
         },
         middle: {
-            1: 62,
-            2: 40,
-            3: 16,
-            4: 12,
-            5: 9
+            1: 62 / 60,
+            2: 40 / 60,
+            3: 16 / 60,
+            4: 12 / 60,
+            5: 9 / 60
         },
         high: {
-            1: 17,
-            2: 13,
-            3: 11,
-            4: 9,
-            5: 7
+            1: 17 / 60,
+            2: 13 / 60,
+            3: 11 / 60,
+            4: 9 / 60,
+            5: 7 / 60
         }
     }
 };
