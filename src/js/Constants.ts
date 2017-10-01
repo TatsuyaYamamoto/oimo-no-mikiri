@@ -2,7 +2,36 @@
  * Parameters for game tuning.
  */
 export const GAME_PARAMETERS = {
+    reaction_tate: {
+        low: {
+            1: 81,
+            2: 49,
+            3: 20,
+            4: 15,
+            5: 10
+        },
+        middle: {
+            1: 62,
+            2: 40,
+            3: 16,
+            4: 12,
+            5: 9
+        },
+        high: {
+            1: 17,
+            2: 13,
+            3: 11,
+            4: 9,
+            5: 7
+        }
+    }
 };
+
+export enum NPC_LEVELS {
+    LOW = 'low',
+    MIDDLE = 'middle',
+    HIGH = 'high',
+}
 
 /**
  * aspect ratio of the application container.
