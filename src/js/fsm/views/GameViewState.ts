@@ -1,9 +1,10 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
+import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
 import ReadyState from "../game/ReadyState";
-import ActionState from "../game/ActionState";
+import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
 import ResultState from "../game/ResultState";
 
 import {Events as ApplicationEvents} from '../ApplicationState';
@@ -40,8 +41,8 @@ class GameViewState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(): void {
-        super.onEnter();
+    onEnter(params: Deliverable): void {
+        super.onEnter(params);
 
         this._gameLevel = NPC_LEVELS.MIDDLE;
         this._roundNumber = 1;
@@ -93,7 +94,12 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleIsReadyEvent = () => {
-        this._gameStateMachine.change(ActionState.TAG);
+        this._gameStateMachine.change(ActionState.TAG, (source: Deliverable): ActionStateEnterParams => {
+            return {
+                level: this._gameLevel,
+                round: this._roundNumber
+            }
+        });
     };
 
     /**

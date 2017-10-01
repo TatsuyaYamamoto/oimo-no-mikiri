@@ -1,6 +1,7 @@
 import {Container, DisplayObject} from 'pixi.js';
 
 import State from "./State";
+import Deliverable from "./Deliverable";
 
 import config from "./config";
 import {isSupportTouchEvent} from "./utils";
@@ -75,8 +76,8 @@ abstract class ViewContainer extends Container implements State {
      * @inheritDoc
      * @see State#onEnter
      */
-    onEnter(): void {
-        console.log(`${this.constructor.name}@onEnter`);
+    onEnter(params: Deliverable): void {
+        console.log(`${this.constructor.name}@onEnter`, params);
         this._elapsedTimeMillis = 0;
     }
 
@@ -84,7 +85,7 @@ abstract class ViewContainer extends Container implements State {
      * @inheritDoc
      * @see State#onExit
      */
-    onExit(): void {
+    onExit(): void | Deliverable {
         console.log(`${this.constructor.name}@onExit`);
 
         this.backGroundLayer.removeChildren();

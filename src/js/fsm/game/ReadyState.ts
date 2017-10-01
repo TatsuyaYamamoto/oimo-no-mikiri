@@ -1,5 +1,6 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import {dispatchEvent} from "../../../framework/EventUtils";
+import Deliverable from "../../../framework/Deliverable";
 
 import {Events} from '../views/GameViewState';
 
@@ -9,8 +10,8 @@ class ReadyState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(): void {
-        super.onEnter();
+    onEnter(params: Deliverable): void {
+        super.onEnter(params);
 
         // TODO: set animation component and fire event on complete.
         window.setTimeout(function () {

@@ -1,7 +1,14 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import {dispatchEvent} from "../../../framework/EventUtils";
+import Deliverable from "../../../framework/Deliverable";
 
 import {Events} from "../views/GameViewState";
+import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
+
+export interface EnterParams extends Deliverable {
+    level: NPC_LEVELS,
+    round: number,
+}
 
 class ActionState extends ViewContainer {
     public static TAG = ActionState.name;
@@ -21,13 +28,12 @@ class ActionState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(): void {
-        super.onEnter();
+    onEnter(params: EnterParams): void {
+        super.onEnter(params);
 
         this.addClickWindowEventListener(this._handleTapWindow);
-
-        // TODO: calculate according to enemy.
-        this._signalTime = 1000;
+        
+        this._signalTime = GAME_PARAMETERS.reaction_rate[params.level][params.round] * 1000;
         this._timeAfterSignal = 0;
     }
 

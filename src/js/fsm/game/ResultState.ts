@@ -1,4 +1,5 @@
 import ViewContainer from "../../../framework/ViewContainer";
+import Deliverable from "../../../framework/Deliverable";
 
 class ResultState extends ViewContainer {
     public static TAG = ResultState.name;
@@ -12,8 +13,8 @@ class ResultState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(): void {
-        super.onEnter();
+    onEnter(params: Deliverable): void {
+        super.onEnter(params);
     }
 
     /**

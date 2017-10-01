@@ -4,7 +4,7 @@ import Deliverable from "./Deliverable";
 /**
  * Function type to convert {@link Deliverable} instance provided from {@link State#onExit}.
  */
-export type DeliverableConverter = (source: Deliverable) => Deliverable;
+export type DeliverableConverter = (source?: Deliverable) => Deliverable;
 
 /**
  * Handle {@code State}.
@@ -42,13 +42,12 @@ class StateMachine {
         if (!nextState) {
             throw new Error('Provided tag is not supported on the state machine.');
         }
-        const delivered = this._currentState.onExit();
+        const delivered = this._currentState.onExit() || {};
 
         this._currentState = nextState;
-        this._currentState.onEnter(
-            delivered ?
-                converter ? converter(delivered) : delivered :
-                null
+        this._currentState.onEnter(converter ?
+            converter(delivered) :
+            delivered
         );
     }
 }

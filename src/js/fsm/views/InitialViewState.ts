@@ -1,5 +1,6 @@
 import {dispatchEvent} from '../../../framework/EventUtils';
 import ViewContainer from "../../../framework/ViewContainer";
+import Deliverable from "../../../framework/Deliverable";
 
 import {Events as ApplicationEvents} from "../ApplicationState";
 
@@ -19,8 +20,8 @@ class InitialViewState extends ViewContainer {
     /**
      * @override
      */
-    onEnter(): void {
-        super.onEnter();
+    onEnter(params: Deliverable): void {
+        super.onEnter(params);
 
         // TODO: check logged-in.
         // TODO: check device is iOS.
