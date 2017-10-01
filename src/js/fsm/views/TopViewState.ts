@@ -5,7 +5,6 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import TitleState from "../top/TitleState";
 import MenuState from "../top/MenuState";
-import LevelSelectState from "../top/LevelSelectState";
 
 export enum Events {
     TAP_TITLE = 'GameViewState@TAP_TITLE',
@@ -19,7 +18,6 @@ class TopViewState extends ViewContainer {
     private _topStateMachine: StateMachine;
     private _titleState: TitleState;
     private _menuState: MenuState;
-    private _levelSelectState: LevelSelectState;
 
     /**
      * @override
@@ -38,12 +36,10 @@ class TopViewState extends ViewContainer {
 
         this._titleState = new TitleState();
         this._menuState = new MenuState();
-        this._levelSelectState = new LevelSelectState();
 
         this._topStateMachine = new StateMachine({
             [TitleState.TAG]: this._titleState,
             [MenuState.TAG]: this._menuState,
-            [LevelSelectState.TAG]: this._levelSelectState,
         });
 
         this._topStateMachine.init(TitleState.TAG);
@@ -83,9 +79,6 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleStartSinglePlayEvent = () => {
-        this._topStateMachine.change(LevelSelectState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._levelSelectState);
     };
 
     /**

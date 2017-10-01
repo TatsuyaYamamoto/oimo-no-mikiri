@@ -3,7 +3,7 @@ export const Ids = {
     TWO_PLAYERS: 'string@two_players',
     BEGINNER: 'string@beginner',
     NOVICE: 'string@novice',
-    EXPERT: 'string@beginner',
+    EXPERT: 'string@expert',
 };
 
 export default {
