@@ -3,6 +3,7 @@ import {Container, DisplayObject} from 'pixi.js';
 import State from "./State";
 
 import config from "./config";
+import {isSupportTouchEvent} from "./utils";
 
 /**
  * A Container represents a collection of basic containers; {@link this#backGroundLayer},
@@ -89,6 +90,27 @@ abstract class ViewContainer extends Container implements State {
         this.backGroundLayer.removeChildren();
         this.applicationLayer.removeChildren();
         this.informationLayer.removeChildren();
+    }
+
+    /**
+     * Convenient method to add click event to {@link window}.
+     * Attached event type is in consideration that the device is supporting touch event with {@link isSupportTouchEvent}.
+     *
+     * @param {(ev: WindowEventMap[K]) => any} listener
+     */
+    protected addClickWindowEventListener<K extends keyof WindowEventMap>(listener: (this: Window, ev: WindowEventMap[K]) => any): void {
+        window.addEventListener(isSupportTouchEvent() ? 'touchstart' : 'click', listener);
+    }
+
+    /**
+     * Convenient method to remove click event to {@link window}.
+     * Attached event type is in consideration that the device is supporting touch event with {@link isSupportTouchEvent}.
+     *
+     * @param {EventListenerOrEventListenerObject} listener
+     * @param {boolean | EventListenerOptions} options
+     */
+    protected removeClickWindowEventListener(listener?: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void {
+        window.removeEventListener(isSupportTouchEvent() ? 'touchstart' : 'click', listener);
     }
 
     /**
