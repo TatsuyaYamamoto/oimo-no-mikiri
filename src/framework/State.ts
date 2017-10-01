@@ -4,6 +4,8 @@
  *
  * @interface
  */
+import Deliverable from "./Deliverable";
+
 interface State {
     /**
      * Fire when StateMachine that has the state is update.
@@ -13,13 +15,17 @@ interface State {
 
     /**
      * Fire when the state become current state in StateMachine.
+     *
+     * @param {Deliverable} params
      */
-    onEnter(): void;
+    onEnter(params: Deliverable): void;
 
     /**
      * Fire when the state is no longer current state in StateMachine.
+     *
+     * @returns {void | Deliverable}
      */
-    onExit(): void;
+    onExit(): void | Deliverable;
 }
 
 export default State;

@@ -1,4 +1,10 @@
 import State from "./State";
+import Deliverable from "./Deliverable";
+
+/**
+ * Function type to convert {@link Deliverable} instance provided from {@link State#onExit}.
+ */
+export type DeliverableConverter = (source: Deliverable) => Deliverable;
 
 /**
  * Handle {@code State}.
@@ -19,19 +25,31 @@ class StateMachine {
         this._currentState.update(elapsedTime);
     }
 
-    public init(firstStateTag): void {
+    public init(firstStateTag, params?: Deliverable): void {
         this._currentState = this._states.get(firstStateTag);
-        this._currentState.onEnter();
+        this._currentState.onEnter(params);
     }
 
-    public change(stateTag: string): void {
+    /**
+     * Change state.
+     * If it has {@param converter}, converted {@link Deliverable} provided from {@link State#onExit} is set as args of {@State#onEnter}.
+     *
+     * @param {string} stateTag
+     * @param {DeliverableConverter} converter
+     */
+    public change(stateTag: string, converter?: DeliverableConverter): void {
         const nextState = this._states.get(stateTag);
         if (!nextState) {
             throw new Error('Provided tag is not supported on the state machine.');
         }
-        this._currentState.onExit();
+        const delivered = this._currentState.onExit();
+
         this._currentState = nextState;
-        this._currentState.onEnter();
+        this._currentState.onEnter(
+            delivered ?
+                converter ? converter(delivered) : delivered :
+                null
+        );
     }
 }
 
