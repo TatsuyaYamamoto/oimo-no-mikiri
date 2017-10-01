@@ -13,9 +13,9 @@ export interface EnterParams extends Deliverable {
 class ActionState extends ViewContainer {
     public static TAG = ActionState.name;
 
-    private _signalTime: number = null;
-    private _isTapActive: boolean = false;
-    private _timeAfterSignal: number = null;
+    private _signalTime: number;
+    private _isTapActive: boolean;
+    private _timeAfterSignal: number;
 
     /**
      * @override
@@ -32,8 +32,9 @@ class ActionState extends ViewContainer {
         super.onEnter(params);
 
         this.addClickWindowEventListener(this._handleTapWindow);
-        
+
         this._signalTime = GAME_PARAMETERS.reaction_rate[params.level][params.round] * 1000;
+        this._isTapActive = false;
         this._timeAfterSignal = 0;
     }
 
@@ -71,7 +72,7 @@ class ActionState extends ViewContainer {
         if (this._isTapActive) {
             const time = performance.now() - this._timeAfterSignal;
             console.log(`Tap! result time: ${time}ms`);
-            dispatchEvent(Events.ACTION_SUCCESS);
+            dispatchEvent(Events.ACTION_SUCCESS, {time});
         } else {
             console.log("It's fault to tap. play again.");
             dispatchEvent(Events.FALSE_START);

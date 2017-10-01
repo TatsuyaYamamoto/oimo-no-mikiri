@@ -20,6 +20,8 @@ export enum Events {
 class GameViewState extends ViewContainer {
     public static TAG = GameViewState.name;
 
+    private static TOTAL_ROUND = 5;
+
     private _gameStateMachine: StateMachine;
     private _readyState: ReadyState;
     private _actionState: ActionState;
@@ -28,6 +30,8 @@ class GameViewState extends ViewContainer {
     private _gameLevel: NPC_LEVELS = null;
     private _roundNumber: number = null;
     private _isFalseStarted: boolean = null;
+    private _results = {};
+
 
     /**
      * @override
@@ -86,7 +90,12 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleRequestReadyEvent = () => {
-        this._gameStateMachine.change(ReadyState.TAG);
+        console.log("round number", this._roundNumber);
+        if (this._roundNumber > GameViewState.TOTAL_ROUND) {
+            dispatchEvent(ApplicationEvents.GAME_OVER);
+        } else {
+            this._gameStateMachine.change(ReadyState.TAG);
+        }
     };
 
     /**
@@ -106,8 +115,11 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _handleActionSuccessEvent = () => {
+    private _handleActionSuccessEvent = (e: CustomEvent) => {
+        console.log(e.detail);
+        this._resultState[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
+        this._roundNumber += 1;
         this._gameStateMachine.change(ResultState.TAG);
     };
 
