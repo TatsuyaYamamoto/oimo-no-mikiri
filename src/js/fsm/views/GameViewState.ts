@@ -6,8 +6,8 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 import ReadyState from "../game/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
 import ResultState from "../game/ResultState";
+import GameOverState from "../game/GameOverState";
 
-import {Events as ApplicationEvents} from '../ApplicationState';
 import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
@@ -15,6 +15,7 @@ export enum Events {
     IS_READY = 'GameViewState@IS_READY',
     ACTION_SUCCESS = 'GameViewState@ACTION_SUCCESS',
     FALSE_START = 'GameViewState@FALSE_START',
+    FIXED_RESULT = 'GameViewState@FIXED_RESULT',
 }
 
 class GameViewState extends ViewContainer {
@@ -26,6 +27,7 @@ class GameViewState extends ViewContainer {
     private _readyState: ReadyState;
     private _actionState: ActionState;
     private _resultState: ResultState;
+    private _gameOverState: GameOverState;
 
     private _gameLevel: NPC_LEVELS = null;
     private _roundNumber: number = null;
@@ -55,11 +57,13 @@ class GameViewState extends ViewContainer {
         this._readyState = new ReadyState();
         this._actionState = new ActionState();
         this._resultState = new ResultState();
+        this._gameOverState = new GameOverState();
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: this._readyState,
             [ActionState.TAG]: this._actionState,
-            [ResultState.TAG]: this._resultState
+            [ResultState.TAG]: this._resultState,
+            [GameOverState.TAG]: this._gameOverState
         });
 
         this._gameStateMachine.init(ReadyState.TAG);
@@ -69,6 +73,7 @@ class GameViewState extends ViewContainer {
             [Events.IS_READY]: this._handleIsReadyEvent,
             [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
             [Events.FALSE_START]: this._handleFalseStartEvent,
+            [Events.FIXED_RESULT]: this._handleFixedResultEvent,
         });
     }
 
@@ -92,7 +97,7 @@ class GameViewState extends ViewContainer {
     private _handleRequestReadyEvent = () => {
         console.log("round number", this._roundNumber);
         if (this._roundNumber > GameViewState.TOTAL_ROUND) {
-            dispatchEvent(ApplicationEvents.GAME_OVER);
+            dispatchEvent(Events.FIXED_RESULT);
         } else {
             this._gameStateMachine.change(ReadyState.TAG);
         }
@@ -116,7 +121,6 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionSuccessEvent = (e: CustomEvent) => {
-        console.log(e.detail);
         this._resultState[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
         this._roundNumber += 1;
@@ -129,12 +133,20 @@ class GameViewState extends ViewContainer {
      */
     private _handleFalseStartEvent = () => {
         if (this._isFalseStarted) {
-            dispatchEvent(ApplicationEvents.GAME_OVER);
+            dispatchEvent(Events.FIXED_RESULT);
         } else {
             this._isFalseStarted = true;
             this._gameStateMachine.change(ReadyState.TAG);
         }
-    }
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleFixedResultEvent = () => {
+        this._gameStateMachine.change(GameOverState.TAG);
+    };
 }
 
 export default GameViewState;
