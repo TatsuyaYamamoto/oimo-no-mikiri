@@ -14,6 +14,7 @@ export enum Events {
     REQUEST_READY = 'GameViewState@REQUEST_READY',
     IS_READY = 'GameViewState@IS_READY',
     ACTION_SUCCESS = 'GameViewState@ACTION_SUCCESS',
+    ACTION_FAILURE = 'GameViewState@ACTION_FAILURE',
     FALSE_START = 'GameViewState@FALSE_START',
     FIXED_RESULT = 'GameViewState@FIXED_RESULT',
 }
@@ -77,6 +78,7 @@ class GameViewState extends ViewContainer {
             [Events.REQUEST_READY]: this._handleRequestReadyEvent,
             [Events.IS_READY]: this._handleIsReadyEvent,
             [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
+            [Events.ACTION_FAILURE]: this._handleActionFailureEvent,
             [Events.FALSE_START]: this._handleFalseStartEvent,
             [Events.FIXED_RESULT]: this._handleFixedResultEvent,
         });
@@ -91,7 +93,10 @@ class GameViewState extends ViewContainer {
         removeEvents([
             Events.REQUEST_READY,
             Events.IS_READY,
-            Events.ACTION_SUCCESS
+            Events.ACTION_SUCCESS,
+            Events.ACTION_FAILURE,
+            Events.FALSE_START,
+            Events.FIXED_RESULT,
         ])
     }
 
@@ -130,6 +135,14 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._roundNumber += 1;
         this._gameStateMachine.change(ResultState.TAG);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleActionFailureEvent = () => {
+        dispatchEvent(Events.FIXED_RESULT);
     };
 
     /**

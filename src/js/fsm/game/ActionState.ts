@@ -15,7 +15,7 @@ class ActionState extends ViewContainer {
     public static TAG = ActionState.name;
 
     private _isTapActive: boolean;
-    
+
     private _signalTime: number;
     private _npcAttackTime: number;
 
@@ -98,7 +98,7 @@ class ActionState extends ViewContainer {
      * @private
      */
     private _handleNpcAttack = () => {
-
+        dispatchEvent(Events.ACTION_FAILURE);
     };
 }
 
