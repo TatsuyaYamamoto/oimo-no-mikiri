@@ -62,12 +62,12 @@ abstract class Application extends PIXI.Application implements State {
     }
 
     /**
-     * @param {number} deltaTime
+     * @param {number} elapsedMS    Time elapsed in milliseconds from last frame to this frame.
+     *                              If the platform supports DOMHighResTimeStamp, this value will have a precision of 1 µs.
      * @inheritDoc
      * @override
      */
-    update(deltaTime: number): void {
-        console.log(deltaTime)
+    update(elapsedMS: number): void {
     }
 
     /**

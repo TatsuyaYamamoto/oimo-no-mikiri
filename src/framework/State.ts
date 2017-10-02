@@ -9,9 +9,9 @@ import Deliverable from "./Deliverable";
 interface State {
     /**
      * Fire when StateMachine that has the state is update.
-     * @param elapsedTime
+     * @param elapsedMS Time elapsed in milliseconds from last frame to this frame.
      */
-    update(elapsedTime: number): void;
+    update(elapsedMS: number): void;
 
     /**
      * Fire when the state become current state in StateMachine.

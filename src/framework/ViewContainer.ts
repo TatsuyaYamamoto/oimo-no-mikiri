@@ -68,8 +68,8 @@ abstract class ViewContainer extends Container implements State {
      * @inheritDoc
      * @see State#update
      */
-    update(elapsedTime: number): void {
-        this._elapsedTimeMillis += elapsedTime;
+    update(elapsedMS: number): void {
+        this._elapsedTimeMillis += elapsedMS;
     }
 
     /**
