@@ -72,8 +72,9 @@ class GameOverState extends ViewContainer {
      *
      * @private
      */
-    private _onClickBackToTopButton = (e) => {
-        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
+    private _onClickBackToTopButton = () => {
+        // prevent to propagate to invoke tap event on title view.
+        setTimeout(() => dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP), 1);
     };
 }
 
