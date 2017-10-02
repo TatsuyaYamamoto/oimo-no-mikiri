@@ -6,7 +6,7 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 import ReadyState from "../game/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
 import ResultState from "../game/ResultState";
-import GameOverState from "../game/GameOverState";
+import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOverState";
 
 import {NPC_LEVELS} from "../../Constants";
 
@@ -35,9 +35,9 @@ class GameViewState extends ViewContainer {
 
     private _gameLevel: NPC_LEVELS = null;
     private _roundLength: number;
-    private _roundNumber: number = null;
-    private _isFalseStarted: boolean = null;
-    private _results = {};
+    private _roundNumber: number;
+    private _isFalseStarted: boolean;
+    private _results: { [roundNumber: string]: number };
 
 
     /**
@@ -59,6 +59,7 @@ class GameViewState extends ViewContainer {
         this._roundLength = params.roundLength;
         this._roundNumber = 1;
         this._isFalseStarted = false;
+        this._results = {};
 
         this._readyState = new ReadyState();
         this._actionState = new ActionState();
@@ -131,7 +132,7 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionSuccessEvent = (e: CustomEvent) => {
-        this._resultState[this._roundNumber] = e.detail.time;
+        this._results[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
         this._roundNumber += 1;
         this._gameStateMachine.change(ResultState.TAG);
@@ -163,7 +164,20 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleFixedResultEvent = () => {
-        this._gameStateMachine.change(GameOverState.TAG);
+        // set max best time as constants.
+        const times: number[] = Object.keys(this._results).map((roundNumber) => this._results[roundNumber]);
+        times.push(99 * 1000);
+
+        const bestTime = Math.max(...times);
+        const round = this._roundNumber;
+
+        this._gameStateMachine.change(GameOverState.TAG, () => {
+            const params: GameOverEnterParams = {
+                bestTime,
+                round
+            };
+            return params;
+        });
     };
 }
 

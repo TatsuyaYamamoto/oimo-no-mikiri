@@ -3,19 +3,24 @@ import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 import {Events} from "../views/GameViewState";
 
+export interface EnterParams extends Deliverable {
+    bestTime: number,
+    round: number,
+}
+
 class GameOverState extends ViewContainer {
     public static TAG = GameOverState.name;
 
     /**
      * @override
      */
-    update(elapsedTimeMillis: number): void {
+    update(elapsedMS: number): void {
     }
 
     /**
      * @override
      */
-    onEnter(params: Deliverable): void {
+    onEnter(params: EnterParams): void {
         super.onEnter(params);
     }
 
