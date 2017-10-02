@@ -3,7 +3,7 @@ import {Container, interaction} from 'pixi.js';
 import {t} from '../../../framework/i18n';
 import {isSupportTouchEvent} from "../../../framework/utils";
 
-import Text from "../sprite/Text";
+import Text from "../internal/Text";
 
 import {Ids as StringIds} from '../../resources/string';
 
