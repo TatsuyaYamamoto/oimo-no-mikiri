@@ -44,6 +44,7 @@ class TopViewState extends ViewContainer {
         });
 
         this._topStateMachine.init(TitleState.TAG);
+        this.applicationLayer.addChild(this._titleState);
 
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,

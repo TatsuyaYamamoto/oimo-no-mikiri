@@ -74,6 +74,7 @@ class GameViewState extends ViewContainer {
         });
 
         this._gameStateMachine.init(ReadyState.TAG);
+        this.applicationLayer.addChild(this._readyState);
 
         addEvents({
             [Events.REQUEST_READY]: this._handleRequestReadyEvent,
@@ -111,6 +112,8 @@ class GameViewState extends ViewContainer {
             dispatchEvent(Events.FIXED_RESULT);
         } else {
             this._gameStateMachine.change(ReadyState.TAG);
+            this.applicationLayer.removeChildren();
+            this.applicationLayer.addChild(this._readyState);
         }
     };
 
@@ -125,6 +128,8 @@ class GameViewState extends ViewContainer {
                 round: this._roundNumber
             }
         });
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._actionState);
     };
 
     /**
@@ -135,7 +140,10 @@ class GameViewState extends ViewContainer {
         this._results[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
         this._roundNumber += 1;
+
         this._gameStateMachine.change(ResultState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._resultState);
     };
 
     /**
@@ -155,7 +163,10 @@ class GameViewState extends ViewContainer {
             dispatchEvent(Events.FIXED_RESULT);
         } else {
             this._isFalseStarted = true;
+
             this._gameStateMachine.change(ReadyState.TAG);
+            this.applicationLayer.removeChildren();
+            this.applicationLayer.addChild(this._readyState);
         }
     };
 
@@ -178,6 +189,8 @@ class GameViewState extends ViewContainer {
             };
             return params;
         });
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._gameOverState);
     };
 }
 

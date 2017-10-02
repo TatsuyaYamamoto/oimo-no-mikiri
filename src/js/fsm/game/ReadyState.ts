@@ -4,14 +4,24 @@ import Deliverable from "../../../framework/Deliverable";
 
 import {Events} from '../views/GameViewState';
 
+import GameBackground from "../../texture/sprite/background/GameBackground";
+
 class ReadyState extends ViewContainer {
     public static TAG = ReadyState.name;
+
+    private _background: GameBackground;
 
     /**
      * @override
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        this._background = new GameBackground();
+
+        this.backGroundLayer.addChild(
+            this._background,
+        );
 
         // TODO: set animation component and fire event on complete.
         window.setTimeout(function () {

@@ -4,6 +4,9 @@ import Deliverable from "../../../framework/Deliverable";
 import {getRandomInteger} from "../../../framework/utils";
 
 import {Events} from "../views/GameViewState";
+
+import GameBackground from "../../texture/sprite/background/GameBackground";
+
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
 export interface EnterParams extends Deliverable {
@@ -21,6 +24,8 @@ class ActionState extends ViewContainer {
 
     private _isSignaled: boolean;
     private _isNpcAttacked: boolean;
+
+    private _background: GameBackground;
 
     /**
      * @override
@@ -54,6 +59,12 @@ class ActionState extends ViewContainer {
         this._isTapActive = false;
         this._isSignaled = false;
         this._isNpcAttacked = false;
+
+        this._background = new GameBackground();
+
+        this.backGroundLayer.addChild(
+            this._background,
+        );
     }
 
     /**

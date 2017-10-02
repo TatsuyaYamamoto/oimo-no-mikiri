@@ -2,13 +2,16 @@ import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
+import {Events} from "../views/TopViewState";
+
 import SelectPlayerNumberBoard from "../../texture/containers/SelectPlayerNumberBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
-
-import {Events} from "../views/TopViewState";
+import TopBackground from "../../texture/sprite/background/TopBackground";
 
 class MenuState extends ViewContainer {
     public static TAG = MenuState.name;
+
+    private _background: TopBackground;
 
     private _selectPlayerNumberBoard: SelectPlayerNumberBoard;
     private _selectLevelBoard: SelectLevelBoard;
@@ -19,6 +22,8 @@ class MenuState extends ViewContainer {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
+        this._background = new TopBackground();
+
         this._selectPlayerNumberBoard = new SelectPlayerNumberBoard();
         this._selectPlayerNumberBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
         this._selectPlayerNumberBoard.setOnSelectOnePlayerListener(this._onSelectOnePlayer);
@@ -27,6 +32,10 @@ class MenuState extends ViewContainer {
         this._selectLevelBoard = new SelectLevelBoard();
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
         this._selectLevelBoard.setOnSelectLevelListener(this._onSelectLevel);
+
+        this.backGroundLayer.addChild(
+            this._background
+        );
 
         this.applicationLayer.addChild(
             this._selectPlayerNumberBoard,

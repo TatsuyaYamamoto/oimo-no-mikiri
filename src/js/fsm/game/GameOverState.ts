@@ -1,7 +1,7 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent} from "../../../framework/EventUtils";
-import {Events} from "../views/GameViewState";
+
+import GameBackground from "../../texture/sprite/background/GameBackground";
 
 export interface EnterParams extends Deliverable {
     bestTime: number,
@@ -10,6 +10,8 @@ export interface EnterParams extends Deliverable {
 
 class GameOverState extends ViewContainer {
     public static TAG = GameOverState.name;
+
+    private _background: GameBackground;
 
     /**
      * @override
@@ -22,6 +24,12 @@ class GameOverState extends ViewContainer {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+
+        this._background = new GameBackground();
+
+        this.backGroundLayer.addChild(
+            this._background,
+        );
     }
 
     /**
