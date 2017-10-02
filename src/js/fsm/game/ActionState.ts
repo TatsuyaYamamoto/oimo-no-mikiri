@@ -35,7 +35,7 @@ class ActionState extends ViewContainer {
 
         if (!this._isNpcAttacked && this._npcAttackTime < this.elapsedTimeMillis) {
             this._isNpcAttacked = true;
-            console.log("NPC attacked!");
+            console.log(`NPC attacked! ${this.elapsedTimeMillis - this._signalTime}ms`);
             this._handleNpcAttack();
         }
 
@@ -82,7 +82,7 @@ class ActionState extends ViewContainer {
         }
 
         if (this._isSignaled) {
-            const time = performance.now() - this._signalTime;
+            const time = this.elapsedTimeMillis - this._signalTime;
             console.log(`Tap! result time: ${time}ms`);
             dispatchEvent(Events.ACTION_SUCCESS, {time});
 
