@@ -1,14 +1,19 @@
 import {dispatchEvent} from '../../../framework/EventUtils';
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
+import AssetLoader, {Asset} from "../../../framework/AssetLoader";
 
 import {Events as ApplicationEvents} from "../ApplicationState";
+
+import imageManifest from '../../resources/image';
 
 export enum Events {
 }
 
 class InitialViewState extends ViewContainer {
     public static TAG = InitialViewState.name;
+
+    private _loader: AssetLoader;
 
     /**
      * @override
@@ -27,7 +32,11 @@ class InitialViewState extends ViewContainer {
         // TODO: check device is iOS.
         // TODO: load resources.
 
-        dispatchEvent(ApplicationEvents.INITIALIZED);
+        this._loader = new AssetLoader();
+        this._loader.setImageManifest(imageManifest);
+        // this._loader.setSoundManifest(soundManifest);
+        // this._loader.onProgress.add(this._onLoadProgress);
+        this._loader.load(this._onLoadComplete);
     }
 
     /**
@@ -36,6 +45,16 @@ class InitialViewState extends ViewContainer {
     onExit(): void {
         super.onExit();
     }
+
+    /**
+     *
+     * @private
+     */
+    private _onLoadComplete = (loader: AssetLoader, resources: { string: Asset }): void => {
+        console.log(`Complete to load [${Object.keys(resources).length}] resources.`);
+
+        dispatchEvent(ApplicationEvents.INITIALIZED);
+    };
 }
 
 export default InitialViewState;
