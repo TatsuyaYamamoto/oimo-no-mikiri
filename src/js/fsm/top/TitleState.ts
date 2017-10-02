@@ -5,11 +5,14 @@ import {dispatchEvent} from '../../../framework/EventUtils';
 import {Events} from "../views/TopViewState";
 
 import TopBackground from "../../texture/sprite/background/TopBackground";
+import TitleLogo from "../../texture/sprite/TitleLogo";
 
 class TitleState extends ViewContainer {
     public static TAG = TitleState.name;
 
     private _background: TopBackground;
+
+    private _titleLogo: TitleLogo;
 
     /**
      * @override
@@ -19,8 +22,14 @@ class TitleState extends ViewContainer {
 
         this._background = new TopBackground();
 
+        this._titleLogo = new TitleLogo();
+        this._titleLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
         this.backGroundLayer.addChild(
             this._background
+        );
+        this.applicationLayer.addChild(
+            this._titleLogo,
         );
 
         this.addClickWindowEventListener(this._handleTapWindow);
