@@ -6,6 +6,7 @@ import {getRandomInteger} from "../../../framework/utils";
 import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
+import Signal from "../../texture/sprite/Signal";
 
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
@@ -25,6 +26,8 @@ class ActionState extends ViewContainer {
     private _isSignaled: boolean;
     private _isNpcAttacked: boolean;
 
+    private _signalSprite: Signal;
+
     private _background: GameBackground;
 
     /**
@@ -36,6 +39,7 @@ class ActionState extends ViewContainer {
         if (!this._isSignaled && this._signalTime < this.elapsedTimeMillis) {
             this._isSignaled = true;
             console.log("Signaled!");
+            this.applicationLayer.addChild(this._signalSprite);
         }
 
         if (!this._isNpcAttacked && this._npcAttackTime < this.elapsedTimeMillis) {
@@ -61,6 +65,9 @@ class ActionState extends ViewContainer {
         this._isNpcAttacked = false;
 
         this._background = new GameBackground();
+
+        this._signalSprite = new Signal();
+        this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
 
         this.backGroundLayer.addChild(
             this._background,
@@ -92,6 +99,8 @@ class ActionState extends ViewContainer {
             return;
         }
 
+        this.applicationLayer.removeChild(this._signalSprite);
+
         if (this._isSignaled) {
             const time = this.elapsedTimeMillis - this._signalTime;
             console.log(`Tap! result time: ${time}ms`);
@@ -109,6 +118,7 @@ class ActionState extends ViewContainer {
      * @private
      */
     private _handleNpcAttack = () => {
+        this.applicationLayer.removeChild(this._signalSprite);
         dispatchEvent(Events.ACTION_FAILURE);
     };
 }
