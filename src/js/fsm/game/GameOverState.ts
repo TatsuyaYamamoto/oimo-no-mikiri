@@ -1,9 +1,13 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
+import {dispatchEvent} from "../../../framework/EventUtils";
+
+import {Events as AppEvents} from '../ApplicationState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import RestartButton from "../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
+
 
 export interface EnterParams extends Deliverable {
     bestTime: number,
@@ -34,8 +38,11 @@ class GameOverState extends ViewContainer {
 
         this._restartButton = new RestartButton();
         this._restartButton.position.set(this.viewWidth * 0.3, this.viewHeight * 0.8);
+        this._restartButton.setOnClickListener(this._onClickRestartButton);
+
         this._backToTopButton = new BackToTopButton();
         this._backToTopButton.position.set(this.viewWidth * 0.7, this.viewHeight * 0.8);
+        this._backToTopButton.setOnClickListener(this._onClickBackToTopButton);
 
         this.backGroundLayer.addChild(
             this._background,
@@ -52,6 +59,22 @@ class GameOverState extends ViewContainer {
     onExit(): void {
         super.onExit();
     }
+
+    /**
+     *
+     * @private
+     */
+    private _onClickRestartButton = () => {
+        dispatchEvent(AppEvents.REQUESTED_GAME_START);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onClickBackToTopButton = (e) => {
+        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
+    };
 }
 
 export default GameOverState;

@@ -13,6 +13,7 @@ import {NPC_LEVELS} from "../Constants";
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
     REQUESTED_GAME_START = "ApplicationState@REQUESTED_GAME_START",
+    REQUESTED_BACK_TO_TOP = "ApplicationState@REQUESTED_BACK_TO_TOP",
 }
 
 class ApplicationState extends Application {
@@ -53,6 +54,7 @@ class ApplicationState extends Application {
         addEvents({
             [Events.INITIALIZED]: this._handleInitializedEvent,
             [Events.REQUESTED_GAME_START]: this._handleRequestedGameStartEvent,
+            [Events.REQUESTED_BACK_TO_TOP]: this._handleRequestedBackToTopEvent,
         });
 
         window.addEventListener('resize', this.onResize);
@@ -131,7 +133,17 @@ class ApplicationState extends Application {
         });
         this.stage.removeChildren();
         this.stage.addChild(this._gameViewState);
-    }
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleRequestedBackToTopEvent = () => {
+        this._viewStateMachine.change(TopViewState.TAG);
+        this.stage.removeChildren();
+        this.stage.addChild(this._topViewState);
+    };
 }
 
 export default ApplicationState;
