@@ -9,21 +9,21 @@ export const GAME_PARAMETERS = {
      * @see http://dic.nicovideo.jp/a/%E5%88%B9%E9%82%A3%E3%81%AE%E8%A6%8B%E6%96%AC%E3%82%8A
      */
     reaction_rate: {
-        low: {
+        beginner: {
             1: 81 / 60,
             2: 49 / 60,
             3: 20 / 60,
             4: 15 / 60,
             5: 10 / 60
         },
-        middle: {
+        novice: {
             1: 62 / 60,
             2: 40 / 60,
             3: 16 / 60,
             4: 12 / 60,
             5: 9 / 60
         },
-        high: {
+        expert: {
             1: 17 / 60,
             2: 13 / 60,
             3: 11 / 60,
@@ -34,9 +34,9 @@ export const GAME_PARAMETERS = {
 };
 
 export enum NPC_LEVELS {
-    LOW = 'low',
-    MIDDLE = 'middle',
-    HIGH = 'high',
+    BEGINNER = 'beginner',
+    NOVICE = 'novice',
+    EXPERT = 'expert',
 }
 
 /**

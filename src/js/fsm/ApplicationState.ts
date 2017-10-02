@@ -12,6 +12,7 @@ import {NPC_LEVELS} from "../Constants";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
+    REQUESTED_GAME_START = "ApplicationState@REQUESTED_GAME_START",
 }
 
 class ApplicationState extends Application {
@@ -51,6 +52,7 @@ class ApplicationState extends Application {
 
         addEvents({
             [Events.INITIALIZED]: this._handleInitializedEvent,
+            [Events.REQUESTED_GAME_START]: this._handleRequestedGameStartEvent,
         });
 
         window.addEventListener('resize', this.onResize);
@@ -113,10 +115,15 @@ class ApplicationState extends Application {
      *
      * @private
      */
-    private _goGameViewState = () => {
+    private _handleRequestedGameStartEvent = (e: CustomEvent) => {
+        const mode: "beginner" | "novice" | "expert" = e.detail.mode;
+        let level: NPC_LEVELS = NPC_LEVELS[mode.toUpperCase()];
+
+        console.log(NPC_LEVELS, mode, level);
+
         this._viewStateMachine.change(GameViewState.TAG, () => {
             const params: GameViewEnterParams = {
-                level: NPC_LEVELS.MIDDLE,
+                level,
                 roundLength: 5,
             };
 

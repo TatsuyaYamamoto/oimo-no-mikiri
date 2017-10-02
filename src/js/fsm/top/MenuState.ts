@@ -1,8 +1,11 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
+import {dispatchEvent} from "../../../framework/EventUtils";
 
 import SelectPlayerNumberBoard from "../../texture/containers/SelectPlayerNumberBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
+
+import {Events} from "../views/TopViewState";
 
 class MenuState extends ViewContainer {
     public static TAG = MenuState.name;
@@ -23,7 +26,7 @@ class MenuState extends ViewContainer {
 
         this._selectLevelBoard = new SelectLevelBoard();
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
-        this._selectLevelBoard.setOnSelectBeginnerListener(this._onSelectLevel);
+        this._selectLevelBoard.setOnSelectLevelListener(this._onSelectLevel);
 
         this.applicationLayer.addChild(
             this._selectPlayerNumberBoard,
@@ -62,8 +65,9 @@ class MenuState extends ViewContainer {
      *
      * @private
      */
-    private _onSelectLevel = () => {
-        console.log("select level")
+    private _onSelectLevel = (e, level: "beginner" | "novice" | "expert") => {
+        console.log("selected level: ", level);
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: level});
     }
 
 }

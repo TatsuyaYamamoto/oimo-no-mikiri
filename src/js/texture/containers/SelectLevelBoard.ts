@@ -30,19 +30,22 @@ class SelectLevelBoard extends Container {
         );
     }
 
-    public setOnSelectBeginnerListener(fn: (event: interaction.InteractionEvent) => void) {
-        this._beginnerText.interactive = true;
-        this._beginnerText.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
-    }
+    /**
+     * Register a callback to be invoked when any level is selected.
+     *
+     * @param {(event: PIXI.interaction.InteractionEvent, level: ("beginner" | "novice" | "expert")) => void} fn
+     */
+    public setOnSelectLevelListener(fn: (event: interaction.InteractionEvent, level: "beginner" | "novice" | "expert") => void) {
+        const type = isSupportTouchEvent() ? 'touchstart' : 'click';
 
-    public setOnSelectNoviceListener(fn: (event: interaction.InteractionEvent) => void) {
         this._beginnerText.interactive = true;
-        this._beginnerText.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
-    }
+        this._beginnerText.on(type, (event: interaction.InteractionEvent) => fn(event, 'beginner'));
 
-    public setOnSelectExpertListener(fn: (event: interaction.InteractionEvent) => void) {
-        this._beginnerText.interactive = true;
-        this._beginnerText.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
+        this._noviceText.interactive = true;
+        this._noviceText.on(type, (event: interaction.InteractionEvent) => fn(event, 'novice'));
+
+        this._expertText.interactive = true;
+        this._expertText.on(type, (event: interaction.InteractionEvent) => fn(event, 'expert'));
     }
 }
 

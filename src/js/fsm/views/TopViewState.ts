@@ -6,10 +6,11 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 import TitleState from "../top/TitleState";
 import MenuState from "../top/MenuState";
 
+import {Events as AppEvents} from '../ApplicationState';
+
 export enum Events {
     TAP_TITLE = 'GameViewState@TAP_TITLE',
-    START_SINGLE_PLAY = 'GameViewState@START_SINGLE_PLAY',
-    SELECT_NPC_LEVEL = 'GameViewState@ACTION_SUCCESS',
+    FIXED_PLAY_MODE = 'GameViewState@FIXED_PLAY_MODE',
 }
 
 class TopViewState extends ViewContainer {
@@ -46,8 +47,7 @@ class TopViewState extends ViewContainer {
 
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,
-            [Events.START_SINGLE_PLAY]: this._handleStartSinglePlayEvent,
-            [Events.SELECT_NPC_LEVEL]: this._handleSelectNpcLevelEvent,
+            [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
         });
     }
 
@@ -59,8 +59,7 @@ class TopViewState extends ViewContainer {
 
         removeEvents([
             Events.TAP_TITLE,
-            Events.START_SINGLE_PLAY,
-            Events.SELECT_NPC_LEVEL
+            Events.FIXED_PLAY_MODE,
         ])
     }
 
@@ -78,15 +77,9 @@ class TopViewState extends ViewContainer {
      *
      * @private
      */
-    private _handleStartSinglePlayEvent = () => {
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _handleSelectNpcLevelEvent = () => {
-
+    private _handleFixedPlayModeEvent = (e: CustomEvent) => {
+        console.log("Fixed play mode: ", e.detail.mode);
+        dispatchEvent(AppEvents.REQUESTED_GAME_START, {mode: e.detail.mode});
     };
 }
 
