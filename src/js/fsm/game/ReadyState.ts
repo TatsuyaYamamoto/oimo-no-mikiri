@@ -14,12 +14,15 @@ import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
 import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
 
 const ANIMATION_TIME_LINE = {
-    PLAY_READY_SOUND: 1000,
-    START_BLACK_OUT: 1000,
-    SHOW_CLOSEUP_LINE_IMAGES: 1000,
-    START_MOVING_CLOSEUP_LINE_IMAGES: 1000,
-    END_MOVING_CLOSING_LINE_IMAGES: 1000,
-    FINISH: 1000,
+    START_INCREASING_BRIGHTNESS: 1000,
+    END_INCREASING_BRIGHTNESS: 2000,
+    PLAY_READY_SOUND: 3000,
+    SHOW_CLOSEUP_LINE_IMAGES: 3000,
+    START_MOVING_CLOSEUP_LINE_IMAGES: 4000,
+    END_MOVING_CLOSING_LINE_IMAGES: 5000,
+    HIDE_CLOSEUP_LINE_IMAGES: 6000,
+    START_DECREASING_BRIGHTNESS: 7000,
+    END_DECREASING_BRIGHTNESS: 8000,
 };
 
 class ReadyState extends ViewContainer {
@@ -52,15 +55,17 @@ class ReadyState extends ViewContainer {
 
         this._playerCharacterCloseup = new HanamaruCloseUp();
         this._playerCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
+        this._playerCharacterCloseup.visible = false;
 
         this._opponentCharacter = new Uchicchi();
         this._opponentCharacter.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this._opponentCharacterCloseup = new UchicchiCloseUp();
         this._opponentCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
+        this._opponentCharacterCloseup.visible = false;
 
         this._closeupBrightnessFilter = new CloseupBrightnessFilter();
-        this._closeupBrightnessFilter.contrast(0.2);
+        this._closeupBrightnessFilter.brightness(0.5);
         this.backGroundLayer.addChild(
             this._background,
         );
@@ -127,16 +132,38 @@ class ReadyState extends ViewContainer {
      * @private
      */
     private _getFilterAnimeTimeLine = () => {
-        let hoge = 0;
-        const timeLine = anime.timeline();
+        const values = {
+            brightness: 1,
+        };
+
+        const {
+            START_INCREASING_BRIGHTNESS,
+            END_INCREASING_BRIGHTNESS,
+            START_DECREASING_BRIGHTNESS,
+            END_DECREASING_BRIGHTNESS
+        } = ANIMATION_TIME_LINE;
+
+        const timeLine = anime.timeline({
+            targets: values,
+            easing: 'linear',
+            update: () => {
+                this._closeupBrightnessFilter.brightness(values.brightness);
+            }
+        });
+
         timeLine
+        // black out
             .add({
-                targets: this._closeupBrightnessFilter,
-                delay: ANIMATION_TIME_LINE.START_BLACK_OUT,
-                update: () => {
-                    hoge += 0.01;
-                    this._closeupBrightnessFilter.brightness(hoge)
-                }
+                brightness: 0,
+                offset: START_INCREASING_BRIGHTNESS,
+                duration: END_INCREASING_BRIGHTNESS - START_INCREASING_BRIGHTNESS,
+            })
+
+            // white out
+            .add({
+                brightness: 1,
+                offset: START_DECREASING_BRIGHTNESS,
+                duration: END_DECREASING_BRIGHTNESS - START_DECREASING_BRIGHTNESS,
             });
 
         return timeLine;
@@ -148,7 +175,52 @@ class ReadyState extends ViewContainer {
      * @private
      */
     private _getCloseupTimeline = () => {
-        const timeLine = anime.timeline();
+        const values = {
+            playerX: this.viewWidth * 0.25,
+            opponentX: this.viewWidth * 0.75,
+        };
+
+        const {
+            SHOW_CLOSEUP_LINE_IMAGES,
+            START_MOVING_CLOSEUP_LINE_IMAGES,
+            END_MOVING_CLOSING_LINE_IMAGES,
+            HIDE_CLOSEUP_LINE_IMAGES
+        } = ANIMATION_TIME_LINE;
+
+        const timeLine = anime.timeline({
+            easing: 'linear',
+            targets: values,
+            update: () => {
+                this._playerCharacterCloseup.x = values.playerX;
+                this._opponentCharacterCloseup.x = values.opponentX;
+
+            },
+        });
+
+        timeLine
+        // show
+            .add({
+                offset: SHOW_CLOSEUP_LINE_IMAGES,
+                begin: () => {
+                    this._playerCharacterCloseup.visible = true;
+                    this._opponentCharacterCloseup.visible = true;
+                }
+            })
+            // move
+            .add({
+                offset: START_MOVING_CLOSEUP_LINE_IMAGES,
+                duration: END_MOVING_CLOSING_LINE_IMAGES - START_MOVING_CLOSEUP_LINE_IMAGES,
+                playerX: this.viewWidth * 0.75,
+                opponentX: this.viewWidth * 0.25,
+            })
+            // hide
+            .add({
+                offset: HIDE_CLOSEUP_LINE_IMAGES,
+                begin: () => {
+                    this._playerCharacterCloseup.visible = false;
+                    this._opponentCharacterCloseup.visible = false;
+                },
+            });
 
         return timeLine;
     };
