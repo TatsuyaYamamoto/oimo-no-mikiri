@@ -70,7 +70,8 @@ class ActionState extends ViewContainer {
         this._isNpcAttacked = false;
 
         this._background = new GameBackground();
-
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        
         this._playerCharacter = new Hanamaru();
         this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
 

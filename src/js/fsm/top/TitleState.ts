@@ -21,7 +21,8 @@ class TitleState extends ViewContainer {
         super.onEnter(params);
 
         this._background = new TopBackground();
-
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        
         this._titleLogo = new TitleLogo();
         this._titleLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
