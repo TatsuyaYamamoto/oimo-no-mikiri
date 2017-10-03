@@ -23,6 +23,7 @@ class MenuState extends ViewContainer {
         super.onEnter(params);
 
         this._background = new TopBackground();
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._selectPlayerNumberBoard = new SelectPlayerNumberBoard();
         this._selectPlayerNumberBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);

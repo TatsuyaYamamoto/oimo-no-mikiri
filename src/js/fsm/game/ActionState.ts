@@ -7,6 +7,8 @@ import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import Signal from "../../texture/sprite/Signal";
+import Hanamaru from "../../texture/sprite/character/Hanamaru";
+import Uchicchi from "../../texture/sprite/character/Uchicchi";
 
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
@@ -26,9 +28,12 @@ class ActionState extends ViewContainer {
     private _isSignaled: boolean;
     private _isNpcAttacked: boolean;
 
+    private _background: GameBackground;
+
     private _signalSprite: Signal;
 
-    private _background: GameBackground;
+    private _playerCharacter: Hanamaru;
+    private _opponentCharacter: Uchicchi;
 
     /**
      * @override
@@ -66,11 +71,21 @@ class ActionState extends ViewContainer {
 
         this._background = new GameBackground();
 
+        this._playerCharacter = new Hanamaru();
+        this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+
+        this._opponentCharacter = new Uchicchi();
+        this._opponentCharacter.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
+
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
 
         this.backGroundLayer.addChild(
             this._background,
+        );
+        this.applicationLayer.addChild(
+            this._playerCharacter,
+            this._opponentCharacter,
         );
     }
 

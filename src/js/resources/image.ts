@@ -11,6 +11,12 @@ export const Ids = {
     BUTTON_GAMEOVER_BACK_TO_TOP: 'BUTTON_GAMEOVER_BACK_TO_TOP',
     BUTTON_GAMEOVER_RESTART: 'BUTTON_GAMEOVER_RESTART',
 
+    CHARACTER_HANAMARU: 'CHARACTER_HANAMARU',
+    CHARACTER_HANAMARU_CLOSEUP: 'CHARACTER_HANAMARU_CLOSEUP',
+
+    CHARACTER_UCHICCHI: 'CHARACTER_UCHICCHI',
+    CHARACTER_UCHICCHI_CLOSEUP: 'CHARACTER_UCHICCHI_CLOSEUP',
+
     LOGO_TITLE: 'LOGO_TITLE',
     SIGNAL: 'SIGNAL',
 };
@@ -22,6 +28,12 @@ const manifest: ImageManifest = {
 
         [Ids.BUTTON_GAMEOVER_BACK_TO_TOP]: 'button_gameover_back_to_top.png',
         [Ids.BUTTON_GAMEOVER_RESTART]: 'button_gameover_restart.png',
+
+        [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.png',
+        [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',
+
+        [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.png',
+        [Ids.CHARACTER_UCHICCHI_CLOSEUP]: 'character_uchicchi_closeup.png',
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
         [Ids.SIGNAL]: 'image_signal.png',
