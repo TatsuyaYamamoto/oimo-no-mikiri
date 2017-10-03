@@ -9,6 +9,7 @@ import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import UchicchiCloseUp from "../../texture/sprite/character/UchicchiCloseUp";
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
+import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
 
 class ReadyState extends ViewContainer {
     public static TAG = ReadyState.name;
@@ -19,6 +20,8 @@ class ReadyState extends ViewContainer {
     private _playerCharacterCloseup: HanamaruCloseUp;
     private _opponentCharacter: Uchicchi;
     private _opponentCharacterCloseup: UchicchiCloseUp;
+
+    private _closeupBrightnessFilter: CloseupBrightnessFilter;
 
     /**
      * @override
@@ -41,6 +44,8 @@ class ReadyState extends ViewContainer {
         this._opponentCharacterCloseup = new UchicchiCloseUp();
         this._opponentCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
 
+        this._closeupBrightnessFilter = new CloseupBrightnessFilter();
+        this._closeupBrightnessFilter.contrast(0.2);
         this.backGroundLayer.addChild(
             this._background,
         );
@@ -52,6 +57,7 @@ class ReadyState extends ViewContainer {
             this._opponentCharacterCloseup,
         );
 
+        this.backGroundLayer.filters = [this._closeupBrightnessFilter];
 
         // TODO: set animation component and fire event on complete.
         window.setTimeout(function () {
