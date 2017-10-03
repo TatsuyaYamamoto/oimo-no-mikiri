@@ -1,3 +1,5 @@
+import * as anime from 'animejs'
+
 import ViewContainer from "../../../framework/ViewContainer";
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
@@ -11,6 +13,15 @@ import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
 import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
 
+const ANIMATION_TIME_LINE = {
+    PLAY_READY_SOUND: 1000,
+    START_BLACK_OUT: 1000,
+    SHOW_CLOSEUP_LINE_IMAGES: 1000,
+    START_MOVING_CLOSEUP_LINE_IMAGES: 1000,
+    END_MOVING_CLOSING_LINE_IMAGES: 1000,
+    FINISH: 1000,
+};
+
 class ReadyState extends ViewContainer {
     public static TAG = ReadyState.name;
 
@@ -22,6 +33,10 @@ class ReadyState extends ViewContainer {
     private _opponentCharacterCloseup: UchicchiCloseUp;
 
     private _closeupBrightnessFilter: CloseupBrightnessFilter;
+
+    private _soundTimeLine;
+    private _filterTimeLine;
+    private _closeupTimeLine;
 
     /**
      * @override
@@ -59,10 +74,23 @@ class ReadyState extends ViewContainer {
 
         this.backGroundLayer.filters = [this._closeupBrightnessFilter];
 
-        // TODO: set animation component and fire event on complete.
-        window.setTimeout(function () {
-            dispatchEvent(Events.IS_READY);
-        }, 1000);
+        // Setup animation time lines
+        this._soundTimeLine = this._getSoundTimeLine();
+        this._filterTimeLine = this._getFilterAnimeTimeLine();
+        this._closeupTimeLine = this._getCloseupTimeline();
+
+        // Create animation promise.
+        Promise
+            .all([
+                new Promise((onfulfilled) => this._soundTimeLine.complete = onfulfilled),
+                new Promise((onfulfilled) => this._filterTimeLine.complete = onfulfilled),
+                new Promise((onfulfilled) => this._closeupTimeLine.complete = onfulfilled),
+            ])
+            .then(() => {
+                dispatchEvent(Events.IS_READY);
+            });
+
+        this._playAnimation();
     }
 
     /**
@@ -71,6 +99,59 @@ class ReadyState extends ViewContainer {
     onExit(): void {
         super.onExit();
     }
+
+    /**
+     *
+     * @private
+     */
+    private _playAnimation = () => {
+        this._soundTimeLine.play();
+        this._filterTimeLine.play();
+        this._closeupTimeLine.play();
+    };
+
+    /**
+     *
+     * @returns {any}
+     * @private
+     */
+    private _getSoundTimeLine = () => {
+        const timeLine = anime.timeline();
+
+        return timeLine;
+    };
+
+    /**
+     *
+     * @returns {any}
+     * @private
+     */
+    private _getFilterAnimeTimeLine = () => {
+        let hoge = 0;
+        const timeLine = anime.timeline();
+        timeLine
+            .add({
+                targets: this._closeupBrightnessFilter,
+                delay: ANIMATION_TIME_LINE.START_BLACK_OUT,
+                update: () => {
+                    hoge += 0.01;
+                    this._closeupBrightnessFilter.brightness(hoge)
+                }
+            });
+
+        return timeLine;
+    };
+
+    /**
+     *
+     * @returns {any}
+     * @private
+     */
+    private _getCloseupTimeline = () => {
+        const timeLine = anime.timeline();
+
+        return timeLine;
+    };
 }
 
 export default ReadyState;
