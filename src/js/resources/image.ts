@@ -16,6 +16,10 @@ export const Ids = {
 
     CHARACTER_UCHICCHI: 'CHARACTER_UCHICCHI',
     CHARACTER_UCHICCHI_CLOSEUP: 'CHARACTER_UCHICCHI_CLOSEUP',
+    CHARACTER_SHITAKE: 'CHARACTER_UCHICCHI',
+    CHARACTER_SHITAKE_CLOSEUP: 'CHARACTER_UCHICCHI_CLOSEUP',
+    CHARACTER_LITTLE_DAEMON: 'CHARACTER_LITTLE_DAEMON',
+    CHARACTER_LITTLE_DAEMON_CLOSEUP: 'CHARACTER_LITTLE_DAEMON_CLOSEUP',
 
     LOGO_TITLE: 'LOGO_TITLE',
     SIGNAL: 'SIGNAL',
@@ -34,6 +38,10 @@ const manifest: ImageManifest = {
 
         [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.png',
         [Ids.CHARACTER_UCHICCHI_CLOSEUP]: 'character_uchicchi_closeup.png',
+        [Ids.CHARACTER_SHITAKE]: 'character_shitake.png',
+        [Ids.CHARACTER_SHITAKE_CLOSEUP]: 'character_shitake_closeup.png',
+        [Ids.CHARACTER_LITTLE_DAEMON]: 'character_little_daemon.png',
+        [Ids.CHARACTER_LITTLE_DAEMON_CLOSEUP]: 'character_little_daemon_closeup.png',
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
         [Ids.SIGNAL]: 'image_signal.png',
