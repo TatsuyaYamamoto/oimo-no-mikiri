@@ -1,14 +1,14 @@
-import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
+import AbstractGameState from "./AbstractGameState";
 import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
 
-class ResultState extends ViewContainer {
+class ResultState extends AbstractGameState {
     public static TAG = ResultState.name;
 
     private _background: GameBackground;

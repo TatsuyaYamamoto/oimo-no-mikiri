@@ -1,7 +1,7 @@
-import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
+import AbstractGameState from "./AbstractGameState";
 import {Events as AppEvents} from '../ApplicationState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
@@ -14,7 +14,7 @@ export interface EnterParams extends Deliverable {
     round: number,
 }
 
-class GameOverState extends ViewContainer {
+class GameOverState extends AbstractGameState {
     public static TAG = GameOverState.name;
 
     private _background: GameBackground;

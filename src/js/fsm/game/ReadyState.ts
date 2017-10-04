@@ -1,9 +1,9 @@
 import * as anime from 'animejs'
 
-import ViewContainer from "../../../framework/ViewContainer";
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
 
+import AbstractGameState from "./AbstractGameState";
 import {Events} from '../views/GameViewState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
@@ -25,7 +25,7 @@ const ANIMATION_TIME_LINE = {
     END_DECREASING_BRIGHTNESS: 8000,
 };
 
-class ReadyState extends ViewContainer {
+class ReadyState extends AbstractGameState {
     public static TAG = ReadyState.name;
 
     private _background: GameBackground;

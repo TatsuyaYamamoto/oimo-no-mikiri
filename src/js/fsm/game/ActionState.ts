@@ -1,8 +1,8 @@
-import ViewContainer from "../../../framework/ViewContainer";
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
 import {getRandomInteger} from "../../../framework/utils";
 
+import AbstractGameState from "./AbstractGameState";
 import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
@@ -17,7 +17,7 @@ export interface EnterParams extends Deliverable {
     round: number,
 }
 
-class ActionState extends ViewContainer {
+class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
 
     private _isTapActive: boolean;
@@ -71,7 +71,7 @@ class ActionState extends ViewContainer {
 
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        
+
         this._playerCharacter = new Hanamaru();
         this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
 
