@@ -1,4 +1,4 @@
-import Sprite from "../../internal/Sprite";
+import PlayerCloseUp from "./PlayerCloseUp";
 
 import {loadTexture} from "../../../../framework/AssetLoader";
 
@@ -7,7 +7,7 @@ import {Ids} from '../../../resources/image';
 /**
  * @class
  */
-class HanamaruCloseUp extends Sprite {
+class HanamaruCloseUp extends PlayerCloseUp {
     public constructor() {
         super(loadTexture(Ids.CHARACTER_HANAMARU_CLOSEUP));
     }

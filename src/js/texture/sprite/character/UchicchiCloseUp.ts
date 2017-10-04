@@ -1,13 +1,12 @@
-import Sprite from "../../internal/Sprite";
-
 import {loadTexture} from "../../../../framework/AssetLoader";
 
 import {Ids} from '../../../resources/image';
+import OpponentCloseUp from "./OpponentCloseUp";
 
 /**
  * @class
  */
-class UchicchiCloseUp extends Sprite {
+class UchicchiCloseUp extends OpponentCloseUp {
     public constructor() {
         super(loadTexture(Ids.CHARACTER_UCHICCHI_CLOSEUP));
     }
