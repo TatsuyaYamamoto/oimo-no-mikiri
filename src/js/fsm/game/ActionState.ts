@@ -7,8 +7,6 @@ import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import Signal from "../../texture/sprite/Signal";
-import Hanamaru from "../../texture/sprite/character/Hanamaru";
-import Uchicchi from "../../texture/sprite/character/Uchicchi";
 
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
@@ -31,9 +29,6 @@ class ActionState extends AbstractGameState {
     private _background: GameBackground;
 
     private _signalSprite: Signal;
-
-    private _playerCharacter: Hanamaru;
-    private _opponentCharacter: Uchicchi;
 
     /**
      * @override
@@ -72,11 +67,9 @@ class ActionState extends AbstractGameState {
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this._playerCharacter = new Hanamaru();
-        this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+        this.player.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
 
-        this._opponentCharacter = new Uchicchi();
-        this._opponentCharacter.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
+        this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
@@ -85,8 +78,8 @@ class ActionState extends AbstractGameState {
             this._background,
         );
         this.applicationLayer.addChild(
-            this._playerCharacter,
-            this._opponentCharacter,
+            this.player,
+            this.opponent,
         );
     }
 

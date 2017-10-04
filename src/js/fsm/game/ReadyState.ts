@@ -7,9 +7,7 @@ import AbstractGameState from "./AbstractGameState";
 import {Events} from '../views/GameViewState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
-import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import UchicchiCloseUp from "../../texture/sprite/character/UchicchiCloseUp";
-import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
 import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
 
@@ -30,9 +28,7 @@ class ReadyState extends AbstractGameState {
 
     private _background: GameBackground;
 
-    private _playerCharacter: Hanamaru;
     private _playerCharacterCloseup: HanamaruCloseUp;
-    private _opponentCharacter: Uchicchi;
     private _opponentCharacterCloseup: UchicchiCloseUp;
 
     private _closeupBrightnessFilter: CloseupBrightnessFilter;
@@ -50,15 +46,12 @@ class ReadyState extends AbstractGameState {
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this._playerCharacter = new Hanamaru();
-        this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+        this.player.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+        this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this._playerCharacterCloseup = new HanamaruCloseUp();
         this._playerCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
         this._playerCharacterCloseup.visible = false;
-
-        this._opponentCharacter = new Uchicchi();
-        this._opponentCharacter.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this._opponentCharacterCloseup = new UchicchiCloseUp();
         this._opponentCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
@@ -71,8 +64,8 @@ class ReadyState extends AbstractGameState {
         );
 
         this.applicationLayer.addChild(
-            this._playerCharacter,
-            this._opponentCharacter,
+            this.player,
+            this.opponent,
             this._playerCharacterCloseup,
             this._opponentCharacterCloseup,
         );

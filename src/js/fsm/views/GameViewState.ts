@@ -8,7 +8,12 @@ import ActionState, {EnterParams as ActionStateEnterParams} from "../game/Action
 import ResultState from "../game/ResultState";
 import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOverState";
 
+import Player from "../../texture/sprite/character/Player";
+import Opponent from "../../texture/sprite/character/Opponent";
+
 import {NPC_LEVELS} from "../../Constants";
+import Hanamaru from "../../texture/sprite/character/Hanamaru";
+import Uchicchi from "../../texture/sprite/character/Uchicchi";
 
 export enum Events {
     REQUEST_READY = 'GameViewState@REQUEST_READY',
@@ -39,6 +44,9 @@ class GameViewState extends ViewContainer {
     private _isFalseStarted: boolean;
     private _results: { [roundNumber: string]: number };
 
+    private _player: Player;
+    private _opponent: Opponent;
+
 
     /**
      * @override
@@ -61,10 +69,13 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._results = {};
 
-        this._readyState = new ReadyState();
-        this._actionState = new ActionState();
-        this._resultState = new ResultState();
-        this._gameOverState = new GameOverState();
+        this._player = new Hanamaru();
+        this._opponent = new Uchicchi();
+
+        this._readyState = new ReadyState(this._player, this._opponent);
+        this._actionState = new ActionState(this._player, this._opponent);
+        this._resultState = new ResultState(this._player, this._opponent);
+        this._gameOverState = new GameOverState(this._player, this._opponent);
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: this._readyState,

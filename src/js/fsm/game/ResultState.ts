@@ -5,16 +5,11 @@ import AbstractGameState from "./AbstractGameState";
 import {Events} from "../views/GameViewState";
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
-import Uchicchi from "../../texture/sprite/character/Uchicchi";
-import Hanamaru from "../../texture/sprite/character/Hanamaru";
 
 class ResultState extends AbstractGameState {
     public static TAG = ResultState.name;
 
     private _background: GameBackground;
-
-    private _playerCharacter: Hanamaru;
-    private _opponentCharacter: Uchicchi;
 
     /**
      * @override
@@ -31,18 +26,16 @@ class ResultState extends AbstractGameState {
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this._playerCharacter = new Hanamaru();
-        this._playerCharacter.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+        this.player.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
 
-        this._opponentCharacter = new Uchicchi();
-        this._opponentCharacter.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
+        this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this.backGroundLayer.addChild(
             this._background,
         );
         this.applicationLayer.addChild(
-            this._playerCharacter,
-            this._opponentCharacter,
+            this.player,
+            this.opponent,
         );
 
         // TODO: fire after completing animation.
