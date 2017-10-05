@@ -84,9 +84,6 @@ class GameViewState extends ViewContainer {
             [GameOverState.TAG]: this._gameOverState
         });
 
-        this._gameStateMachine.init(ReadyState.TAG);
-        this.applicationLayer.addChild(this._readyState);
-
         addEvents({
             [Events.REQUEST_READY]: this._handleRequestReadyEvent,
             [Events.IS_READY]: this._handleIsReadyEvent,
@@ -95,6 +92,9 @@ class GameViewState extends ViewContainer {
             [Events.FALSE_START]: this._handleFalseStartEvent,
             [Events.FIXED_RESULT]: this._handleFixedResultEvent,
         });
+
+        this._gameStateMachine.init(ReadyState.TAG);
+        this.applicationLayer.addChild(this._readyState);
     }
 
     /**

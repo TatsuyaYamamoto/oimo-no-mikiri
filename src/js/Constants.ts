@@ -64,11 +64,11 @@ export const BASIC_IMAGE_WIDTH = 800;
 export const BASIC_IMAGE_HEIGHT = BASIC_IMAGE_WIDTH / ASPECT_RATIO;
 
 /**
- * Skip game count state on game view if true.
+ * Skip ready state animation before game action if true.
  *
  * @type {boolean}
  */
-export const SKIP_COUNT_DOWN_FOR_GAME_START = false;
+export const SKIP_READY_ANIMATION = false;
 
 /**
  * Skip brant logo animation on load view if true.

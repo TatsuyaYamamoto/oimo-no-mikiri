@@ -9,7 +9,10 @@ import {Events} from '../views/GameViewState';
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import UchicchiCloseUp from "../../texture/sprite/character/UchicchiCloseUp";
 import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
+
 import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
+
+import {SKIP_READY_ANIMATION} from '../../Constants';
 
 const ANIMATION_TIME_LINE = {
     START_INCREASING_BRIGHTNESS: 1000,
@@ -88,7 +91,12 @@ class ReadyState extends AbstractGameState {
                 dispatchEvent(Events.IS_READY);
             });
 
-        this._playAnimation();
+        if (SKIP_READY_ANIMATION) {
+            // Set timeout to dispatch after ending onEnter logic.
+            window.setTimeout(() => dispatchEvent(Events.IS_READY), 1);
+        } else {
+            this._playAnimation();
+        }
     }
 
     /**
