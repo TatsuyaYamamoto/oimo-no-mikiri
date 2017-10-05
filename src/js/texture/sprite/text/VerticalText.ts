@@ -6,6 +6,10 @@ import Text from "../../internal/Text";
 
 const VERTICAL_SUPPORT_LANGUAGES = ['ja'];
 
+const VERTICAL_DEFAULT_STYLE: TextStyleOptions = {
+    align: 'center'
+};
+
 class VerticalText extends Text {
     constructor(text: string, style: TextStyleOptions = {}) {
         const currentLang = getCurrentLanguage();
@@ -17,7 +21,7 @@ class VerticalText extends Text {
             text;
 
         const verticalStyle = isVerticalSupportLang ?
-            Object.assign(style, {}) :
+            Object.assign(style, VERTICAL_DEFAULT_STYLE) :
             style;
 
         super(verticalText, verticalStyle)
