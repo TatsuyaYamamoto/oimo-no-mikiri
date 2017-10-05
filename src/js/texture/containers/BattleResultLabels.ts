@@ -4,7 +4,9 @@ import VerticalText from "../sprite/text/VerticalText";
 export enum BattleResultTypes {
     PLAYER_WIN = 'playerWin',
     OPPONENT_WIN = 'opponentWin',
-    DRAW = 'draw'
+    DRAW = 'draw',
+    PLAYER_FALSE_STARTED = 'playerFalseStarted',
+    OPPONENT_FALSE_STARTED = 'opponentFalseStarted'
 }
 
 class Label extends Container {
@@ -45,7 +47,11 @@ class BattleResultLabels extends Container {
         super();
         this._type = type;
 
-        this._resultLabel = new Label("勝負");
+        if (this._type === BattleResultTypes.PLAYER_FALSE_STARTED || this._type === BattleResultTypes.OPPONENT_FALSE_STARTED) {
+            this._resultLabel = new Label("仕切り直し");
+        } else {
+            this._resultLabel = new Label("勝者");
+        }
 
         this._playerLabel = new Label(winnerName);
         this._playerLabel.position.x = -1 * width * 0.3;
@@ -62,8 +68,15 @@ class BattleResultLabels extends Container {
                 this.addChild(this._opponentLabel, this._resultLabel);
                 break;
 
+            case BattleResultTypes.PLAYER_FALSE_STARTED:
+            case BattleResultTypes.OPPONENT_FALSE_STARTED:
+                this._resultLabel = new Label("仕切り直し");
+                this.addChild(this._resultLabel,);
+                break;
+
             case BattleResultTypes.DRAW:
             default:
+                this._resultLabel = new Label("勝者");
                 this.addChild(this._resultLabel,);
                 break;
         }

@@ -136,8 +136,7 @@ class GameViewState extends ViewContainer {
 
         // is failed previous match?
         // TODO: reconsider logic
-
-        if (!this._results[this._roundNumber - 1]) {
+        if (!this._isFalseStarted && !this._results[this._roundNumber - 1]) {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
@@ -220,9 +219,15 @@ class GameViewState extends ViewContainer {
         } else {
             this._isFalseStarted = true;
 
-            this._gameStateMachine.change(ReadyState.TAG);
+            this._gameStateMachine.change(ResultState.TAG, () => {
+                const params: ResultEnterParams = {
+                    resultType: 'playerFalseStarted'
+                };
+                return params;
+            });
+
             this.applicationLayer.removeChildren();
-            this.applicationLayer.addChild(this._readyState);
+            this.applicationLayer.addChild(this._resultState);
         }
     };
 
