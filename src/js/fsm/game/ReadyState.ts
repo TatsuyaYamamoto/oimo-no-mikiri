@@ -1,4 +1,5 @@
 import * as anime from 'animejs'
+import {filters} from 'pixi.js';
 
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
@@ -9,8 +10,6 @@ import {Events} from '../views/GameViewState';
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import UchicchiCloseUp from "../../texture/sprite/character/UchicchiCloseUp";
 import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
-
-import CloseupBrightnessFilter from "../../filter/CloseupBrightnessFilter";
 
 import {SKIP_READY_ANIMATION} from '../../Constants';
 
@@ -34,7 +33,9 @@ class ReadyState extends AbstractGameState {
     private _playerCharacterCloseup: HanamaruCloseUp;
     private _opponentCharacterCloseup: UchicchiCloseUp;
 
-    private _closeupBrightnessFilter: CloseupBrightnessFilter;
+    private _brightnessFilter: filters.ColorMatrixFilter;
+    private _contrastFilter: filters.ColorMatrixFilter;
+
 
     private _soundTimeLine;
     private _filterTimeLine;
@@ -60,8 +61,9 @@ class ReadyState extends AbstractGameState {
         this._opponentCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
         this._opponentCharacterCloseup.visible = false;
 
-        this._closeupBrightnessFilter = new CloseupBrightnessFilter();
-        this._closeupBrightnessFilter.brightness(0.5);
+        this._brightnessFilter = new filters.ColorMatrixFilter();
+        this._contrastFilter = new filters.ColorMatrixFilter();
+
         this.backGroundLayer.addChild(
             this._background,
         );
@@ -73,7 +75,10 @@ class ReadyState extends AbstractGameState {
             this._opponentCharacterCloseup,
         );
 
-        this.backGroundLayer.filters = [this._closeupBrightnessFilter];
+        this.backGroundLayer.filters = [
+            this._brightnessFilter,
+            this._contrastFilter,
+        ];
 
         // Setup animation time lines
         this._soundTimeLine = this._getSoundTimeLine();
@@ -135,6 +140,7 @@ class ReadyState extends AbstractGameState {
     private _getFilterAnimeTimeLine = () => {
         const values = {
             brightness: 1,
+            contrast: 0,
         };
 
         const {
@@ -148,7 +154,8 @@ class ReadyState extends AbstractGameState {
             targets: values,
             easing: 'linear',
             update: () => {
-                this._closeupBrightnessFilter.brightness(values.brightness);
+                this._brightnessFilter.contrast(values.contrast);
+                this._contrastFilter.brightness(values.brightness);
             }
         });
 
@@ -156,6 +163,7 @@ class ReadyState extends AbstractGameState {
         // black out
             .add({
                 brightness: 0.4,
+                contrast: 0.8,
                 offset: START_INCREASING_BRIGHTNESS,
                 duration: END_INCREASING_BRIGHTNESS - START_INCREASING_BRIGHTNESS,
             })
@@ -163,6 +171,7 @@ class ReadyState extends AbstractGameState {
             // white out
             .add({
                 brightness: 1,
+                contrast: 0,
                 offset: START_DECREASING_BRIGHTNESS,
                 duration: END_DECREASING_BRIGHTNESS - START_DECREASING_BRIGHTNESS,
             });
