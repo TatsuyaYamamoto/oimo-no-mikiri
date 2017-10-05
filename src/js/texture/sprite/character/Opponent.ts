@@ -1,6 +1,6 @@
-import Sprite from "../../internal/Sprite";
+import Character from "./Character";
 
-abstract class Opponent extends Sprite {
+abstract class Opponent extends Character {
 }
 
 export default Opponent;

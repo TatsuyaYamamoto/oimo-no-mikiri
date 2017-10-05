@@ -84,6 +84,8 @@ class GameViewState extends ViewContainer {
         this._opponents[4] = new Shitake();
         this._opponents[5] = new LittleDaemon();
 
+        this._opponents[1].playWait();
+
         this._readyState = new ReadyState(this._player, this._getCurrentOpponent());
         this._actionState = new ActionState(this._player, this._getCurrentOpponent());
         this._resultState = new ResultState(this._player, this._getCurrentOpponent());

@@ -37,11 +37,11 @@ const manifest: ImageManifest = {
         [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.json',
         [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',
 
-        [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.png',
+        [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.json',
         [Ids.CHARACTER_UCHICCHI_CLOSEUP]: 'character_uchicchi_closeup.png',
-        [Ids.CHARACTER_SHITAKE]: 'character_shitake.png',
+        [Ids.CHARACTER_SHITAKE]: 'character_shitake.json',
         [Ids.CHARACTER_SHITAKE_CLOSEUP]: 'character_shitake_closeup.png',
-        [Ids.CHARACTER_LITTLE_DAEMON]: 'character_little_daemon.png',
+        [Ids.CHARACTER_LITTLE_DAEMON]: 'character_little_daemon.json',
         [Ids.CHARACTER_LITTLE_DAEMON_CLOSEUP]: 'character_little_daemon_closeup.png',
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
