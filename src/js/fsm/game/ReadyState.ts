@@ -155,7 +155,7 @@ class ReadyState extends AbstractGameState {
         timeLine
         // black out
             .add({
-                brightness: 0,
+                brightness: 0.4,
                 offset: START_INCREASING_BRIGHTNESS,
                 duration: END_INCREASING_BRIGHTNESS - START_INCREASING_BRIGHTNESS,
             })
