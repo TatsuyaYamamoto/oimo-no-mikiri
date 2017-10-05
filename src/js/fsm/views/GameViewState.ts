@@ -11,11 +11,12 @@ import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOve
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 
-import {NPC_LEVELS} from "../../Constants";
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
+
+import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
     REQUEST_READY = 'GameViewState@REQUEST_READY',
@@ -128,13 +129,25 @@ class GameViewState extends ViewContainer {
      */
     private _handleRequestReadyEvent = () => {
         console.log("round number", this._roundNumber);
+
+        // is failed previous match?
+        // TODO: reconsider logic
+
+        if (!this._results[this._roundNumber - 1]) {
+            dispatchEvent(Events.FIXED_RESULT);
+            return;
+        }
+        
+        // is finished every match?
         if (this._roundNumber > this._roundLength) {
             dispatchEvent(Events.FIXED_RESULT);
-        } else {
-            this._gameStateMachine.change(ReadyState.TAG);
-            this.applicationLayer.removeChildren();
-            this.applicationLayer.addChild(this._readyState);
+            return;
         }
+
+        this._gameStateMachine.change(ReadyState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._readyState);
+
     };
 
     /**

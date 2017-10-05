@@ -22,6 +22,7 @@ export const Ids = {
     CHARACTER_LITTLE_DAEMON_CLOSEUP: 'CHARACTER_LITTLE_DAEMON_CLOSEUP',
 
     LOGO_TITLE: 'LOGO_TITLE',
+    LOGO_GAME_OVER: 'LOGO_GAME_OVER',
     SIGNAL: 'SIGNAL',
 };
 
@@ -44,6 +45,7 @@ const manifest: ImageManifest = {
         [Ids.CHARACTER_LITTLE_DAEMON_CLOSEUP]: 'character_little_daemon_closeup.png',
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
+        [Ids.LOGO_GAME_OVER]: 'image_logo_gameover.png',
         [Ids.SIGNAL]: 'image_signal.png',
     },
     ja: {}

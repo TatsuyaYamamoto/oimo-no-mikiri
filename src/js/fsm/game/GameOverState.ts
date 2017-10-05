@@ -7,6 +7,7 @@ import {Events as AppEvents} from '../ApplicationState';
 import GameBackground from "../../texture/sprite/background/GameBackground";
 import RestartButton from "../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
+import GameOverLogo from "../../texture/sprite/GameOverLogo";
 
 
 export interface EnterParams extends Deliverable {
@@ -18,6 +19,8 @@ class GameOverState extends AbstractGameState {
     public static TAG = GameOverState.name;
 
     private _background: GameBackground;
+
+    private _gameOverLogo: GameOverLogo;
 
     private _restartButton: RestartButton;
     private _backToTopButton: BackToTopButton;
@@ -37,6 +40,9 @@ class GameOverState extends AbstractGameState {
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
+        this._gameOverLogo = new GameOverLogo();
+        this._gameOverLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
+
         this._restartButton = new RestartButton();
         this._restartButton.position.set(this.viewWidth * 0.3, this.viewHeight * 0.8);
         this._restartButton.setOnClickListener(this._onClickRestartButton);
@@ -51,6 +57,7 @@ class GameOverState extends AbstractGameState {
         this.applicationLayer.addChild(
             this._restartButton,
             this._backToTopButton,
+            this._gameOverLogo,
         );
     }
 
