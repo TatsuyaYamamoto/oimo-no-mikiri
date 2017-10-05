@@ -120,9 +120,7 @@ class ApplicationState extends Application {
     private _handleRequestedGameStartEvent = (e: CustomEvent) => {
         const mode: "beginner" | "novice" | "expert" = e.detail.mode;
         let level: NPC_LEVELS = NPC_LEVELS[mode.toUpperCase()];
-
-        console.log(NPC_LEVELS, mode, level);
-
+        
         this._viewStateMachine.change(GameViewState.TAG, () => {
             const params: GameViewEnterParams = {
                 level,
