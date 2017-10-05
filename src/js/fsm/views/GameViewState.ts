@@ -45,6 +45,7 @@ class GameViewState extends ViewContainer {
     private _roundLength: number;
     private _roundNumber: number;
     private _isFalseStarted: boolean;
+    private _isGameFailed: boolean;
     private _results: { [roundNumber: string]: number };
 
     private _player: Player;
@@ -72,6 +73,7 @@ class GameViewState extends ViewContainer {
         this._roundLength = params.roundLength;
         this._roundNumber = 1;
         this._isFalseStarted = false;
+        this._isGameFailed = false;
         this._results = {};
 
         this._player = new Hanamaru();
@@ -135,8 +137,7 @@ class GameViewState extends ViewContainer {
         console.log("round number", this._roundNumber);
 
         // is failed previous match?
-        // TODO: reconsider logic
-        if (!this._isFalseStarted && !this._results[this._roundNumber - 1]) {
+        if (this._isGameFailed) {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
@@ -204,6 +205,7 @@ class GameViewState extends ViewContainer {
             };
             return params;
         });
+        this._isGameFailed = true;
 
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._resultState);
@@ -214,21 +216,21 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleFalseStartEvent = () => {
-        if (this._isFalseStarted) {
-            dispatchEvent(Events.FIXED_RESULT);
-        } else {
-            this._isFalseStarted = true;
+        this._isGameFailed = this._isFalseStarted;
 
-            this._gameStateMachine.change(ResultState.TAG, () => {
-                const params: ResultEnterParams = {
-                    resultType: 'playerFalseStarted'
-                };
-                return params;
-            });
+        this._gameStateMachine.change(ResultState.TAG, () => {
+            const params: ResultEnterParams = {
+                resultType: this._isFalseStarted ?
+                    'opponentWinWithFalseStarted' :
+                    'playerFalseStarted'
+            };
+            return params;
+        });
 
-            this.applicationLayer.removeChildren();
-            this.applicationLayer.addChild(this._resultState);
-        }
+        this._isFalseStarted = true;
+
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._resultState);
     };
 
     /**

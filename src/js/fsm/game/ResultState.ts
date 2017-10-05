@@ -11,7 +11,13 @@ import BattleResultLabels, {BattleResultTypes} from "../../texture/containers/Ba
 import GameBackground from "../../texture/sprite/background/GameBackground";
 
 export interface EnterParams extends Deliverable {
-    resultType: 'playerWin' | 'opponentWin' | 'draw' | 'playerFalseStarted' | 'opponentFalseStarted'
+    resultType: 'playerWin' |
+        'opponentWin' |
+        'playerWinWithFalseStarted' |
+        'opponentWinWithFalseStarted' |
+        'draw' |
+        'playerFalseStarted' |
+        'opponentFalseStarted'
 }
 
 class ResultState extends AbstractGameState {
