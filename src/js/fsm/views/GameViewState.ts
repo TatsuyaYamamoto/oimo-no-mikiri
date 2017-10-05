@@ -5,7 +5,7 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import ReadyState from "../game/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
-import ResultState from "../game/ResultState";
+import ResultState, {EnterParams as ResultEnterParams} from "../game/ResultState";
 import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOverState";
 
 import Player from "../../texture/sprite/character/Player";
@@ -166,7 +166,12 @@ class GameViewState extends ViewContainer {
         this._resultState.setOpponent(this._getCurrentOpponent());
         this._gameOverState.setOpponent(this._getCurrentOpponent());
 
-        this._gameStateMachine.change(ResultState.TAG);
+        this._gameStateMachine.change(ResultState.TAG, () => {
+            const params: ResultEnterParams = {
+                resultType: 'playerWin'
+            };
+            return params;
+        });
 
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._resultState);
@@ -177,7 +182,15 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionFailureEvent = () => {
-        dispatchEvent(Events.FIXED_RESULT);
+        this._gameStateMachine.change(ResultState.TAG, () => {
+            const params: ResultEnterParams = {
+                resultType: 'opponentWin'
+            };
+            return params;
+        });
+
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._resultState);
     };
 
     /**
