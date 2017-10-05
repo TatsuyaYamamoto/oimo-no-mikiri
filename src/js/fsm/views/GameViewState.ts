@@ -14,6 +14,8 @@ import Opponent from "../../texture/sprite/character/Opponent";
 import {NPC_LEVELS} from "../../Constants";
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
+import Shitake from "../../texture/sprite/character/Shitake";
+import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 
 export enum Events {
     REQUEST_READY = 'GameViewState@REQUEST_READY',
@@ -45,7 +47,9 @@ class GameViewState extends ViewContainer {
     private _results: { [roundNumber: string]: number };
 
     private _player: Player;
-    private _opponent: Opponent;
+    private _opponents: {
+        [roundNumber: number]: Opponent
+    };
 
 
     /**
@@ -70,12 +74,17 @@ class GameViewState extends ViewContainer {
         this._results = {};
 
         this._player = new Hanamaru();
-        this._opponent = new Uchicchi();
+        this._opponents = {};
+        this._opponents[1] = new Shitake();
+        this._opponents[2] = new LittleDaemon();
+        this._opponents[3] = new Uchicchi();
+        this._opponents[4] = new Shitake();
+        this._opponents[5] = new LittleDaemon();
 
-        this._readyState = new ReadyState(this._player, this._opponent);
-        this._actionState = new ActionState(this._player, this._opponent);
-        this._resultState = new ResultState(this._player, this._opponent);
-        this._gameOverState = new GameOverState(this._player, this._opponent);
+        this._readyState = new ReadyState(this._player, this._getCurrentOpponent());
+        this._actionState = new ActionState(this._player, this._getCurrentOpponent());
+        this._resultState = new ResultState(this._player, this._getCurrentOpponent());
+        this._gameOverState = new GameOverState(this._player, this._getCurrentOpponent());
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: this._readyState,
@@ -152,7 +161,13 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._roundNumber += 1;
 
+        this._readyState.setOpponent(this._getCurrentOpponent());
+        this._actionState.setOpponent(this._getCurrentOpponent());
+        this._resultState.setOpponent(this._getCurrentOpponent());
+        this._gameOverState.setOpponent(this._getCurrentOpponent());
+
         this._gameStateMachine.change(ResultState.TAG);
+
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._resultState);
     };
@@ -203,6 +218,10 @@ class GameViewState extends ViewContainer {
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._gameOverState);
     };
+
+    private _getCurrentOpponent = (): Opponent => {
+        return this._opponents[this._roundNumber];
+    }
 }
 
 export default GameViewState;
