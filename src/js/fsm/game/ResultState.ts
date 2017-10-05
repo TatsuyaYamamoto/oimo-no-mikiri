@@ -1,3 +1,5 @@
+import {filters} from 'pixi.js';
+
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
@@ -19,6 +21,9 @@ class ResultState extends AbstractGameState {
 
     private _battleResultLabels: BattleResultLabels;
 
+    private _hueFilter: filters.ColorMatrixFilter;
+    private _brightnessFilter: filters.ColorMatrixFilter;
+
     /**
      * @override
      */
@@ -30,6 +35,7 @@ class ResultState extends AbstractGameState {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+        const resultType = <BattleResultTypes>params.resultType;
 
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -41,10 +47,14 @@ class ResultState extends AbstractGameState {
         this._battleResultLabels = new BattleResultLabels(
             this.viewWidth,
             this.viewHeight,
-            <BattleResultTypes>params.resultType,
+            resultType,
             "WinnerName"); // TODO: get winner name according to result.
         this._battleResultLabels.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._battleResultLabels.show(true);
+
+        this._hueFilter = new filters.ColorMatrixFilter();
+        this._brightnessFilter = new filters.ColorMatrixFilter();
+        this._background.filters = [this._hueFilter, this._brightnessFilter];
 
         this.backGroundLayer.addChild(
             this._background,
@@ -56,10 +66,15 @@ class ResultState extends AbstractGameState {
             this._battleResultLabels,
         );
 
+        if (resultType === BattleResultTypes.PLAYER_FALSE_STARTED || resultType === BattleResultTypes.OPPONENT_FALSE_STARTED) {
+            this._hueFilter.hue(180);
+            this._brightnessFilter.brightness(0.5);
+        }
+
         // TODO: fire after completing animation.
         window.setTimeout(function () {
             dispatchEvent(Events.REQUEST_READY);
-        }, 5000);
+        }, 3000);
     }
 
     /**
