@@ -34,7 +34,7 @@ const manifest: ImageManifest = {
         [Ids.BUTTON_GAMEOVER_BACK_TO_TOP]: 'button_gameover_back_to_top.png',
         [Ids.BUTTON_GAMEOVER_RESTART]: 'button_gameover_restart.png',
 
-        [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.png',
+        [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.json',
         [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',
 
         [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.png',

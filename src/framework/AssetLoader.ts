@@ -120,6 +120,18 @@ export function loadTexture(id: string): Texture {
 }
 
 /**
+ * Convenience method for getting texture asset list for sprite sheet animation cached with the loader.
+ *
+ * @param {string} id
+ * @returns {PIXI.Texture[]}
+ */
+export function loadFrames(id: string): Texture[] {
+    return Object.keys(AssetsCache[id].textures).map(textureKey => {
+        return AssetsCache[id].textures[textureKey];
+    });
+}
+
+/**
  * Convenience method for getting sound asset cached with the loader.
  *
  * @param {string} id

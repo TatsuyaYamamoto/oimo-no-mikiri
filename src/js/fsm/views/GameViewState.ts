@@ -75,6 +75,8 @@ class GameViewState extends ViewContainer {
         this._results = {};
 
         this._player = new Hanamaru();
+        this._player.playWait();
+
         this._opponents = {};
         this._opponents[1] = new Shitake();
         this._opponents[2] = new LittleDaemon();
@@ -137,7 +139,7 @@ class GameViewState extends ViewContainer {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
-        
+
         // is finished every match?
         if (this._roundNumber > this._roundLength) {
             dispatchEvent(Events.FIXED_RESULT);
