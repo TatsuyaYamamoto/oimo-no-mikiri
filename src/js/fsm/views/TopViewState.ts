@@ -7,9 +7,12 @@ import TitleState from "../top/TitleState";
 import MenuState from "../top/MenuState";
 
 import {Events as AppEvents} from '../ApplicationState';
+import HowToPlayState from "../top/HowToPlayState";
 
 export enum Events {
     TAP_TITLE = 'GameViewState@TAP_TITLE',
+    REQUEST_BACK_TO_MENU = 'GameViewState@REQUEST_BACK_TO_MENU',
+    REQUEST_HOW_TO_PLAY = 'GameViewState@REQUEST_HOW_TO_PLAY',
     FIXED_PLAY_MODE = 'GameViewState@FIXED_PLAY_MODE',
 }
 
@@ -19,6 +22,7 @@ class TopViewState extends ViewContainer {
     private _topStateMachine: StateMachine;
     private _titleState: TitleState;
     private _menuState: MenuState;
+    private _howToPlayState: HowToPlayState;
 
     /**
      * @override
@@ -37,10 +41,12 @@ class TopViewState extends ViewContainer {
 
         this._titleState = new TitleState();
         this._menuState = new MenuState();
+        this._howToPlayState = new HowToPlayState();
 
         this._topStateMachine = new StateMachine({
             [TitleState.TAG]: this._titleState,
             [MenuState.TAG]: this._menuState,
+            [HowToPlayState.TAG]: this._howToPlayState,
         });
 
         this._topStateMachine.init(TitleState.TAG);
@@ -48,6 +54,8 @@ class TopViewState extends ViewContainer {
 
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,
+            [Events.REQUEST_BACK_TO_MENU]: this._handleRequestBackMenuEvent,
+            [Events.REQUEST_HOW_TO_PLAY]: this._handleRequestHowToPlayEvent,
             [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
         });
     }
@@ -60,6 +68,8 @@ class TopViewState extends ViewContainer {
 
         removeEvents([
             Events.TAP_TITLE,
+            Events.REQUEST_BACK_TO_MENU,
+            Events.REQUEST_HOW_TO_PLAY,
             Events.FIXED_PLAY_MODE,
         ])
     }
@@ -69,6 +79,26 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleTapTitleEvent = () => {
+        this._topStateMachine.change(MenuState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._menuState);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleRequestHowToPlayEvent = () => {
+        this._topStateMachine.change(HowToPlayState.TAG);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._howToPlayState);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleRequestBackMenuEvent = () => {
         this._topStateMachine.change(MenuState.TAG);
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._menuState);

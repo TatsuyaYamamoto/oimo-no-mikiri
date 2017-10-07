@@ -18,6 +18,8 @@ export const Ids = {
     BUTTON_LEVEL_NOVICE: 'BUTTON_LEVEL_NOVICE',
     BUTTON_LEVEL_EXPERT: 'BUTTON_LEVEL_EXPERT',
 
+    CHARACTER_OIMO: 'CHARACTER_OIMO',
+
     CHARACTER_HANAMARU: 'CHARACTER_HANAMARU',
     CHARACTER_HANAMARU_CLOSEUP: 'CHARACTER_HANAMARU_CLOSEUP',
 
@@ -49,6 +51,8 @@ const manifest: ImageManifest = {
         [Ids.BUTTON_LEVEL_BEGINNER]: 'button_level_beginner.png',
         [Ids.BUTTON_LEVEL_NOVICE]: 'button_level_novice.png',
         [Ids.BUTTON_LEVEL_EXPERT]: 'button_level_expert.png',
+
+        [Ids.CHARACTER_OIMO]: 'character_oimo.json',
 
         [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.json',
         [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',

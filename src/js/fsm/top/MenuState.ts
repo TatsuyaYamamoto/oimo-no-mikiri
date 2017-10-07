@@ -75,7 +75,7 @@ class MenuState extends ViewContainer {
      * @private
      */
     private _onSelectHowToPlay = () => {
-        // TODO: implement.
+        dispatchEvent(Events.REQUEST_HOW_TO_PLAY);
     };
 
     /**
