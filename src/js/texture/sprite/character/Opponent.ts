@@ -1,18 +1,16 @@
 import {Texture} from 'pixi.js';
 
-import Character from "./Character";
+import Character, {FrameStructureIndexes} from "./Character";
 import OpponentCloseUp from "./OpponentCloseUp";
 
 abstract class Opponent extends Character {
     private _closeUpTexture: OpponentCloseUp;
 
-    constructor(waitTextures: Texture[],
-                attackTextures: Texture[],
-                winTextures: Texture[],
-                loseTextures: Texture[],
+    constructor(frameTextures: Texture[],
+                indexed: FrameStructureIndexes,
                 closeUpTexture: OpponentCloseUp) {
-        super(waitTextures, attackTextures, winTextures, loseTextures);
 
+        super(frameTextures, indexed);
         this._closeUpTexture = closeUpTexture;
     }
 

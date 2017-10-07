@@ -84,7 +84,6 @@ class GameViewState extends ViewContainer {
         this._results = {};
 
         this._player = new Hanamaru();
-        this._player.playWait();
 
         this._opponents = {};
         this._opponents[1] = new Shitake();
@@ -92,8 +91,6 @@ class GameViewState extends ViewContainer {
         this._opponents[3] = new Uchicchi();
         this._opponents[4] = new Shitake();
         this._opponents[5] = new LittleDaemon();
-
-        this._opponents[1].playWait();
 
         this._readyState = new ReadyState(this._player, this._opponents[1]);
         this._actionState = new ActionState(this._player, this._opponents[1]);
@@ -121,6 +118,9 @@ class GameViewState extends ViewContainer {
             [Events.FALSE_START]: this._handleFalseStartEvent,
             [Events.FIXED_RESULT]: this._handleFixedResultEvent,
         });
+
+        this._player.playWait();
+        this._opponents[this._roundNumber].playWait();
 
         this._gameStateMachine.init(ReadyState.TAG);
         this.applicationLayer.addChild(this._readyState);
@@ -163,6 +163,9 @@ class GameViewState extends ViewContainer {
 
         this._updateCurrentOpponent();
 
+        this._player.playWait();
+        this._opponents[this._roundNumber].playWait();
+
         this._gameStateMachine.change(ReadyState.TAG);
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._readyState);
@@ -193,8 +196,10 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._roundNumber += 1;
 
-        this._gameStateMachine.change(PlayerWinState.TAG);
+        this._player.playWin();
+        this._opponents[this._roundNumber].playLose();
 
+        this._gameStateMachine.change(PlayerWinState.TAG);
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._playerWinResultState);
     };
@@ -204,9 +209,12 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionFailureEvent = () => {
-        this._gameStateMachine.change(OpponentWinState.TAG);
         this._isGameFailed = true;
 
+        this._player.playLose();
+        this._opponents[this._roundNumber].playWin();
+
+        this._gameStateMachine.change(OpponentWinState.TAG);
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._opponentWinResultState);
     };

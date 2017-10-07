@@ -1,18 +1,16 @@
 import {Texture} from 'pixi.js';
 
-import Character from "./Character";
+import Character, {FrameStructureIndexes} from "./Character";
 import PlayerCloseUp from "./PlayerCloseUp";
 
 abstract class Player extends Character {
     protected _closeUpTexture: PlayerCloseUp;
 
-    constructor(waitTextures: Texture[],
-                attackTextures: Texture[],
-                winTextures: Texture[],
-                loseTextures: Texture[],
+    constructor(frameTextures: Texture[],
+                indexed: FrameStructureIndexes,
                 closeUpTexture: PlayerCloseUp) {
-        super(waitTextures, attackTextures, winTextures, loseTextures);
 
+        super(frameTextures, indexed);
         this._closeUpTexture = closeUpTexture;
     }
 

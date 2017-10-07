@@ -1,11 +1,12 @@
 import {loadTexture, loadFrames} from "../../../../framework/AssetLoader";
 
+import {FrameStructureIndexes} from "./Character";
 import Opponent from "./Opponent";
 import OpponentCloseUp from "./OpponentCloseUp";
 
 import {Ids} from '../../../resources/image';
 
-const FRAMES = {
+const FRAMES: FrameStructureIndexes = {
     WAIT: [0, 1],
     ATTACK: [2, 3],
     LOSE: [4, 5],
@@ -26,13 +27,10 @@ class LittleDaemonCloseUp extends OpponentCloseUp {
  */
 class LittleDaemon extends Opponent {
     public constructor() {
-        const frames = loadFrames(Ids.CHARACTER_LITTLE_DAEMON);
-        const wait = FRAMES.WAIT.map((waitFrameIndex) => frames[waitFrameIndex]);
-        const attack = FRAMES.ATTACK.map((attackFrameIndex) => frames[attackFrameIndex]);
-        const win = FRAMES.WIN.map((winFrameIndex) => frames[winFrameIndex]);
-        const lose = FRAMES.LOSE.map((loseFrameIndex) => frames[loseFrameIndex]);
-
-        super(wait, attack, win, lose, new LittleDaemonCloseUp());
+        super(
+            loadFrames(Ids.CHARACTER_LITTLE_DAEMON),
+            FRAMES,
+            new LittleDaemonCloseUp());
     }
 }
 
