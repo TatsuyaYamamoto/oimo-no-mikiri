@@ -1,3 +1,4 @@
+import {t} from "../../../../framework/i18n";
 import {loadTexture, loadFrames} from "../../../../framework/AssetLoader";
 
 import {FrameStructureIndexes} from "./Character";
@@ -5,6 +6,7 @@ import Player from "./Player";
 import PlayerCloseUp from "./PlayerCloseUp";
 
 import {Ids} from '../../../resources/image';
+import {Ids as StringIds} from '../../../resources/string';
 
 const FRAMES: FrameStructureIndexes = {
     WAIT: [0, 1],
@@ -31,6 +33,10 @@ class Hanamaru extends Player {
             loadFrames(Ids.CHARACTER_HANAMARU),
             FRAMES,
             new HanamaruCloseUp());
+    }
+
+    public get name(): string {
+        return t(StringIds.CHARA_NAME_HANAMARU);
     }
 }
 

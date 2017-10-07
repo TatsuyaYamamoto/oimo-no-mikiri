@@ -7,6 +7,13 @@ export const Ids = {
     NOVICE: 'string@novice',
     EXPERT: 'string@expert',
 
+    LABEL_WINNER: 'LABEL_WINNER',
+
+    CHARA_NAME_HANAMARU: 'CHARA_NAME_HANAMARU',
+    CHARA_NAME_SHITAKE: 'CHARA_NAME_SHITAKE',
+    CHARA_NAME_LITTLE_DAEMON: 'CHARA_NAME_LITTLE_DAEMON',
+    CHARA_NAME_UCHICCHI: 'CHARA_NAME_UCHICCHI',
+
     CREDIT_T28: "CREDIT_T28",
     CREDIT_SANZASHI: "CREDIT_SANZASHI",
     CREDIT_ON_JIN: "CREDIT_ON_JIN",
@@ -29,6 +36,13 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.NOVICE]: 'Novice',
             [Ids.EXPERT]: 'Expert',
 
+            [Ids.LABEL_WINNER]: 'Winner',
+
+            [Ids.CHARA_NAME_HANAMARU]: 'Hanamaru',
+            [Ids.CHARA_NAME_SHITAKE]: 'Shitake',
+            [Ids.CHARA_NAME_LITTLE_DAEMON]: 'Little deamond',
+            [Ids.CHARA_NAME_UCHICCHI]: 'Uchicchi',
+
             [Ids.CREDIT_T28]: 'Planning, Program, Music: T28',
             [Ids.CREDIT_SANZASHI]: 'Illustration: Sanzashi',
             [Ids.CREDIT_ON_JIN]: 'Sound effect: On-Jin ～音人～',
@@ -46,6 +60,13 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.BEGINNER]: '易',
             [Ids.NOVICE]: '中',
             [Ids.EXPERT]: '難',
+
+            [Ids.LABEL_WINNER]: '勝者',
+
+            [Ids.CHARA_NAME_HANAMARU]: 'はなまる',
+            [Ids.CHARA_NAME_SHITAKE]: 'しいたけ',
+            [Ids.CHARA_NAME_LITTLE_DAEMON]: 'リトルデーモン',
+            [Ids.CHARA_NAME_UCHICCHI]: 'うちっちー',
 
             [Ids.CREDIT_T28]: '思いつき, プラグラム, 音楽: T28',
             [Ids.CREDIT_SANZASHI]: 'イラスト: さんざし',

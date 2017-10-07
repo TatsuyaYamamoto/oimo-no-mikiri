@@ -1,11 +1,14 @@
 import {filters} from 'pixi.js';
 
+import {t} from "../../../../framework/i18n";
 import Deliverable from "../../../../framework/Deliverable";
 
 import AbstractGameState from "../AbstractGameState";
 
 import GameBackground from "../../../texture/sprite/background/GameBackground";
 import BattleResultLabel from '../../../texture/containers/BattleResultLabel';
+
+import {Ids as StringIds} from '../../../resources/string';
 
 export interface EnterParams extends Deliverable {
     resultType: 'playerWin' |
@@ -39,18 +42,15 @@ abstract class ResultState extends AbstractGameState {
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
 
-        // TODO: replace string resources.
-        this._resultLabel = new BattleResultLabel('勝者');
+        this._resultLabel = new BattleResultLabel(t(StringIds.LABEL_WINNER));
         this._resultLabel.position.set(this.viewWidth * 0.5, this.viewHeight * 0.3);
         this._resultLabel.visible = false;
 
-        // TODO: replace string resources.
-        this._playerLabel = new BattleResultLabel('ぷれいやー');
+        this._playerLabel = new BattleResultLabel(this.player.name);
         this._playerLabel.position.set(this.viewWidth * 0.3, this.viewHeight * 0.3);
         this._playerLabel.visible = false;
 
-        // TODO: replace string resources.
-        this._opponentLabel = new BattleResultLabel('こんぴゅーた');
+        this._opponentLabel = new BattleResultLabel(this.opponent.name);
         this._opponentLabel.position.set(this.viewWidth * 0.7, this.viewHeight * 0.3);
         this._opponentLabel.visible = false;
 

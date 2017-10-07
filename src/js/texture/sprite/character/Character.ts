@@ -35,6 +35,8 @@ abstract class Character extends AnimatedSprite {
         this.animationSpeed = ANIMATION_SPEED;
     }
 
+    abstract get name(): string;
+
     public playWait(): void {
         this.textures = this.waitTextures;
         if (!this.playing) {

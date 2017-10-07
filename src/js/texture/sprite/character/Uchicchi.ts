@@ -1,10 +1,12 @@
-import {loadFrames, loadTexture} from "../../../../framework/AssetLoader";
+import {t} from "../../../../framework/i18n";
+import {loadTexture, loadFrames} from "../../../../framework/AssetLoader";
 
 import {FrameStructureIndexes} from "./Character";
 import Opponent from "./Opponent";
 import OpponentCloseUp from "./OpponentCloseUp";
 
 import {Ids} from '../../../resources/image';
+import {Ids as StringIds} from '../../../resources/string';
 
 const FRAMES: FrameStructureIndexes = {
     WAIT: [0, 1, 2, 3],
@@ -31,6 +33,10 @@ class Uchicchi extends Opponent {
             loadFrames(Ids.CHARACTER_UCHICCHI),
             FRAMES,
             new UchicchiCloseUp());
+    }
+
+    public get name(): string {
+        return t(StringIds.CHARA_NAME_UCHICCHI);
     }
 }
 
