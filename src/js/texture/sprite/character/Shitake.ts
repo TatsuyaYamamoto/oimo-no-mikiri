@@ -1,6 +1,7 @@
-import Opponent from "./Opponent";
+import {loadTexture, loadFrames} from "../../../../framework/AssetLoader";
 
-import {loadFrames} from "../../../../framework/AssetLoader";
+import Opponent from "./Opponent";
+import OpponentCloseUp from "./OpponentCloseUp";
 
 import {Ids} from '../../../resources/image';
 
@@ -14,6 +15,15 @@ const FRAMES = {
 /**
  * @class
  */
+class ShitakeCloseUp extends OpponentCloseUp {
+    public constructor() {
+        super(loadTexture(Ids.CHARACTER_SHITAKE_CLOSEUP));
+    }
+}
+
+/**
+ * @class
+ */
 class Shitake extends Opponent {
     public constructor() {
         const frames = loadFrames(Ids.CHARACTER_SHITAKE);
@@ -22,7 +32,7 @@ class Shitake extends Opponent {
         const win = FRAMES.WIN.map((winFrameIndex) => frames[winFrameIndex]);
         const lose = FRAMES.LOSE.map((loseFrameIndex) => frames[loseFrameIndex]);
 
-        super(wait, attack, win, lose);
+        super(wait, attack, win, lose, new ShitakeCloseUp());
     }
 }
 

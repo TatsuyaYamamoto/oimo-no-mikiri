@@ -1,6 +1,7 @@
-import Opponent from "./Opponent";
+import {loadFrames, loadTexture} from "../../../../framework/AssetLoader";
 
-import {loadFrames} from "../../../../framework/AssetLoader";
+import Opponent from "./Opponent";
+import OpponentCloseUp from "./OpponentCloseUp";
 
 import {Ids} from '../../../resources/image';
 
@@ -14,6 +15,15 @@ const FRAMES = {
 /**
  * @class
  */
+class UchicchiCloseUp extends OpponentCloseUp {
+    public constructor() {
+        super(loadTexture(Ids.CHARACTER_UCHICCHI_CLOSEUP));
+    }
+}
+
+/**
+ * @class
+ */
 class Uchicchi extends Opponent {
     public constructor() {
         const frames = loadFrames(Ids.CHARACTER_UCHICCHI);
@@ -22,7 +32,7 @@ class Uchicchi extends Opponent {
         const win = FRAMES.WIN.map((winFrameIndex) => frames[winFrameIndex]);
         const lose = FRAMES.LOSE.map((loseFrameIndex) => frames[loseFrameIndex]);
 
-        super(wait, attack, win, lose);
+        super(wait, attack, win, lose, new UchicchiCloseUp());
     }
 }
 

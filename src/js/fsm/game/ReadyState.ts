@@ -8,8 +8,8 @@ import AbstractGameState from "./AbstractGameState";
 import {Events} from '../views/GameViewState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
-import UchicchiCloseUp from "../../texture/sprite/character/UchicchiCloseUp";
-import HanamaruCloseUp from "../../texture/sprite/character/HanamaruCloseUp";
+import PlayerCloseUp from "../../texture/sprite/character/PlayerCloseUp";
+import OpponentCloseUp from "../../texture/sprite/character/OpponentCloseUp";
 
 import {SKIP_READY_ANIMATION} from '../../Constants';
 
@@ -30,8 +30,8 @@ class ReadyState extends AbstractGameState {
 
     private _background: GameBackground;
 
-    private _playerCharacterCloseup: HanamaruCloseUp;
-    private _opponentCharacterCloseup: UchicchiCloseUp;
+    private _playerCharacterCloseup: PlayerCloseUp;
+    private _opponentCharacterCloseup: OpponentCloseUp;
 
     private _brightnessFilter: filters.ColorMatrixFilter;
     private _contrastFilter: filters.ColorMatrixFilter;
@@ -53,11 +53,11 @@ class ReadyState extends AbstractGameState {
         this.player.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
         this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
-        this._playerCharacterCloseup = new HanamaruCloseUp();
+        this._playerCharacterCloseup = this.player.closeUpTexture;
         this._playerCharacterCloseup.position.set(this.viewWidth * 1, this.viewHeight * 0);
         this._playerCharacterCloseup.visible = false;
 
-        this._opponentCharacterCloseup = new UchicchiCloseUp();
+        this._opponentCharacterCloseup = this.opponent.closeUpTexture;
         this._opponentCharacterCloseup.position.set(this.viewWidth * 0, this.viewHeight * 1);
         this._opponentCharacterCloseup.visible = false;
 
