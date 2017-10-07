@@ -176,11 +176,9 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleIsReadyEvent = () => {
-        this._gameStateMachine.change(ActionState.TAG, (source: Deliverable): ActionStateEnterParams => {
-            return {
-                level: this._gameLevel,
-                round: this._roundNumber
-            }
+        this._gameStateMachine.change<ActionStateEnterParams>(ActionState.TAG, {
+            level: this._gameLevel,
+            round: this._roundNumber
         });
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._actionState);
@@ -225,12 +223,9 @@ class GameViewState extends ViewContainer {
     private _handleFalseStartEvent = () => {
         this._isGameFailed = this._isFalseStarted;
 
-        this._gameStateMachine.change(FalseStartedState.TAG, () => {
-            const params: FalseStartedStateEnterParams = {
-                actor: 'player',
-                isEnded: this._isGameFailed,
-            };
-            return params;
+        this._gameStateMachine.change<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
+            actor: 'player',
+            isEnded: this._isGameFailed,
         });
 
         this._isFalseStarted = true;
@@ -251,12 +246,9 @@ class GameViewState extends ViewContainer {
         const bestTime = Math.max(...times);
         const round = this._roundNumber;
 
-        this._gameStateMachine.change(GameOverState.TAG, () => {
-            const params: GameOverEnterParams = {
-                bestTime,
-                round
-            };
-            return params;
+        this._gameStateMachine.change<GameOverEnterParams>(GameOverState.TAG, {
+            bestTime,
+            round
         });
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._gameOverState);

@@ -32,12 +32,14 @@ class StateMachine {
 
     /**
      * Change state.
-     * If it has {@param converter}, converted {@link Deliverable} provided from {@link State#onExit} is set as args of {@State#onEnter}.
+     * If there is not previous state, this method makes the state machine initialize.
+     * Provided {@link params} is set as args of {@State#onEnter}.
      *
      * @param {string} stateTag
-     * @param {DeliverableConverter} converter
+     * @param {T} params
+     * @returns {State}
      */
-    public change(stateTag: string, converter?: DeliverableConverter): State {
+    public change<T extends Deliverable>(stateTag: string, params?: T): State {
         const nextState = this._states.get(stateTag);
 
         // Check provide state is defined.
@@ -46,14 +48,11 @@ class StateMachine {
         }
 
         // Make state exit, if there is previous state.
-        const delivered = this._currentState && this._currentState.onExit() || {};
+        this._currentState && this._currentState.onExit();
 
         // Set next state and make new state enter.
         this._currentState = nextState;
-        this._currentState.onEnter(converter ?
-            converter(delivered) :
-            delivered
-        );
+        this._currentState.onEnter(params);
 
         return this._currentState;
     }

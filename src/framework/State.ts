@@ -22,10 +22,8 @@ interface State {
 
     /**
      * Fire when the state is no longer current state in StateMachine.
-     *
-     * @returns {void | Deliverable}
      */
-    onExit(): void | Deliverable;
+    onExit(): void;
 }
 
 export default State;
