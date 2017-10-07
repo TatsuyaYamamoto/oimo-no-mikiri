@@ -54,11 +54,11 @@ class ReadyState extends AbstractGameState {
         this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
 
         this._playerCharacterCloseup = new HanamaruCloseUp();
-        this._playerCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
+        this._playerCharacterCloseup.position.set(this.viewWidth * 1, this.viewHeight * 0);
         this._playerCharacterCloseup.visible = false;
 
         this._opponentCharacterCloseup = new UchicchiCloseUp();
-        this._opponentCharacterCloseup.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
+        this._opponentCharacterCloseup.position.set(this.viewWidth * 0, this.viewHeight * 1);
         this._opponentCharacterCloseup.visible = false;
 
         this._brightnessFilter = new filters.ColorMatrixFilter();
@@ -186,8 +186,8 @@ class ReadyState extends AbstractGameState {
      */
     private _getCloseupTimeline = () => {
         const values = {
-            playerX: this.viewWidth * 0.25,
-            opponentX: this.viewWidth * 0.75,
+            playerX: this.viewWidth * 1,
+            opponentX: this.viewWidth * 0,
         };
 
         const {
@@ -220,8 +220,8 @@ class ReadyState extends AbstractGameState {
             .add({
                 offset: START_MOVING_CLOSEUP_LINE_IMAGES,
                 duration: END_MOVING_CLOSING_LINE_IMAGES - START_MOVING_CLOSEUP_LINE_IMAGES,
-                playerX: this.viewWidth * 0.75,
-                opponentX: this.viewWidth * 0.25,
+                playerX: this.viewWidth * 2,
+                opponentX: -1 * this.viewWidth * 1,
             })
             // hide
             .add({
