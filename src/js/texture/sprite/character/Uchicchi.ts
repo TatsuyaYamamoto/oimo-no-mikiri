@@ -7,10 +7,10 @@ import OpponentCloseUp from "./OpponentCloseUp";
 import {Ids} from '../../../resources/image';
 
 const FRAMES: FrameStructureIndexes = {
-    WAIT: [0, 1],
-    ATTACK: [2, 3],
-    LOSE: [4, 5],
-    WIN: [6, 7]
+    WAIT: [0, 1, 2, 3],
+    ATTACK: [4, 5],
+    LOSE: [6, 7],
+    WIN: [8, 9, 10]
 };
 
 /**

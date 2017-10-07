@@ -7,6 +7,7 @@ import {Events} from "../views/TopViewState";
 import MenuBoard from "../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
 import TopBackground from "../../texture/sprite/background/TopBackground";
+import CreditContainer from "../../texture/containers/CreditContainer";
 
 class MenuState extends ViewContainer {
     public static TAG = MenuState.name;
@@ -15,6 +16,7 @@ class MenuState extends ViewContainer {
 
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
+    private _creditContainer: CreditContainer;
 
     /**
      * @override
@@ -34,6 +36,10 @@ class MenuState extends ViewContainer {
         this._selectLevelBoard = new SelectLevelBoard(this.viewHeight, this.viewHeight);
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectLevelBoard.setOnSelectLevelListener(this._onSelectLevel);
+
+        this._creditContainer = new CreditContainer(this.viewHeight, this.viewHeight);
+        this._creditContainer.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._creditContainer.setOnBackToMenuButtonClickListener(this._onBackToMenuClick);
 
         this.backGroundLayer.addChild(
             this._background
@@ -77,7 +83,25 @@ class MenuState extends ViewContainer {
      * @private
      */
     private _onSelectCredit = () => {
-        // TODO: implement.
+        this.applicationLayer.removeChild(
+            this._menuBoard,
+        );
+        this.applicationLayer.addChild(
+            this._creditContainer,
+        );
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onBackToMenuClick = () => {
+        this.applicationLayer.removeChild(
+            this._creditContainer,
+        );
+        this.applicationLayer.addChild(
+            this._menuBoard,
+        );
     };
 
     /**

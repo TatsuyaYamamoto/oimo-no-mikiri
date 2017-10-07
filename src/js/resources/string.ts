@@ -4,6 +4,11 @@ export const Ids = {
     BEGINNER: 'string@beginner',
     NOVICE: 'string@novice',
     EXPERT: 'string@expert',
+
+    CREDIT_T28: "CREDIT_T28",
+    CREDIT_SANZASHI: "CREDIT_SANZASHI",
+    CREDIT_ON_JIN: "CREDIT_ON_JIN",
+    CREDIT_LOVELIVE: "CREDIT_LOVELIVE"
 };
 
 export default {
@@ -15,6 +20,11 @@ export default {
             [Ids.BEGINNER]: 'Beginner',
             [Ids.NOVICE]: 'Novice',
             [Ids.EXPERT]: 'Expert',
+
+            [Ids.CREDIT_T28]: 'Planning, Program, Music: T28',
+            [Ids.CREDIT_SANZASHI]: 'Illustration: Sanzashi',
+            [Ids.CREDIT_ON_JIN]: 'Sound effect: On-Jin ～音人～',
+            [Ids.CREDIT_LOVELIVE]: 'PROJECT Lovelive!'
         }
     },
     ja: {
@@ -22,6 +32,11 @@ export default {
             [Ids.BEGINNER]: '易',
             [Ids.NOVICE]: '中',
             [Ids.EXPERT]: '難',
+
+            [Ids.CREDIT_T28]: '思いつき, プラグラム, 音楽: T28',
+            [Ids.CREDIT_SANZASHI]: 'イラスト: さんざし',
+            [Ids.CREDIT_ON_JIN]: '効果音: On-Jin ～音人～',
+            [Ids.CREDIT_LOVELIVE]: 'プロジェクト ラブライブ！'
         }
     }
 }
