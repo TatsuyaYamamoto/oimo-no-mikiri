@@ -67,9 +67,8 @@ class ActionState extends AbstractGameState {
         this._background = new GameBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this.player.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
-
-        this.opponent.position.set(this.viewWidth * 0.7, this.viewHeight * 0.5);
+        this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+        this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
 
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
