@@ -4,7 +4,7 @@ import {dispatchEvent} from "../../../framework/EventUtils";
 
 import {Events} from "../views/TopViewState";
 
-import SelectPlayerNumberBoard from "../../texture/containers/SelectPlayerNumberBoard";
+import MenuBoard from "../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
 import TopBackground from "../../texture/sprite/background/TopBackground";
 
@@ -13,7 +13,7 @@ class MenuState extends ViewContainer {
 
     private _background: TopBackground;
 
-    private _selectPlayerNumberBoard: SelectPlayerNumberBoard;
+    private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
 
     /**
@@ -25,10 +25,11 @@ class MenuState extends ViewContainer {
         this._background = new TopBackground();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this._selectPlayerNumberBoard = new SelectPlayerNumberBoard();
-        this._selectPlayerNumberBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
-        this._selectPlayerNumberBoard.setOnSelectOnePlayerListener(this._onSelectOnePlayer);
-        this._selectPlayerNumberBoard.setOnSelectTwoPlayerListener(this._onSelectTwoPlayer);
+        this._menuBoard = new MenuBoard(this.viewHeight, this.viewHeight);
+        this._menuBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._menuBoard.setOnSelectGameStartListener(this._onSelectGameStart);
+        this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
+        this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
         this._selectLevelBoard = new SelectLevelBoard();
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
@@ -39,7 +40,7 @@ class MenuState extends ViewContainer {
         );
 
         this.applicationLayer.addChild(
-            this._selectPlayerNumberBoard,
+            this._menuBoard,
         )
     }
 
@@ -54,9 +55,9 @@ class MenuState extends ViewContainer {
      *
      * @private
      */
-    private _onSelectOnePlayer = () => {
+    private _onSelectGameStart = () => {
         this.applicationLayer.removeChild(
-            this._selectPlayerNumberBoard,
+            this._menuBoard,
         );
         this.applicationLayer.addChild(
             this._selectLevelBoard,
@@ -67,7 +68,15 @@ class MenuState extends ViewContainer {
      *
      * @private
      */
-    private _onSelectTwoPlayer = () => {
+    private _onSelectHowToPlay = () => {
+        // TODO: implement.
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onSelectCredit = () => {
         // TODO: implement.
     };
 

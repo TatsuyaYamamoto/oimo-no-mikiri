@@ -8,6 +8,9 @@ export const Ids = {
     BACKGROUND_TOP: 'BACKGROUND_TOP',
     BACKGROUND_GAME: 'BACKGROUND_GAME',
 
+    BUTTON_MENU_GAME_START: 'BUTTON_MENU_GAME_START',
+    BUTTON_MENU_HOW_TO_PLAY: 'BUTTON_MENU_HOW_TO_PLAY',
+    BUTTON_MENU_CREDIT: 'BUTTON_MENU_CREDIT',
     BUTTON_GAMEOVER_BACK_TO_TOP: 'BUTTON_GAMEOVER_BACK_TO_TOP',
     BUTTON_GAMEOVER_RESTART: 'BUTTON_GAMEOVER_RESTART',
 
@@ -23,6 +26,7 @@ export const Ids = {
 
     LOGO_TITLE: 'LOGO_TITLE',
     LOGO_GAME_OVER: 'LOGO_GAME_OVER',
+    MENU_BOARD: 'MENU_BOARD',
     SIGNAL: 'SIGNAL',
 };
 
@@ -31,6 +35,9 @@ const manifest: ImageManifest = {
         [Ids.BACKGROUND_TOP]: 'background_top.png',
         [Ids.BACKGROUND_GAME]: 'background_game.png',
 
+        [Ids.BUTTON_MENU_GAME_START]: 'button_menu_game_start.png',
+        [Ids.BUTTON_MENU_HOW_TO_PLAY]: 'button_menu_how_to_play.png',
+        [Ids.BUTTON_MENU_CREDIT]: 'button_menu_credit.png',
         [Ids.BUTTON_GAMEOVER_BACK_TO_TOP]: 'button_gameover_back_to_top.png',
         [Ids.BUTTON_GAMEOVER_RESTART]: 'button_gameover_restart.png',
 
@@ -46,6 +53,7 @@ const manifest: ImageManifest = {
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
         [Ids.LOGO_GAME_OVER]: 'image_logo_gameover.png',
+        [Ids.MENU_BOARD]: 'image_menu_board.png',
         [Ids.SIGNAL]: 'image_signal.png',
     },
     ja: {}
