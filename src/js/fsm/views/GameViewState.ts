@@ -29,6 +29,7 @@ export enum Events {
     ACTION_FAILURE = 'GameViewState@ACTION_FAILURE',
     FALSE_START = 'GameViewState@FALSE_START',
     FIXED_RESULT = 'GameViewState@FIXED_RESULT',
+    RESTART_GAME = 'GameViewState@RESTART_GAME',
 }
 
 export interface EnterParams extends Deliverable {
@@ -78,10 +79,7 @@ class GameViewState extends ViewContainer {
 
         this._gameLevel = params.level;
         this._roundLength = params.roundLength;
-        this._roundNumber = 1;
-        this._isFalseStarted = false;
-        this._isGameFailed = false;
-        this._results = {};
+        this._initState();
 
         this._player = new Hanamaru();
 
@@ -117,13 +115,13 @@ class GameViewState extends ViewContainer {
             [Events.ACTION_FAILURE]: this._handleActionFailureEvent,
             [Events.FALSE_START]: this._handleFalseStartEvent,
             [Events.FIXED_RESULT]: this._handleFixedResultEvent,
+            [Events.RESTART_GAME]: this._handleRestartGameEvent,
         });
 
         this._player.playWait();
         this._opponents[this._roundNumber].playWait();
 
-        this._gameStateMachine.init(ReadyState.TAG);
-        this.applicationLayer.addChild(this._readyState);
+        dispatchEvent(Events.REQUEST_READY);
     }
 
     /**
@@ -139,6 +137,7 @@ class GameViewState extends ViewContainer {
             Events.ACTION_FAILURE,
             Events.FALSE_START,
             Events.FIXED_RESULT,
+            Events.RESTART_GAME,
         ])
     }
 
@@ -261,6 +260,18 @@ class GameViewState extends ViewContainer {
         });
         this.applicationLayer.removeChildren();
         this.applicationLayer.addChild(this._gameOverState);
+    };
+
+    private _handleRestartGameEvent = () => {
+        this._initState();
+        dispatchEvent(Events.REQUEST_READY);
+    };
+
+    private _initState = () => {
+        this._roundNumber = 1;
+        this._isFalseStarted = false;
+        this._isGameFailed = false;
+        this._results = {};
     };
 
     private _updateCurrentOpponent = (): void => {

@@ -37,18 +37,25 @@ class StateMachine {
      * @param {string} stateTag
      * @param {DeliverableConverter} converter
      */
-    public change(stateTag: string, converter?: DeliverableConverter): void {
+    public change(stateTag: string, converter?: DeliverableConverter): State {
         const nextState = this._states.get(stateTag);
+
+        // Check provide state is defined.
         if (!nextState) {
             throw new Error('Provided tag is not supported on the state machine.');
         }
-        const delivered = this._currentState.onExit() || {};
 
+        // Make state exit, if there is previous state.
+        const delivered = this._currentState && this._currentState.onExit() || {};
+
+        // Set next state and make new state enter.
         this._currentState = nextState;
         this._currentState.onEnter(converter ?
             converter(delivered) :
             delivered
         );
+
+        return this._currentState;
     }
 }
 

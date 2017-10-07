@@ -2,6 +2,7 @@ import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
 import AbstractGameState from "./AbstractGameState";
+import {Events} from '../views/GameViewState';
 import {Events as AppEvents} from '../ApplicationState';
 
 import GameBackground from "../../texture/sprite/background/GameBackground";
@@ -59,7 +60,6 @@ class GameOverState extends AbstractGameState {
             this._backToTopButton,
             this._gameOverLogo,
         );
-        console.log(this._restartButton.position,this._backToTopButton.position);
     }
 
     /**
@@ -74,7 +74,7 @@ class GameOverState extends AbstractGameState {
      * @private
      */
     private _onClickRestartButton = () => {
-        dispatchEvent(AppEvents.REQUESTED_GAME_START);
+        dispatchEvent(Events.RESTART_GAME);
     };
 
     /**
