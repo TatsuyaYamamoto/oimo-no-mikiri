@@ -1,4 +1,6 @@
 export const Ids = {
+    HOW_TO_PLAY_INFORMATION: 'HOW_TO_PLAY_INFORMATION',
+
     ONE_PLAYER: 'string@one_player',
     TWO_PLAYERS: 'string@two_players',
     BEGINNER: 'string@beginner',
@@ -14,6 +16,12 @@ export const Ids = {
 export default {
     en: {
         translation: {
+            [Ids.HOW_TO_PLAY_INFORMATION]: `An oimo, sweet potato, has baked, zura!.
+...No! Someone is coming close to take them!
+
+It’s not going to work that way, zura!
+Tap display or click any key immediately when you see "!".`,
+
             [Ids.ONE_PLAYER]: '1P',
             [Ids.TWO_PLAYERS]: '2P',
 
@@ -29,6 +37,12 @@ export default {
     },
     ja: {
         translation: {
+            [Ids.HOW_TO_PLAY_INFORMATION]: `おいもやけたずら〜！
+...大変！まるのお芋を狙ってる子達が次々とやってくるずら！
+
+そうはいかないずら！
+"!"マークが現れたら、すかさずタップ、またはキーを押そう！`,
+
             [Ids.BEGINNER]: '易',
             [Ids.NOVICE]: '中',
             [Ids.EXPERT]: '難',
