@@ -77,6 +77,7 @@ class ActionState extends AbstractGameState {
             this._background,
         );
         this.applicationLayer.addChild(
+            this.oimo,
             this.player,
             this.opponent,
         );

@@ -59,6 +59,7 @@ class GameOverState extends AbstractGameState {
             this._backToTopButton,
             this._gameOverLogo,
         );
+        console.log(this._restartButton.position,this._backToTopButton.position);
     }
 
     /**
