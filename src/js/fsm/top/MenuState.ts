@@ -31,8 +31,8 @@ class MenuState extends ViewContainer {
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
-        this._selectLevelBoard = new SelectLevelBoard();
-        this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.8);
+        this._selectLevelBoard = new SelectLevelBoard(this.viewHeight, this.viewHeight);
+        this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectLevelBoard.setOnSelectLevelListener(this._onSelectLevel);
 
         this.backGroundLayer.addChild(

@@ -1,32 +1,51 @@
 import {Container, interaction} from 'pixi.js';
 
-import {t} from '../../../framework/i18n';
+import {loadTexture} from "../../../framework/AssetLoader";
 import {isSupportTouchEvent} from "../../../framework/utils";
 
-import Text from "../internal/Text";
+import Sprite from "../internal/Sprite";
 
-import {Ids as StringIds} from '../../resources/string';
+import BeginnerLevelButton from "../sprite/button/BeginnerLevelButton";
+import NoviceLevelButton from "../sprite/button/NoviceLevelButton";
+import ExpertLevelButton from "../sprite/button/ExpertLevelButton";
+
+import {Ids} from "../../resources/image";
+
+/**
+ * @class
+ */
+class SelectLevelBoardBackGround extends Sprite {
+    constructor() {
+        super(loadTexture(Ids.SELECT_LEVEL_BOARD));
+    }
+}
 
 class SelectLevelBoard extends Container {
-    private _beginnerText: Text;
-    private _noviceText: Text;
-    private _expertText: Text;
+    private _background: SelectLevelBoardBackGround;
+    private _beginnerButton: BeginnerLevelButton;
+    private _noviceButton: NoviceLevelButton;
+    private _expertButton: ExpertLevelButton;
 
-    constructor() {
+    constructor(width: number, height: number) {
         super();
 
-        this._beginnerText = new Text(t(StringIds.BEGINNER));
-        this._beginnerText.position.x -= this._beginnerText.width;
+        this._background = new SelectLevelBoardBackGround();
+        this._background.position.set(0);
 
-        this._noviceText = new Text(t(StringIds.NOVICE));
+        this._beginnerButton = new BeginnerLevelButton();
+        this._beginnerButton.position.set(-1 * width * 0.3, 0);
 
-        this._expertText = new Text(t(StringIds.EXPERT));
-        this._expertText.position.x += this._expertText.width;
+        this._noviceButton = new NoviceLevelButton();
+        this._noviceButton.position.set(0, 0);
+
+        this._expertButton = new ExpertLevelButton();
+        this._expertButton.position.set(width * 0.3, 0);
 
         this.addChild(
-            this._beginnerText,
-            this._noviceText,
-            this._expertText,
+            this._background,
+            this._beginnerButton,
+            this._noviceButton,
+            this._expertButton,
         );
     }
 
@@ -38,14 +57,14 @@ class SelectLevelBoard extends Container {
     public setOnSelectLevelListener(fn: (event: interaction.InteractionEvent, level: "beginner" | "novice" | "expert") => void) {
         const type = isSupportTouchEvent() ? 'touchstart' : 'click';
 
-        this._beginnerText.interactive = true;
-        this._beginnerText.on(type, (event: interaction.InteractionEvent) => fn(event, 'beginner'));
+        this._beginnerButton.interactive = true;
+        this._beginnerButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'beginner'));
 
-        this._noviceText.interactive = true;
-        this._noviceText.on(type, (event: interaction.InteractionEvent) => fn(event, 'novice'));
+        this._noviceButton.interactive = true;
+        this._noviceButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'novice'));
 
-        this._expertText.interactive = true;
-        this._expertText.on(type, (event: interaction.InteractionEvent) => fn(event, 'expert'));
+        this._expertButton.interactive = true;
+        this._expertButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'expert'));
     }
 }
 
