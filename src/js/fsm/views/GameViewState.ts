@@ -192,12 +192,12 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionSuccessEvent = (e: CustomEvent) => {
+        this._player.playWin();
+        this._opponents[this._roundNumber].playLose();
+
         this._results[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
         this._roundNumber += 1;
-
-        this._player.playWin();
-        this._opponents[this._roundNumber].playLose();
 
         this._gameStateMachine.change(PlayerWinState.TAG);
         this.applicationLayer.removeChildren();
