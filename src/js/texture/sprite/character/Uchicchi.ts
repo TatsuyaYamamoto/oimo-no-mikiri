@@ -9,7 +9,7 @@ import {Ids} from '../../../resources/image';
 import {Ids as StringIds} from '../../../resources/string';
 
 const FRAMES: FrameStructureIndexes = {
-    WAIT: [0, 1, 2],
+    WAIT: [0, 1, 2, 1],
     TRY_ATTACK: [4],
     SUCCESS_ATTACK: [3],
     LOSE: [8, 9],
