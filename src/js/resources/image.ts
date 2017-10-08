@@ -7,6 +7,9 @@ import {ImageManifest} from "../../framework/AssetLoader";
 export const Ids = {
     BACKGROUND_TOP: 'BACKGROUND_TOP',
     BACKGROUND_GAME: 'BACKGROUND_GAME',
+    BACKGROUND_CLOUD: 'BACKGROUND_CLOUD',
+    BACKGROUND_SKY: 'BACKGROUND_SKY',
+    BACKGROUND_BEACH: 'BACKGROUND_BEACH',
 
     BUTTON_MENU_GAME_START: 'BUTTON_MENU_GAME_START',
     BUTTON_MENU_HOW_TO_PLAY: 'BUTTON_MENU_HOW_TO_PLAY',
@@ -41,6 +44,9 @@ const manifest: ImageManifest = {
     en: {
         [Ids.BACKGROUND_TOP]: 'background_top.png',
         [Ids.BACKGROUND_GAME]: 'background_game.png',
+        [Ids.BACKGROUND_CLOUD]: 'background_cloud.png',
+        [Ids.BACKGROUND_SKY]: 'background_sky.png',
+        [Ids.BACKGROUND_BEACH]: 'background_beach.png',
 
         [Ids.BUTTON_MENU_GAME_START]: 'button_menu_game_start.png',
         [Ids.BUTTON_MENU_HOW_TO_PLAY]: 'button_menu_how_to_play.png',

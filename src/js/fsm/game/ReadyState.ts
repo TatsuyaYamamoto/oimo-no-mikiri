@@ -7,7 +7,7 @@ import Deliverable from "../../../framework/Deliverable";
 import AbstractGameState from "./AbstractGameState";
 import {Events} from '../views/GameViewState';
 
-import GameBackground from "../../texture/sprite/background/GameBackground";
+import BackGround from "../../texture/containers/BackGround";
 import PlayerCloseUp from "../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../texture/sprite/character/OpponentCloseUp";
 
@@ -28,8 +28,6 @@ const ANIMATION_TIME_LINE = {
 class ReadyState extends AbstractGameState {
     public static TAG = ReadyState.name;
 
-    private _background: GameBackground;
-
     private _playerCharacterCloseup: PlayerCloseUp;
     private _opponentCharacterCloseup: OpponentCloseUp;
 
@@ -44,12 +42,18 @@ class ReadyState extends AbstractGameState {
     /**
      * @override
      */
+    update(elapsedMS: number): void {
+        super.update(elapsedMS);
+        this.background.progress(elapsedMS);
+    }
+
+    /**
+     * @override
+     */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._background = new GameBackground();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-
+        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
@@ -66,7 +70,7 @@ class ReadyState extends AbstractGameState {
         this._contrastFilter = new filters.ColorMatrixFilter();
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
 
         this.applicationLayer.addChild(

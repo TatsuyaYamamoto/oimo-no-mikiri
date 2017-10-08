@@ -5,7 +5,7 @@ import AbstractGameState from "./AbstractGameState";
 import {Events} from '../views/GameViewState';
 import {Events as AppEvents} from '../ApplicationState';
 
-import GameBackground from "../../texture/sprite/background/GameBackground";
+import BackGround from "../../texture/containers/BackGround";
 import RestartButton from "../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
 import GameOverLogo from "../../texture/sprite/GameOverLogo";
@@ -19,8 +19,6 @@ export interface EnterParams extends Deliverable {
 class GameOverState extends AbstractGameState {
     public static TAG = GameOverState.name;
 
-    private _background: GameBackground;
-
     private _gameOverLogo: GameOverLogo;
 
     private _restartButton: RestartButton;
@@ -30,6 +28,8 @@ class GameOverState extends AbstractGameState {
      * @override
      */
     update(elapsedMS: number): void {
+        super.update(elapsedMS);
+        this.background.progress(elapsedMS);
     }
 
     /**
@@ -38,8 +38,7 @@ class GameOverState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._background = new GameBackground();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._gameOverLogo = new GameOverLogo();
         this._gameOverLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
@@ -53,7 +52,7 @@ class GameOverState extends AbstractGameState {
         this._backToTopButton.setOnClickListener(this._onClickBackToTopButton);
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
         this.applicationLayer.addChild(
             this._restartButton,

@@ -6,13 +6,13 @@ import {Events} from "../views/TopViewState";
 
 import MenuBoard from "../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
-import TopBackground from "../../texture/sprite/background/TopBackground";
+import BackGround from "../../texture/containers/BackGround";
 import CreditContainer from "../../texture/containers/CreditContainer";
 
 class MenuState extends ViewContainer {
     public static TAG = MenuState.name;
 
-    private _background: TopBackground;
+    private _background: BackGround;
 
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
@@ -21,10 +21,18 @@ class MenuState extends ViewContainer {
     /**
      * @override
      */
+    update(elapsedMS: number): void {
+        super.update(elapsedMS);
+        this._background.progress(elapsedMS);
+    }
+
+    /**
+     * @override
+     */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._background = new TopBackground();
+        this._background = new BackGround();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._menuBoard = new MenuBoard(this.viewHeight, this.viewHeight);

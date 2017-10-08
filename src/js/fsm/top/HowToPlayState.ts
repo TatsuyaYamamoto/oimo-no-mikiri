@@ -5,7 +5,7 @@ import {dispatchEvent} from "../../../framework/EventUtils";
 import {Events} from "../views/TopViewState";
 
 import UsageTextArea from "../../texture/containers/UsageTextArea";
-import TopBackground from "../../texture/sprite/background/TopBackground";
+import BackGround from "../../texture/containers/BackGround";
 import BackToMenuButton from "../../texture/sprite/button/BackToMenuButton";
 
 import Player from "../../texture/sprite/character/Player";
@@ -17,7 +17,7 @@ import Oimo from "../../texture/sprite/character/Oimo";
 class HowToPlayState extends ViewContainer {
     public static TAG = HowToPlayState.name;
 
-    private _background: TopBackground;
+    private _background: BackGround;
 
     private _usageTextArea: UsageTextArea;
 
@@ -30,10 +30,18 @@ class HowToPlayState extends ViewContainer {
     /**
      * @override
      */
+    update(elapsedMS: number): void {
+        super.update(elapsedMS);
+        this._background.progress(elapsedMS);
+    }
+
+    /**
+     * @override
+     */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._background = new TopBackground();
+        this._background = new BackGround();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._usageTextArea = new UsageTextArea();

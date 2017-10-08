@@ -4,15 +4,23 @@ import {dispatchEvent} from '../../../framework/EventUtils';
 
 import {Events} from "../views/TopViewState";
 
-import TopBackground from "../../texture/sprite/background/TopBackground";
+import BackGround from "../../texture/containers/BackGround";
 import TitleLogo from "../../texture/sprite/TitleLogo";
 
 class TitleState extends ViewContainer {
     public static TAG = TitleState.name;
 
-    private _background: TopBackground;
+    private _background: BackGround;
 
     private _titleLogo: TitleLogo;
+
+    /**
+     * @override
+     */
+    update(elapsedMS: number): void {
+        super.update(elapsedMS);
+        this._background.progress(elapsedMS);
+    }
 
     /**
      * @override
@@ -20,9 +28,9 @@ class TitleState extends ViewContainer {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._background = new TopBackground();
+        this._background = new BackGround();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        
+
         this._titleLogo = new TitleLogo();
         this._titleLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 

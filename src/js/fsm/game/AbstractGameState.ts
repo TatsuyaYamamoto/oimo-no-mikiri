@@ -1,6 +1,7 @@
 import {Graphics} from 'pixi.js';
 import ViewContainer from "../../../framework/ViewContainer";
 
+import BackGround from "../../texture/containers/BackGround";
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 import Oimo from "../../texture/sprite/character/Oimo";
@@ -15,13 +16,21 @@ class WhiteLayer extends Graphics {
 }
 
 abstract class AbstractGameState extends ViewContainer {
+    private _background: BackGround;
+
     private _player: Player;
     private _opponent: Opponent;
     private _oimo: Oimo;
+
     private _whiteLayer: WhiteLayer;
 
-    constructor(player: Player, opponent: Opponent) {
+    constructor(background: BackGround,
+                player: Player,
+                opponent: Opponent) {
+
         super();
+
+        this._background = background;
 
         this._player = player;
         this._opponent = opponent;
@@ -32,6 +41,10 @@ abstract class AbstractGameState extends ViewContainer {
         this._whiteLayer = new WhiteLayer(this.viewWidth, this.viewHeight);
         this._whiteLayer.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._whiteLayer.alpha = 0;
+    }
+
+    protected get background(): BackGround {
+        return this._background;
     }
 
     protected get player(): Player {

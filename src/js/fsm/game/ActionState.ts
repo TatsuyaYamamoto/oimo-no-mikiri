@@ -1,5 +1,3 @@
-import * as anime from 'animejs'
-
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
 import {getRandomInteger} from "../../../framework/utils";
@@ -7,7 +5,7 @@ import {getRandomInteger} from "../../../framework/utils";
 import AbstractGameState from "./AbstractGameState";
 import {Events} from "../views/GameViewState";
 
-import GameBackground from "../../texture/sprite/background/GameBackground";
+import BackGround from "../../texture/containers/BackGround";
 import Signal from "../../texture/sprite/Signal";
 
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
@@ -28,7 +26,6 @@ class ActionState extends AbstractGameState {
     private _isSignaled: boolean;
     private _isNpcAttacked: boolean;
 
-    private _background: GameBackground;
     private _signalSprite: Signal;
 
     /**
@@ -36,6 +33,8 @@ class ActionState extends AbstractGameState {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
+
+        this.background.progress(elapsedMS);
 
         if (!this._isSignaled && this._signalTime < this.elapsedTimeMillis) {
             console.log("Signaled!");
@@ -65,9 +64,7 @@ class ActionState extends AbstractGameState {
         this._isSignaled = false;
         this._isNpcAttacked = false;
 
-        this._background = new GameBackground();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-
+        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
@@ -77,7 +74,7 @@ class ActionState extends AbstractGameState {
         this._signalSprite.visible = false;
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
         this.applicationLayer.addChild(
             this.oimo,
