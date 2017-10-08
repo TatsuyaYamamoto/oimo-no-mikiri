@@ -1,15 +1,24 @@
+import {Graphics} from 'pixi.js';
 import ViewContainer from "../../../framework/ViewContainer";
 
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
-import PlayerCloseUp from "../../texture/sprite/character/PlayerCloseUp";
-import OpponentCloseUp from "../../texture/sprite/character/OpponentCloseUp";
 import Oimo from "../../texture/sprite/character/Oimo";
+
+class WhiteLayer extends Graphics {
+    constructor(width: number, height: number) {
+        super();
+        this.beginFill(0xffffff);
+        this.drawRect(-1 * width * 0.5, -1 * height * 0.5, width, height);
+        this.endFill();
+    }
+}
 
 abstract class AbstractGameState extends ViewContainer {
     private _player: Player;
     private _opponent: Opponent;
     private _oimo: Oimo;
+    private _whiteLayer: WhiteLayer;
 
     constructor(player: Player, opponent: Opponent) {
         super();
@@ -20,19 +29,26 @@ abstract class AbstractGameState extends ViewContainer {
         this._oimo = new Oimo();
         this._oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
         this._oimo.play();
+
+        this._whiteLayer = new WhiteLayer(this.viewWidth, this.viewHeight);
+        this._whiteLayer.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._whiteLayer.alpha = 0;
     }
 
-    public get player(): Player {
+    protected get player(): Player {
         return this._player;
     }
 
-    public get opponent(): Opponent {
+    protected get opponent(): Opponent {
         return this._opponent;
     }
 
-
-    public get oimo(): Oimo {
+    protected get oimo(): Oimo {
         return this._oimo;
+    }
+
+    protected get whiteLayer(): WhiteLayer {
+        return this._whiteLayer;
     }
 
     public setOpponent(opponent: Opponent): void {
