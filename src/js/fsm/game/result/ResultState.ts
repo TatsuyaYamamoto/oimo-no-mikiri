@@ -1,4 +1,4 @@
-import {Graphics, filters} from 'pixi.js';
+import {filters} from 'pixi.js';
 import * as anime from 'animejs'
 
 import {t} from "../../../../framework/i18n";
@@ -72,34 +72,54 @@ abstract class ResultState extends AbstractGameState {
         const timeLine = anime.timeline({
             targets: this.whiteLayer,
             easing: 'linear',
-            complete: callback
         });
 
+        const playAttack = () => {
+            this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+            this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+
+            this.oimo.visible = false;
+
+            if (winner === 'player') {
+                this.player.playSuccessAttack();
+                this.opponent.playTryAttack();
+            } else {
+                this.player.playTryAttack();
+                this.opponent.playSuccessAttack();
+            }
+        };
+
+        const playWinOrLose = () => {
+            if (winner === 'player') {
+                this.player.playWin();
+                this.opponent.playLose();
+            } else {
+                this.player.playLose();
+                this.opponent.playWin();
+            }
+        };
+
         timeLine
+        // Start white out.
             .add({
                 alpha: 1,
-                duration: 300,
-                begin: () => {
-                    this.player.playAttack();
-                    this.opponent.playAttack();
-                }
+                duration: 100,
             })
+            // Refresh white out.
             .add({
                 begin: () => {
-                    this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-                    this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-                    this.oimo.visible = false;
-
-                    if (winner === 'player') {
-                        this.player.playWin();
-                        this.opponent.playLose();
-                    } else {
-                        this.player.playLose();
-                        this.opponent.playWin();
-                    }
+                    playAttack();
                 },
                 alpha: 0,
                 duration: 300,
+            })
+            // Show result animation.
+            .add({
+                duration: 300,
+                complete: () => {
+                    callback();
+                    playWinOrLose();
+                }
             });
 
         timeLine.play();
