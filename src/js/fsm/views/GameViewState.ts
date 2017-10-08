@@ -189,9 +189,6 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleActionSuccessEvent = (e: CustomEvent) => {
-        this._player.playWin();
-        this._opponents[this._roundNumber].playLose();
-
         this._results[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
         this._roundNumber += 1;
@@ -207,9 +204,6 @@ class GameViewState extends ViewContainer {
      */
     private _handleActionFailureEvent = () => {
         this._isGameFailed = true;
-
-        this._player.playLose();
-        this._opponents[this._roundNumber].playWin();
 
         this._gameStateMachine.change(OpponentWinState.TAG);
         this.applicationLayer.removeChildren();
