@@ -17,8 +17,7 @@ class FalseStartedState extends ResultState {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
-
-
+        
         if (params.isEnded) {
             this._resultLabel.visible = true;
             if (params.actor === 'player') {

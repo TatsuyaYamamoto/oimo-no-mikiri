@@ -1,3 +1,5 @@
+import * as anime from 'animejs'
+
 import {dispatchEvent} from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
 import {getRandomInteger} from "../../../framework/utils";
@@ -27,7 +29,6 @@ class ActionState extends AbstractGameState {
     private _isNpcAttacked: boolean;
 
     private _background: GameBackground;
-
     private _signalSprite: Signal;
 
     /**
@@ -69,6 +70,7 @@ class ActionState extends AbstractGameState {
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+        this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
@@ -116,7 +118,6 @@ class ActionState extends AbstractGameState {
             const time = this.elapsedTimeMillis - this._signalTime;
             console.log(`Tap! result time: ${time}ms`);
             dispatchEvent(Events.ACTION_SUCCESS, {time});
-
             return;
         }
 
@@ -129,8 +130,8 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _handleNpcAttack = () => {
-        dispatchEvent(Events.ACTION_FAILURE);
         this._signalSprite.visible = false;
+        dispatchEvent(Events.ACTION_FAILURE);
     };
 }
 

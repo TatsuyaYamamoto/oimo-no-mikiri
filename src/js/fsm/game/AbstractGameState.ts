@@ -27,7 +27,6 @@ abstract class AbstractGameState extends ViewContainer {
         this._opponent = opponent;
 
         this._oimo = new Oimo();
-        this._oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
         this._oimo.play();
 
         this._whiteLayer = new WhiteLayer(this.viewWidth, this.viewHeight);

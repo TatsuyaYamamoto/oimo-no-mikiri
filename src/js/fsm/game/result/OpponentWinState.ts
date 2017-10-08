@@ -16,10 +16,11 @@ class OpponentWinState extends ResultState {
         this._resultLabel.visible = true;
         this._opponentLabel.visible = true;
 
-        // TODO: fire after completing animation.
-        window.setTimeout(function () {
-            dispatchEvent(Events.REQUEST_READY);
-        }, 3000);
+        this.whiteOut('opponent', () => {
+            window.setTimeout(function () {
+                dispatchEvent(Events.REQUEST_READY);
+            }, 3000);
+        });
     }
 }
 
