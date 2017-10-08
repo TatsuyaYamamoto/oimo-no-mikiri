@@ -10,16 +10,6 @@ import BattleResultLabel from '../../../texture/containers/BattleResultLabel';
 
 import {Ids as StringIds} from '../../../resources/string';
 
-export interface EnterParams extends Deliverable {
-    resultType: 'playerWin' |
-        'opponentWin' |
-        'playerWinWithFalseStarted' |
-        'opponentWinWithFalseStarted' |
-        'draw' |
-        'playerFalseStarted' |
-        'opponentFalseStarted'
-}
-
 abstract class ResultState extends AbstractGameState {
     protected _background: GameBackground;
 

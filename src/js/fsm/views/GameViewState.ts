@@ -5,7 +5,7 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import ReadyState from "../game/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
-import ResultState, {EnterParams as ResultEnterParams} from "../game/result/ResultState";
+import ResultState from "../game/result/ResultState";
 import DrawState from "../game/result/DrawState";
 import PlayerWinState from "../game/result/PlayerWinState";
 import OpponentWinState from "../game/result/OpponentWinState";
