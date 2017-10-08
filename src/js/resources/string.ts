@@ -24,7 +24,7 @@ export default {
     en: {
         translation: {
             [Ids.HOW_TO_PLAY_INFORMATION]: `An oimo, sweet potato, has baked, zura!.
-...No! Someone is coming close to take them!
+...No! Someone is coming close to take it!
 
 It’s not going to work that way, zura!
 Tap display or click any key immediately when you see "!".`,
