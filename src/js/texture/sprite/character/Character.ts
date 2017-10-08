@@ -59,7 +59,6 @@ abstract class Character extends AnimatedSprite {
     }
 
     public playLose(): void {
-        console.log("lose?", this);
         this.textures = this.loseTextures;
         if (!this.playing) {
             this.play();
