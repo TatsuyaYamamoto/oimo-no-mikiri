@@ -9,10 +9,11 @@ import {Ids} from '../../../resources/image';
 import {Ids as StringIds} from '../../../resources/string';
 
 const FRAMES: FrameStructureIndexes = {
-    WAIT: [0, 1, 2, 3],
-    ATTACK: [4, 5],
-    LOSE: [6, 7],
-    WIN: [8, 9, 10]
+    WAIT: [0, 1, 2],
+    TRY_ATTACK: [4],
+    SUCCESS_ATTACK: [3],
+    LOSE: [8, 9],
+    WIN: [5, 6, 7]
 };
 
 /**

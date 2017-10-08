@@ -6,14 +6,16 @@ const ANIMATION_SPEED = 0.04;
 
 export interface FrameStructureIndexes {
     WAIT: number[],
-    ATTACK: number[],
+    TRY_ATTACK: number[],
+    SUCCESS_ATTACK: number[],
     LOSE: number[],
     WIN: number[],
 }
 
 abstract class Character extends AnimatedSprite {
     protected waitTextures: Texture[];
-    protected attackTextures: Texture[];
+    protected tryAttackTextures: Texture[];
+    protected successAttackTextures: Texture[];
     protected winTextures: Texture[];
     protected loseTextures: Texture[];
 
@@ -21,14 +23,16 @@ abstract class Character extends AnimatedSprite {
                 indexed: FrameStructureIndexes) {
 
         const wait = indexed.WAIT.map((waitFrameIndex) => frameTextures[waitFrameIndex]);
-        const attack = indexed.ATTACK.map((attackFrameIndex) => frameTextures[attackFrameIndex]);
+        const tryAttackTextures = indexed.TRY_ATTACK.map((frameIndex) => frameTextures[frameIndex]);
+        const successAttackTextures = indexed.SUCCESS_ATTACK.map((frameIndex) => frameTextures[frameIndex]);
         const win = indexed.WIN.map((winFrameIndex) => frameTextures[winFrameIndex]);
         const lose = indexed.LOSE.map((loseFrameIndex) => frameTextures[loseFrameIndex]);
 
         super(wait);
 
         this.waitTextures = wait;
-        this.attackTextures = attack;
+        this.tryAttackTextures = tryAttackTextures;
+        this.successAttackTextures = successAttackTextures;
         this.winTextures = win;
         this.loseTextures = lose;
 
@@ -44,8 +48,15 @@ abstract class Character extends AnimatedSprite {
         }
     }
 
-    public playAttack(): void {
-        this.textures = this.attackTextures;
+    public playTryAttack(): void {
+        this.textures = this.tryAttackTextures;
+        if (!this.playing) {
+            this.play();
+        }
+    }
+
+    public playSuccessAttack(): void {
+        this.textures = this.successAttackTextures;
         if (!this.playing) {
             this.play();
         }
