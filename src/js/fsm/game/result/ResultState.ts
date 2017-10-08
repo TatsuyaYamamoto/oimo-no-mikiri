@@ -88,6 +88,7 @@ abstract class ResultState extends AbstractGameState {
                 begin: () => {
                     this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
                     this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+                    this.oimo.visible = false;
 
                     if (winner === 'player') {
                         this.player.playWin();
