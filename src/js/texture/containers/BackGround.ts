@@ -51,6 +51,10 @@ class BackGround extends Container {
         );
 
         this._cloudLayer.position.y = -1 * this.height * 0.5;
+
+        // This background is set in some {@link ViewContainer}s.
+        // Because of that, calculate first cloud position not to be difference for each.
+        this._cloudLayer.tilePosition.x = Date.now() * CLOUD_SPEED % this._cloudLayer.width;
     }
 
     progress(elapsedMS: number): void {
