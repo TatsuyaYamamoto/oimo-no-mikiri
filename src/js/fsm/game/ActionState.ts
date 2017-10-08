@@ -37,9 +37,9 @@ class ActionState extends AbstractGameState {
         super.update(elapsedMS);
 
         if (!this._isSignaled && this._signalTime < this.elapsedTimeMillis) {
-            this._isSignaled = true;
             console.log("Signaled!");
-            this.applicationLayer.addChild(this._signalSprite);
+            this._isSignaled = true;
+            this._signalSprite.visible = true;
         }
 
         if (!this._isNpcAttacked && this._npcAttackTime < this.elapsedTimeMillis) {
@@ -72,6 +72,7 @@ class ActionState extends AbstractGameState {
 
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
+        this._signalSprite.visible = false;
 
         this.backGroundLayer.addChild(
             this._background,
@@ -80,6 +81,7 @@ class ActionState extends AbstractGameState {
             this.oimo,
             this.player,
             this.opponent,
+            this._signalSprite,
         );
     }
 
@@ -108,7 +110,7 @@ class ActionState extends AbstractGameState {
             return;
         }
 
-        this.applicationLayer.removeChild(this._signalSprite);
+        this._signalSprite.visible = false;
 
         if (this._isSignaled) {
             const time = this.elapsedTimeMillis - this._signalTime;
@@ -127,8 +129,8 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _handleNpcAttack = () => {
-        this.applicationLayer.removeChild(this._signalSprite);
         dispatchEvent(Events.ACTION_FAILURE);
+        this._signalSprite.visible = false;
     };
 }
 
