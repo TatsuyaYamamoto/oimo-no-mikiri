@@ -12,7 +12,6 @@ import OpponentWinState from "../game/result/OpponentWinState";
 import FalseStartedState, {EnterParams as FalseStartedStateEnterParams} from "../game/result/FalseStartedState";
 import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOverState";
 
-import BackGround from "../../texture/containers/BackGround";
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 
@@ -57,7 +56,6 @@ class GameViewState extends ViewContainer {
     private _isGameFailed: boolean;
     private _results: { [roundNumber: string]: number };
 
-    private _background: BackGround;
     private _player: Player;
     private _opponents: {
         [roundNumber: number]: Opponent
@@ -83,8 +81,6 @@ class GameViewState extends ViewContainer {
         this._roundLength = params.roundLength;
         this._initState();
 
-        this._background = new BackGround();
-
         this._player = new Hanamaru();
 
         this._opponents = {};
@@ -95,30 +91,24 @@ class GameViewState extends ViewContainer {
         this._opponents[5] = new LittleDaemon();
 
         this._readyState = new ReadyState(
-            this._background,
             this._player,
             this._opponents[1]);
         this._actionState = new ActionState(
-            this._background,
             this._player,
             this._opponents[1]);
         this._drawResultState = new DrawState(
-            this._background,
             this._player,
             this._opponents[1]);
         this._playerWinResultState = new PlayerWinState(
-            this._background,
-            this._player, this._opponents[1]);
+            this._player,
+            this._opponents[1]);
         this._opponentWinResultState = new OpponentWinState(
-            this._background,
             this._player,
             this._opponents[1]);
         this._falseStartedResultState = new FalseStartedState(
-            this._background,
             this._player,
             this._opponents[1]);
         this._gameOverState = new GameOverState(
-            this._background,
             this._player,
             this._opponents[1]);
 

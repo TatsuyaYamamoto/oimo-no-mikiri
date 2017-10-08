@@ -28,6 +28,7 @@ const ANIMATION_TIME_LINE = {
 class ReadyState extends AbstractGameState {
     public static TAG = ReadyState.name;
 
+    private _background: BackGround;
     private _playerCharacterCloseup: PlayerCloseUp;
     private _opponentCharacterCloseup: OpponentCloseUp;
 
@@ -44,7 +45,7 @@ class ReadyState extends AbstractGameState {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-        this.background.progress(elapsedMS);
+        this._background.progress(elapsedMS);
     }
 
     /**
@@ -53,7 +54,9 @@ class ReadyState extends AbstractGameState {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._background = new BackGround();
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
@@ -70,7 +73,7 @@ class ReadyState extends AbstractGameState {
         this._contrastFilter = new filters.ColorMatrixFilter();
 
         this.backGroundLayer.addChild(
-            this.background,
+            this._background,
         );
 
         this.applicationLayer.addChild(

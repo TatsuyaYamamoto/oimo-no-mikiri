@@ -26,6 +26,7 @@ class ActionState extends AbstractGameState {
     private _isSignaled: boolean;
     private _isNpcAttacked: boolean;
 
+    private _background: BackGround;
     private _signalSprite: Signal;
 
     /**
@@ -34,7 +35,7 @@ class ActionState extends AbstractGameState {
     update(elapsedMS: number): void {
         super.update(elapsedMS);
 
-        this.background.progress(elapsedMS);
+        this._background.progress(elapsedMS);
 
         if (!this._isSignaled && this._signalTime < this.elapsedTimeMillis) {
             console.log("Signaled!");
@@ -64,7 +65,9 @@ class ActionState extends AbstractGameState {
         this._isSignaled = false;
         this._isNpcAttacked = false;
 
-        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._background = new BackGround();
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
@@ -74,7 +77,7 @@ class ActionState extends AbstractGameState {
         this._signalSprite.visible = false;
 
         this.backGroundLayer.addChild(
-            this.background,
+            this._background,
         );
         this.applicationLayer.addChild(
             this.oimo,

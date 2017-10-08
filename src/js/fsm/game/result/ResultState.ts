@@ -12,6 +12,8 @@ import BattleResultLabel from '../../../texture/containers/BattleResultLabel';
 import {Ids as StringIds} from '../../../resources/string';
 
 abstract class ResultState extends AbstractGameState {
+    private _background:BackGround;
+
     protected _resultLabel: BattleResultLabel;
     protected _playerLabel: BattleResultLabel;
     protected _opponentLabel: BattleResultLabel;
@@ -24,7 +26,7 @@ abstract class ResultState extends AbstractGameState {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-        this.background.progress(elapsedMS);
+        this._background.progress(elapsedMS);
     }
 
     /**
@@ -33,7 +35,9 @@ abstract class ResultState extends AbstractGameState {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._background = new BackGround();
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
@@ -54,10 +58,10 @@ abstract class ResultState extends AbstractGameState {
 
         this._hueFilter = new filters.ColorMatrixFilter();
         this._brightnessFilter = new filters.ColorMatrixFilter();
-        this.background.filters = [this._hueFilter, this._brightnessFilter];
+        this._background.filters = [this._hueFilter, this._brightnessFilter];
 
         this.backGroundLayer.addChild(
-            this.background,
+            this._background,
         );
 
         this.applicationLayer.addChild(

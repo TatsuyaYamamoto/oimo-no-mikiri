@@ -19,6 +19,8 @@ export interface EnterParams extends Deliverable {
 class GameOverState extends AbstractGameState {
     public static TAG = GameOverState.name;
 
+    private _background: BackGround;
+
     private _gameOverLogo: GameOverLogo;
 
     private _restartButton: RestartButton;
@@ -29,7 +31,7 @@ class GameOverState extends AbstractGameState {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-        this.background.progress(elapsedMS);
+        this._background.progress(elapsedMS);
     }
 
     /**
@@ -38,7 +40,8 @@ class GameOverState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this.background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._background = new BackGround();
+        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._gameOverLogo = new GameOverLogo();
         this._gameOverLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
@@ -52,7 +55,7 @@ class GameOverState extends AbstractGameState {
         this._backToTopButton.setOnClickListener(this._onClickBackToTopButton);
 
         this.backGroundLayer.addChild(
-            this.background,
+            this._background,
         );
         this.applicationLayer.addChild(
             this._restartButton,
