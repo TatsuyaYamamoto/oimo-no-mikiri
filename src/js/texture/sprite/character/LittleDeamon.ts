@@ -10,8 +10,8 @@ import {Ids as StringIds} from '../../../resources/string';
 
 const FRAMES: FrameStructureIndexes = {
     WAIT: [0, 1],
-    TRY_ATTACK: [3],
-    SUCCESS_ATTACK: [2],
+    TRY_ATTACK: [2],
+    SUCCESS_ATTACK: [3],
     LOSE: [4, 5],
     WIN: [6, 7]
 };
