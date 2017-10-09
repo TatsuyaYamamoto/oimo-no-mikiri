@@ -8,6 +8,8 @@ export const Ids = {
     EXPERT: 'string@expert',
 
     LABEL_WINNER: 'LABEL_WINNER',
+    LABEL_FALSE_START: 'LABEL_FALSE_START',
+    LABEL_DRAW: 'LABEL_DRAW',
 
     CHARA_NAME_HANAMARU: 'CHARA_NAME_HANAMARU',
     CHARA_NAME_SHITAKE: 'CHARA_NAME_SHITAKE',
@@ -37,6 +39,8 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.EXPERT]: 'Expert',
 
             [Ids.LABEL_WINNER]: 'Winner',
+            [Ids.LABEL_FALSE_START]: 'False start',
+            [Ids.LABEL_DRAW]: 'Tie',
 
             [Ids.CHARA_NAME_HANAMARU]: 'Hanamaru',
             [Ids.CHARA_NAME_SHITAKE]: 'Shitake',
@@ -62,6 +66,8 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.EXPERT]: '難',
 
             [Ids.LABEL_WINNER]: '勝者',
+            [Ids.LABEL_FALSE_START]: '仕切り直し',
+            [Ids.LABEL_DRAW]: '仕切り直し',
 
             [Ids.CHARA_NAME_HANAMARU]: 'はなまる',
             [Ids.CHARA_NAME_SHITAKE]: 'しいたけ',

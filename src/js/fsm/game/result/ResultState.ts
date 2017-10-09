@@ -1,22 +1,14 @@
 import {filters} from 'pixi.js';
 import * as anime from 'animejs'
 
-import {t} from "../../../../framework/i18n";
 import Deliverable from "../../../../framework/Deliverable";
 
 import AbstractGameState from "../AbstractGameState";
 
 import BackGround from "../../../texture/containers/BackGround";
-import BattleResultLabel from '../../../texture/containers/BattleResultLabel';
-
-import {Ids as StringIds} from '../../../resources/string';
 
 abstract class ResultState extends AbstractGameState {
-    private _background:BackGround;
-
-    protected _resultLabel: BattleResultLabel;
-    protected _playerLabel: BattleResultLabel;
-    protected _opponentLabel: BattleResultLabel;
+    private _background: BackGround;
 
     protected _hueFilter: filters.ColorMatrixFilter;
     protected _brightnessFilter: filters.ColorMatrixFilter;
@@ -42,18 +34,6 @@ abstract class ResultState extends AbstractGameState {
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
-        this._resultLabel = new BattleResultLabel(t(StringIds.LABEL_WINNER));
-        this._resultLabel.position.set(this.viewWidth * 0.5, this.viewHeight * 0.3);
-        this._resultLabel.visible = false;
-
-        this._playerLabel = new BattleResultLabel(this.player.name);
-        this._playerLabel.position.set(this.viewWidth * 0.3, this.viewHeight * 0.3);
-        this._playerLabel.visible = false;
-
-        this._opponentLabel = new BattleResultLabel(this.opponent.name);
-        this._opponentLabel.position.set(this.viewWidth * 0.7, this.viewHeight * 0.3);
-        this._opponentLabel.visible = false;
-
         this.whiteLayer.alpha = 0;
 
         this._hueFilter = new filters.ColorMatrixFilter();
@@ -68,9 +48,6 @@ abstract class ResultState extends AbstractGameState {
             this.player,
             this.opponent,
             this.oimo,
-            this._resultLabel,
-            this._playerLabel,
-            this._opponentLabel,
             this.whiteLayer,
         );
     }

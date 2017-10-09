@@ -3,9 +3,12 @@ import {dispatchEvent} from "../../../../framework/EventUtils";
 
 import {Events} from "../../views/GameViewState";
 import ResultState from "./ResultState";
+import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
 
 class PlayerWinState extends ResultState {
     public static TAG = PlayerWinState.name;
+
+    private _battleResultLabelBoard: BattleResultLabelBoard;
 
     /**
      * @override
@@ -13,8 +16,15 @@ class PlayerWinState extends ResultState {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._resultLabel.visible = true;
-        this._playerLabel.visible = true;
+        this._battleResultLabelBoard = new BattleResultLabelBoard(
+            this.viewWidth,
+            this.viewHeight,
+            'playerWin',
+            this.player.name
+        );
+        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
+        this.applicationLayer.addChild(this._battleResultLabelBoard);
 
         this.whiteOut('player', () => {
             window.setTimeout(function () {

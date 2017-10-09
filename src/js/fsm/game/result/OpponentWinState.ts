@@ -4,8 +4,12 @@ import {dispatchEvent} from "../../../../framework/EventUtils";
 import {Events} from "../../views/GameViewState";
 import ResultState from "./ResultState";
 
+import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
+
 class OpponentWinState extends ResultState {
     public static TAG = OpponentWinState.name;
+
+    private _battleResultLabelBoard: BattleResultLabelBoard;
 
     /**
      * @override
@@ -13,8 +17,15 @@ class OpponentWinState extends ResultState {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._resultLabel.visible = true;
-        this._opponentLabel.visible = true;
+        this._battleResultLabelBoard = new BattleResultLabelBoard(
+            this.viewWidth,
+            this.viewHeight,
+            'opponentWin',
+            this.opponent.name
+        );
+        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
+        this.applicationLayer.addChild(this._battleResultLabelBoard);
 
         this.whiteOut('opponent', () => {
             window.setTimeout(function () {
