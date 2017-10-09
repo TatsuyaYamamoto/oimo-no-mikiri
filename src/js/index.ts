@@ -18,6 +18,7 @@ import 'whatwg-fetch';
 
 // Brand logo text font
 require('../fonts/PixelMplus10-Regular.css');
+require('../fonts/g_brushtappitsu_freeH.css');
 
 /**
  * Rendering target on html.

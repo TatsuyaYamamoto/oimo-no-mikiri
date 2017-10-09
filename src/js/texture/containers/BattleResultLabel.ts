@@ -1,4 +1,4 @@
-import {Container, Graphics} from 'pixi.js';
+import {Container, Graphics, TextStyleOptions} from 'pixi.js';
 
 import {getCurrentLanguage, t} from "../../../framework/i18n";
 
@@ -9,6 +9,11 @@ import {Ids as StringIds} from '../../resources/string';
 
 const VERTICAL_SUPPORT_LANGUAGES = ['ja'];
 
+const labelTextStyle: TextStyleOptions = {
+    fontFamily: 'g_brushtappitsu_freeH',
+    fontSize: 35,
+};
+
 class BattleResultLabel extends Container {
     private _text: VerticalText;
     private _rectangle: Graphics;
@@ -16,8 +21,8 @@ class BattleResultLabel extends Container {
     constructor(text: string, isVertical = true) {
         super();
         this._text = isVertical ?
-            new VerticalText(text) :
-            new Text(text);
+            new VerticalText(text, labelTextStyle) :
+            new Text(text, labelTextStyle);
         this._text.anchor.set(0.5, 0);
 
         const rectangleWidth = this._text.width * 1.5;

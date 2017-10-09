@@ -53,7 +53,7 @@ const config = {
                 ]
             },
             {test: /\.css$/, loader: 'style-loader!css-loader'},
-            {test: /\.woff$/, loader: 'url-loader'},
+            {test: /\.(woff|ttf)$/, loader: 'url-loader'},
         ]
     },
     // https://github.com/pixijs/pixi-sound/issues/28
