@@ -25,14 +25,17 @@ class BattleResultLabel extends Container {
             new Text(text, labelTextStyle);
         this._text.anchor.set(0.5, 0);
 
-        const rectangleWidth = this._text.width * 1.5;
-        const rectangleHeight = this._text.height * 1.5;
+        const margin = isVertical ?
+            this._text.width * 0.25 :
+            this._text.height * 0.25;
+        const rectangleWidth = margin + this._text.width + margin;
+        const rectangleHeight = margin + this._text.height + margin;
 
         this._rectangle = new Graphics();
         this._rectangle.beginFill(0xffffff, 1);
         this._rectangle.drawRect(
-            -1 * rectangleWidth * 0.5,
-            -1 * rectangleHeight * 0.25,
+            -1 * rectangleWidth / 2,
+            -1 * margin,
             rectangleWidth,
             rectangleHeight);
         this._rectangle.endFill();
@@ -64,7 +67,9 @@ class BattleResultLabelBoard extends Container {
             t(StringIds.LABEL_WINNER) :
             t(StringIds.LABEL_FALSE_START);
 
-        const labelPositionY = -1 * height * 0.45;
+        const labelPositionY = isVertical ?
+            -1 * height * 0.45 :
+            -1 * height * 0.4;
         const characterLabelPositionX = width * 0.3;
 
         this._resultLabel = new BattleResultLabel(resultLabel, isVertical);
