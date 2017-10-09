@@ -1,13 +1,17 @@
 import {Container, Graphics} from 'pixi.js';
+
 import VerticalText from "../sprite/text/VerticalText";
+import Text from "../internal/Text";
 
 class BattleResultLabel extends Container {
     private _text: VerticalText;
     private _rectangle: Graphics;
 
-    constructor(text: string) {
+    constructor(text: string, isVertical = true) {
         super();
-        this._text = new VerticalText(text);
+        this._text = isVertical ?
+            new VerticalText(text) :
+            new Text(text);
 
         const rectangleWidth = this._text.width * 1.5;
         const rectangleHeight = this._text.height * 1.5;
