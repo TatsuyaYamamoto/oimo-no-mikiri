@@ -47,8 +47,7 @@ class GameOverState extends AbstractGameState {
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._resultPaper = new GameResultPaper({
-            width: this.viewWidth,
-            height: this.viewHeight,
+            height: this.viewHeight * 0.9,
             straightWins: params.round,
             playerName: 'playerName',
             winnerName: 'winnerName',
