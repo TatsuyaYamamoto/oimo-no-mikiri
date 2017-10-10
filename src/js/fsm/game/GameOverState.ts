@@ -9,6 +9,7 @@ import BackGround from "../../texture/containers/BackGround";
 import RestartButton from "../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
 import GameOverLogo from "../../texture/sprite/GameOverLogo";
+import GameResultPaper from "../../texture/containers/GameResultPaper";
 
 
 export interface EnterParams extends Deliverable {
@@ -20,6 +21,8 @@ class GameOverState extends AbstractGameState {
     public static TAG = GameOverState.name;
 
     private _background: BackGround;
+
+    private _resultPaper: GameResultPaper;
 
     private _gameOverLogo: GameOverLogo;
 
@@ -43,15 +46,28 @@ class GameOverState extends AbstractGameState {
         this._background = new BackGround();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
+        this._resultPaper = new GameResultPaper({
+            width: this.viewWidth,
+            height: this.viewHeight,
+            straightWins: params.round,
+            playerName: 'playerName',
+            winnerName: 'winnerName',
+            topTime: params.bestTime,
+            player: this.player,
+            opponent: this.opponent,
+        });
+        this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+
         this._gameOverLogo = new GameOverLogo();
-        this._gameOverLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
+        this._gameOverLogo.position.set(this.viewWidth * 0.75, this.viewHeight * 0.1);
+        this._gameOverLogo.scale.set(0.5);
 
         this._restartButton = new RestartButton();
-        this._restartButton.position.set(this.viewWidth * 0.3, this.viewHeight * 0.8);
+        this._restartButton.position.set(this.viewWidth * 0.1, this.viewHeight * 0.8);
         this._restartButton.setOnClickListener(this._onClickRestartButton);
 
         this._backToTopButton = new BackToTopButton();
-        this._backToTopButton.position.set(this.viewWidth * 0.7, this.viewHeight * 0.8);
+        this._backToTopButton.position.set(this.viewWidth * 0.9, this.viewHeight * 0.8);
         this._backToTopButton.setOnClickListener(this._onClickBackToTopButton);
 
         this.backGroundLayer.addChild(
@@ -60,6 +76,7 @@ class GameOverState extends AbstractGameState {
         this.applicationLayer.addChild(
             this._restartButton,
             this._backToTopButton,
+            this._resultPaper,
             this._gameOverLogo,
         );
     }
