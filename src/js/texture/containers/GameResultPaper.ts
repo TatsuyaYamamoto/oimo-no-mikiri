@@ -1,14 +1,14 @@
-import {Graphics, Container} from 'pixi.js';
+import {Graphics, Container, Sprite} from 'pixi.js';
 
 import {t} from '../../../framework/i18n';
 
 import Text from "../internal/Text";
-import Sprite from "../internal/Sprite";
 import VerticalText from "../sprite/text/VerticalText";
 import Player from "../sprite/character/Player";
 import Opponent from "../sprite/character/Opponent";
 
 import {Ids as StringIds} from "../../resources/string";
+import Texture = PIXI.Texture;
 
 /**
  * Graphics of calligraphy paper.
@@ -166,8 +166,8 @@ class GameResultPaper extends Container {
     private _playerName: PlayerName;
     private _winnerName: Text;
 
-    private _playerTexture: Sprite;
-    private _opponentTexture: Sprite;
+    private _playerSprite: Sprite;
+    private _opponentSprite: Sprite;
 
     constructor(options: GameResultPaperOptions) {
         super();
@@ -189,13 +189,11 @@ class GameResultPaper extends Container {
         this._winnerName = new WinnerName(options.player.name);
         this._winnerName.position.set(0, height * 0.05);
 
-        this._playerTexture = options.player;
-        this._playerTexture.scale.set(0.5);
-        this._playerTexture.position.set(-1 * width * 0.2, height * 0.3);
+        this._playerSprite = this._from(options.player.winTexture);
+        this._playerSprite.position.set(-1 * width * 0.2, height * 0.3);
 
-        this._opponentTexture = options.opponent;
-        this._opponentTexture.scale.set(0.5);
-        this._opponentTexture.position.set(width * 0.2, height * 0.3);
+        this._opponentSprite = this._from(options.opponent.winTexture);
+        this._opponentSprite.position.set(width * 0.2, height * 0.3);
 
         this.addChild(
             this._calligraphyPaper,
@@ -203,9 +201,16 @@ class GameResultPaper extends Container {
             this._topTime,
             this._playerName,
             this._winnerName,
-            this._playerTexture,
-            this._opponentTexture,
+            this._playerSprite,
+            this._opponentSprite,
         );
+    }
+
+    private _from = (texture: Texture): Sprite => {
+        const s = new Sprite(texture);
+        s.anchor.set(0.5);
+        s.scale.set(0.5);
+        return s;
     }
 }
 

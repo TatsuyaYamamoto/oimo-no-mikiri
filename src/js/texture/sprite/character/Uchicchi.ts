@@ -13,7 +13,9 @@ const FRAMES: FrameStructureIndexes = {
     TRY_ATTACK: [4],
     SUCCESS_ATTACK: [3],
     LOSE: [8, 9],
-    WIN: [5, 6, 7]
+    WIN: [5, 6, 7],
+    LOSE_TEXTURE: 8,
+    WIN_TEXTURE: 5,
 };
 
 /**
