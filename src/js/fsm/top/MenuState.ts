@@ -1,18 +1,15 @@
-import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
 import {Events} from "../views/TopViewState";
+import AbstractTopState from "./AbstractTopState";
 
 import MenuBoard from "../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
-import BackGround from "../../texture/containers/BackGround";
 import CreditContainer from "../../texture/containers/CreditContainer";
 
-class MenuState extends ViewContainer {
+class MenuState extends AbstractTopState {
     public static TAG = MenuState.name;
-
-    private _background: BackGround;
 
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
@@ -23,7 +20,7 @@ class MenuState extends ViewContainer {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-        this._background.progress(elapsedMS);
+        this.background.progress(elapsedMS);
     }
 
     /**
@@ -31,9 +28,6 @@ class MenuState extends ViewContainer {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
-
-        this._background = new BackGround();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._menuBoard = new MenuBoard(this.viewHeight, this.viewHeight);
         this._menuBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -50,7 +44,7 @@ class MenuState extends ViewContainer {
         this._creditContainer.setOnBackToMenuButtonClickListener(this._onBackToMenuClick);
 
         this.backGroundLayer.addChild(
-            this._background
+            this.background
         );
 
         this.applicationLayer.addChild(

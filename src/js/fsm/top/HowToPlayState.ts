@@ -2,10 +2,10 @@ import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
+import AbstractTopState from "./AbstractTopState";
 import {Events} from "../views/TopViewState";
 
 import UsageTextArea from "../../texture/containers/UsageTextArea";
-import BackGround from "../../texture/containers/BackGround";
 import BackToMenuButton from "../../texture/sprite/button/BackToMenuButton";
 
 import Player from "../../texture/sprite/character/Player";
@@ -14,10 +14,8 @@ import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Oimo from "../../texture/sprite/character/Oimo";
 
-class HowToPlayState extends ViewContainer {
+class HowToPlayState extends AbstractTopState {
     public static TAG = HowToPlayState.name;
-
-    private _background: BackGround;
 
     private _usageTextArea: UsageTextArea;
 
@@ -32,7 +30,7 @@ class HowToPlayState extends ViewContainer {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-        this._background.progress(elapsedMS);
+        this.background.progress(elapsedMS);
     }
 
     /**
@@ -40,9 +38,6 @@ class HowToPlayState extends ViewContainer {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
-
-        this._background = new BackGround();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._usageTextArea = new UsageTextArea();
         this._usageTextArea.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
@@ -61,7 +56,7 @@ class HowToPlayState extends ViewContainer {
         this._backToMenuButton.setOnClickListener(this._onBackToMenuClick);
 
         this.backGroundLayer.addChild(
-            this._background
+            this.background
         );
 
         this.applicationLayer.addChild(
