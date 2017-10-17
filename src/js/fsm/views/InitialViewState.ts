@@ -8,6 +8,7 @@ import {Events as ApplicationEvents} from "../ApplicationState";
 import LoadingAnimationContainer from "../../texture/containers/LoadingAnimationContainer";
 
 import imageManifest from '../../resources/image';
+import soundManifest from '../../resources/sound';
 import {SKIP_BRAND_LOGO_ANIMATION} from "../../Constants";
 
 export enum Events {
@@ -51,7 +52,7 @@ class InitialViewState extends ViewContainer {
 
         this._loader = new AssetLoader();
         this._loader.setImageManifest(imageManifest);
-        // this._loader.setSoundManifest(soundManifest);
+        this._loader.setSoundManifest(soundManifest);
         this._loader.onProgress.add(this._onLoadProgress);
         this._loader.load(() => dispatchEvent(Events.COMPLETE_PRELOAD));
 
