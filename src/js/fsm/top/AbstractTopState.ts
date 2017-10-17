@@ -1,12 +1,6 @@
-import Sound from "pixi-sound/lib/Sound";
-
 import ViewContainer from "../../../framework/ViewContainer";
-import {loadSound} from "../../../framework/AssetLoader";
 
 import BackGround from "../../texture/containers/BackGround";
-
-import {Ids as SoundIds} from '../../resources/sound';
-
 
 abstract class AbstractTopState extends ViewContainer {
     private _background: BackGround;

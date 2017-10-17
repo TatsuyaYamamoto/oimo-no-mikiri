@@ -6,6 +6,10 @@ import {Events} from "../views/TopViewState";
 
 import TitleLogo from "../../texture/sprite/TitleLogo";
 
+import {play, playOnLoop} from "../../helper/MusicPlayer";
+
+import {Ids as SoundIds} from '../../resources/sound';
+
 class TitleState extends AbstractTopState {
     public static TAG = TitleState.name;
 
@@ -36,6 +40,8 @@ class TitleState extends AbstractTopState {
         );
 
         this.addClickWindowEventListener(this._handleTapWindow);
+
+        playOnLoop(SoundIds.SOUND_ZENKAI);
     }
 
     /**
@@ -48,6 +54,8 @@ class TitleState extends AbstractTopState {
 
     private _handleTapWindow = () => {
         dispatchEvent(Events.TAP_TITLE);
+
+        play(SoundIds.SOUND_OK);
     };
 }
 

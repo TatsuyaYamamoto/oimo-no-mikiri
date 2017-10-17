@@ -8,6 +8,9 @@ import {Events} from "../views/GameViewState";
 import BackGround from "../../texture/containers/BackGround";
 import Signal from "../../texture/sprite/Signal";
 
+import {play} from "../../helper/MusicPlayer";
+
+import {Ids as SoundIds} from '../../resources/sound';
 import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
 export interface EnterParams extends Deliverable {
@@ -41,6 +44,8 @@ class ActionState extends AbstractGameState {
             console.log("Signaled!");
             this._isSignaled = true;
             this._signalSprite.visible = true;
+
+            play(SoundIds.SOUND_HARISEN);
         }
 
         if (!this._isNpcAttacked && this._npcAttackTime < this.elapsedTimeMillis) {

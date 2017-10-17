@@ -11,6 +11,9 @@ import BackGround from "../../texture/containers/BackGround";
 import PlayerCloseUp from "../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../texture/sprite/character/OpponentCloseUp";
 
+import {playOnLoop} from "../../helper/MusicPlayer";
+
+import {Ids as SoundIds} from '../../resources/sound';
 import {SKIP_READY_ANIMATION} from '../../Constants';
 
 const ANIMATION_TIME_LINE = {
@@ -111,6 +114,8 @@ class ReadyState extends AbstractGameState {
         } else {
             this._playAnimation();
         }
+
+        playOnLoop(SoundIds.SOUND_WAVE_LOOP);
     }
 
     /**

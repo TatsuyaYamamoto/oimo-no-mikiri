@@ -1,4 +1,3 @@
-import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent} from "../../../framework/EventUtils";
 
@@ -13,6 +12,10 @@ import Opponent from "../../texture/sprite/character/Opponent";
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Oimo from "../../texture/sprite/character/Oimo";
+
+import {play} from "../../helper/MusicPlayer";
+
+import {Ids as SoundIds} from '../../resources/sound';
 
 class HowToPlayState extends AbstractTopState {
     public static TAG = HowToPlayState.name;
@@ -89,6 +92,8 @@ class HowToPlayState extends AbstractTopState {
      */
     private _onBackToMenuClick = () => {
         dispatchEvent(Events.REQUEST_BACK_TO_MENU);
+
+        play(SoundIds.SOUND_CANCEL);
     };
 
     /**

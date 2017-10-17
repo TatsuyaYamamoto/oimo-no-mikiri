@@ -11,6 +11,9 @@ import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
 import GameOverLogo from "../../texture/sprite/GameOverLogo";
 import GameResultPaper from "../../texture/containers/GameResultPaper";
 
+import {play, stop} from "../../helper/MusicPlayer";
+
+import {Ids as SoundIds} from '../../resources/sound';
 
 export interface EnterParams extends Deliverable {
     bestTime: number,
@@ -93,6 +96,8 @@ class GameOverState extends AbstractGameState {
      */
     private _onClickRestartButton = () => {
         dispatchEvent(Events.RESTART_GAME);
+
+        play(SoundIds.SOUND_OK);
     };
 
     /**
@@ -102,6 +107,9 @@ class GameOverState extends AbstractGameState {
     private _onClickBackToTopButton = () => {
         // prevent to propagate to invoke tap event on title view.
         setTimeout(() => dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP), 1);
+
+        stop(SoundIds.SOUND_WAVE_LOOP);
+        play(SoundIds.SOUND_CANCEL);
     };
 }
 
