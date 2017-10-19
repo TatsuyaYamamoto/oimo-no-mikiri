@@ -5,10 +5,10 @@ import {loadTexture} from "../../../../framework/AssetLoader";
 import {Ids} from '../../../resources/image';
 
 
-class BackToMenuButton extends Button {
+class SelectCharacterButton extends Button {
     constructor() {
-        super(loadTexture(Ids.BUTTON_MENU_BACK_TO_MENU));
+        super(loadTexture(Ids.BUTTON_MENU_SELECT_CHARACTER));
     }
 }
 
-export default BackToMenuButton;
+export default SelectCharacterButton;

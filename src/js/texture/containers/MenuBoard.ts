@@ -7,6 +7,7 @@ import Sprite from "../internal/Sprite";
 import GameStartButton from "../sprite/button/GameStartButton";
 import HowToPlayButton from "../sprite/button/HowToPlayButton";
 import CreditButton from "../sprite/button/CreditButton";
+import SelectCharacterButton from "../sprite/button/SelectCharacterButton";
 
 import {Ids} from "../../resources/image";
 
@@ -28,6 +29,7 @@ class MenuBoard extends Container {
     private _gameStartButton: GameStartButton;
     private _howToPlayButton: HowToPlayButton;
     private _creditButton: CreditButton;
+    private _selectCharacterButton: SelectCharacterButton;
 
     constructor(width: number, height: number) {
         super();
@@ -44,11 +46,15 @@ class MenuBoard extends Container {
         this._creditButton = new CreditButton();
         this._creditButton.position.set(width * 0.3, 0);
 
+        this._selectCharacterButton = new SelectCharacterButton();
+        this._selectCharacterButton.position.set(width * 0.57, height * 0.2);
+
         this.addChild(
             this._backGround,
             this._gameStartButton,
             this._howToPlayButton,
             this._creditButton,
+            this._selectCharacterButton,
         );
     }
 
