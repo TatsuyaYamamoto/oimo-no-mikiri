@@ -1,6 +1,5 @@
 import Application from "../../framework/Application";
 import StateMachine from "../../framework/StateMachine";
-import {toggleMute} from '../../framework/utils';
 import {getCurrentViewSize, getScale} from "../../framework/utils";
 import {addEvents, removeEvents} from '../../framework/EventUtils';
 
@@ -8,6 +7,7 @@ import InitialViewState from "./views/InitialViewState";
 import GameViewState, {EnterParams as GameViewEnterParams} from "./views/GameViewState";
 import TopViewState from "./views/TopViewState";
 
+import {toggleMute} from '../helper/MusicPlayer';
 import {NPC_LEVELS} from "../Constants";
 
 export enum Events {

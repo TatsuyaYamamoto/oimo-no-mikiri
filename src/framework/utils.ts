@@ -1,8 +1,6 @@
 /**
  * @fileOverview Convenience utilities.
  */
-import PixiSound from 'pixi-sound/lib';
-
 import config from './config';
 
 /**
@@ -64,19 +62,4 @@ export function isSupportTouchEvent(): boolean {
  */
 export function getRandomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
-}
-
-/**
- * Toggle muted property for all sounds.
- *
- * @return {boolean} if all sounds are muted.
- */
-export function toggleMute(): boolean {
-    if (PixiSound.context.muted) {
-        PixiSound.unmuteAll();
-    } else {
-        PixiSound.muteAll();
-    }
-
-    return PixiSound.context.muted;
 }
