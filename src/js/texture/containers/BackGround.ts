@@ -1,7 +1,8 @@
 import {Sprite, extras, Container} from 'pixi.js';
 
-import {loadTexture} from "../../../framework/AssetLoader";
+import {loadTexture, loadFrames} from "../../../framework/AssetLoader";
 
+import AnimatedSprite from "../internal/AnimatedSprite";
 import {Ids} from "../../resources/image";
 
 const CLOUD_SPEED = 0.01;
@@ -20,10 +21,17 @@ class SkyLayer extends Sprite {
     }
 }
 
-class BeachLayer extends Sprite {
+class BeachLayer extends AnimatedSprite {
     public constructor() {
-        super(loadTexture(Ids.BACKGROUND_BEACH));
-        this.anchor.set(0.5);
+        const frames = loadFrames(Ids.BACKGROUND_BEACH);
+
+        const alternateFrames = []
+            .concat(frames)
+            .concat(frames.reverse());
+
+        super(alternateFrames);
+
+        this.animationSpeed = 0.03;
     }
 }
 
@@ -43,6 +51,7 @@ class BackGround extends Container {
         this._cloudLayer.position.set(0, -100);
 
         this._beachLayer = new BeachLayer();
+        this._beachLayer.play();
 
         this.addChild(
             this._skyLayer,
