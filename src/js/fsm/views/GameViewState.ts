@@ -19,6 +19,7 @@ import Hanamaru from "../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
+import Wataame from "../../texture/sprite/character/Wataame";
 
 import {NPC_LEVELS} from "../../Constants";
 
@@ -84,10 +85,10 @@ class GameViewState extends ViewContainer {
         this._player = new Hanamaru();
 
         this._opponents = {};
-        this._opponents[1] = new Shitake();
+        this._opponents[1] = new Wataame();
         this._opponents[2] = new LittleDaemon();
-        this._opponents[3] = new Uchicchi();
-        this._opponents[4] = new Shitake();
+        this._opponents[3] = new Shitake();
+        this._opponents[4] = new Uchicchi();
         this._opponents[5] = new LittleDaemon();
 
         this._readyState = new ReadyState(
