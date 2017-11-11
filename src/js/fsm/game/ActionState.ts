@@ -65,7 +65,7 @@ class ActionState extends AbstractGameState {
         this.addClickWindowEventListener(this._handleTapWindow);
 
         this._signalTime = this._createSignalTime();
-        this._npcAttackTime = this._signalTime + GAME_PARAMETERS.reaction_rate[params.level][params.round] * 1000;
+        this._npcAttackTime = this._signalTime + (GAME_PARAMETERS.reaction_rate[params.level][params.round] * GAME_PARAMETERS.reaction_rate_tuning * 1000);
         this._isTapActive = false;
         this._isSignaled = false;
         this._isNpcAttacked = false;
