@@ -60,7 +60,15 @@ class GameViewState extends ViewContainer {
     private _player: Player;
     private _opponents: {
         [roundNumber: number]: Opponent
-    };
+    } = Object.create(null);
+
+    public get player(): Player {
+        return this._player;
+    }
+
+    public get opponent(): Opponent {
+        return this._opponents[this._roundNumber];
+    }
 
 
     /**
@@ -84,34 +92,19 @@ class GameViewState extends ViewContainer {
 
         this._player = new Hanamaru();
 
-        this._opponents = {};
         this._opponents[1] = new Wataame();
         this._opponents[2] = new LittleDaemon();
         this._opponents[3] = new Shitake();
         this._opponents[4] = new Uchicchi();
         this._opponents[5] = new LittleDaemon();
 
-        this._readyState = new ReadyState(
-            this._player,
-            this._opponents[1]);
-        this._actionState = new ActionState(
-            this._player,
-            this._opponents[1]);
-        this._drawResultState = new DrawState(
-            this._player,
-            this._opponents[1]);
-        this._playerWinResultState = new PlayerWinState(
-            this._player,
-            this._opponents[1]);
-        this._opponentWinResultState = new OpponentWinState(
-            this._player,
-            this._opponents[1]);
-        this._falseStartedResultState = new FalseStartedState(
-            this._player,
-            this._opponents[1]);
-        this._overState = new OverState(
-            this._player,
-            this._opponents[1]);
+        this._readyState = new ReadyState(this);
+        this._actionState = new ActionState(this);
+        this._drawResultState = new DrawState(this);
+        this._playerWinResultState = new PlayerWinState(this);
+        this._opponentWinResultState = new OpponentWinState(this);
+        this._falseStartedResultState = new FalseStartedState(this);
+        this._overState = new OverState(this);
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: this._readyState,
@@ -132,9 +125,6 @@ class GameViewState extends ViewContainer {
             [Events.FIXED_RESULT]: this._handleFixedResultEvent,
             [Events.RESTART_GAME]: this._handleRestartGameEvent,
         });
-
-        this._player.playWait();
-        this._opponents[this._roundNumber].playWait();
 
         dispatchEvent(Events.REQUEST_READY);
     }
@@ -174,8 +164,6 @@ class GameViewState extends ViewContainer {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
-
-        this._updateCurrentOpponent();
 
         this._player.playWait();
         this._opponents[this._roundNumber].playWait();
@@ -273,18 +261,6 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._isGameFailed = false;
         this._results = {};
-    };
-
-    private _updateCurrentOpponent = (): void => {
-        const opponent = this._opponents[this._roundNumber];
-
-        this._readyState.setOpponent(opponent);
-        this._actionState.setOpponent(opponent);
-        this._drawResultState.setOpponent(opponent);
-        this._playerWinResultState.setOpponent(opponent);
-        this._opponentWinResultState.setOpponent(opponent);
-        this._falseStartedResultState.setOpponent(opponent);
-        this._overState.setOpponent(opponent);
     };
 }
 
