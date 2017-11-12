@@ -11,23 +11,20 @@ import Signal from "../../../texture/sprite/Signal";
 import {play} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
-import {GAME_PARAMETERS, NPC_LEVELS} from "../../../Constants";
 
 export interface EnterParams extends Deliverable {
-    level: NPC_LEVELS,
-    round: number,
+    autoOpponentAttackInterval?: number
 }
 
 class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
 
-    private _isTapActive: boolean;
-
     private _signalTime: number;
-    private _npcAttackTime: number;
+    private _opponentAttackTime: number;
 
     private _isSignaled: boolean;
-    private _isNpcAttacked: boolean;
+    private _isPlayerAttacked: boolean;
+    private _isOpponentAttacked: boolean;
 
     private _background: BackGround;
     private _signalSprite: Signal;
@@ -40,19 +37,15 @@ class ActionState extends AbstractGameState {
 
         this._background.progress(elapsedMS);
 
-        if (!this._isSignaled && this._signalTime < this.elapsedTimeMillis) {
-            console.log("Signaled!");
-            this._isSignaled = true;
-            this._signalSprite.visible = true;
+        const shouldSign = !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
 
-            play(SoundIds.SOUND_HARISEN);
-        }
+        if (shouldSign) this._onSignaled();
 
-        if (!this._isNpcAttacked && this._npcAttackTime < this.elapsedTimeMillis) {
-            this._isNpcAttacked = true;
-            console.log(`NPC attacked! ${this.elapsedTimeMillis - this._signalTime}ms`);
-            this._handleNpcAttack();
-        }
+        const shouldAutoAttack = this._opponentAttackTime &&
+            !this._isOpponentAttacked
+            && this._opponentAttackTime < this.elapsedTimeMillis;
+
+        if (shouldAutoAttack) this._onAttackedByOpponent();
 
     }
 
@@ -62,13 +55,12 @@ class ActionState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this.addClickWindowEventListener(this._handleTapWindow);
-
         this._signalTime = this._createSignalTime();
-        this._npcAttackTime = this._signalTime + (GAME_PARAMETERS.reaction_rate[params.level][params.round] * GAME_PARAMETERS.reaction_rate_tuning * 1000);
-        this._isTapActive = false;
+        this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
+
         this._isSignaled = false;
-        this._isNpcAttacked = false;
+        this._isPlayerAttacked = false;
+        this._isOpponentAttacked = false;
 
         this._background = new BackGround();
         this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -79,7 +71,7 @@ class ActionState extends AbstractGameState {
 
         this._signalSprite = new Signal();
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
-        this._signalSprite.visible = false;
+        this._signalSprite.hide();
 
         this.backGroundLayer.addChild(
             this._background,
@@ -90,6 +82,8 @@ class ActionState extends AbstractGameState {
             this.opponent,
             this._signalSprite,
         );
+
+        this.addClickWindowEventListener(this._onAttackedByPlayer);
     }
 
     /**
@@ -98,11 +92,20 @@ class ActionState extends AbstractGameState {
     onExit(): void {
         super.onExit();
 
-        this.removeClickWindowEventListener(this._handleTapWindow);
+        this.removeClickWindowEventListener(this._onAttackedByPlayer);
     }
 
     private _createSignalTime = (): number => {
         return getRandomInteger(3000, 5000);
+    };
+
+    private _onSignaled = () => {
+        console.log("Signaled!");
+
+        this._isSignaled = true;
+        this._signalSprite.show();
+
+        play(SoundIds.SOUND_HARISEN);
     };
 
     /**
@@ -112,30 +115,47 @@ class ActionState extends AbstractGameState {
      *
      * @private
      */
-    private _handleTapWindow = () => {
-        if (this._isNpcAttacked) {
+    private _onAttackedByPlayer = () => {
+        if (this._isOpponentAttacked) {
             return;
         }
 
-        this._signalSprite.visible = false;
+        const attackTime = this.elapsedTimeMillis - this._signalTime;
 
-        if (this._isSignaled) {
-            const time = this.elapsedTimeMillis - this._signalTime;
-            console.log(`Tap! result time: ${time}ms`);
-            dispatchEvent(Events.ACTION_SUCCESS, {time});
+        if (!this._isSignaled) {
+            console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
+            dispatchEvent(Events.FALSE_START);
             return;
         }
 
-        console.log("It's fault to tap. play again.");
-        dispatchEvent(Events.FALSE_START);
+        this._isPlayerAttacked = true;
+        this._signalSprite.hide();
+
+        console.log(`Tap! result time: ${attackTime}ms`);
+        dispatchEvent(Events.ACTION_SUCCESS, {attackTime});
     };
 
     /**
      *
      * @private
      */
-    private _handleNpcAttack = () => {
-        this._signalSprite.visible = false;
+    private _onAttackedByOpponent = () => {
+        if (this._isPlayerAttacked) {
+            return;
+        }
+
+        const attackTime = this.elapsedTimeMillis - this._signalTime;
+
+        if (!this._isSignaled) {
+            console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
+            dispatchEvent(Events.FALSE_START);
+            return;
+        }
+
+        this._isOpponentAttacked = true;
+        this._signalSprite.hide();
+
+        console.log(`Opponent attacked! ${attackTime}ms`);
         dispatchEvent(Events.ACTION_FAILURE);
     };
 }

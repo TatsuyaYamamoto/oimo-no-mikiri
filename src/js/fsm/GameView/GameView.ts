@@ -21,7 +21,7 @@ import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
 
-import {NPC_LEVELS} from "../../Constants";
+import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
@@ -93,7 +93,7 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: new ReadyState(this),
-            [ActionState.TAG]:new ActionState(this),
+            [ActionState.TAG]: new ActionState(this),
             [DrawState.TAG]: new DrawState(this),
             [PlayerWinState.TAG]: new PlayerWinState(this),
             [OpponentWinState.TAG]: new OpponentWinState(this),
@@ -103,7 +103,7 @@ class GameViewState extends ViewContainer {
 
         addEvents({
             [Events.REQUEST_READY]: this._onRequestedReady,
-            [Events.IS_READY]: this._handleIsReadyEvent,
+            [Events.IS_READY]: this._onReady,
             [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
             [Events.ACTION_FAILURE]: this._handleActionFailureEvent,
             [Events.FALSE_START]: this._handleFalseStartEvent,
@@ -149,7 +149,7 @@ class GameViewState extends ViewContainer {
         }
 
         // is retry battle by false-start?
-        if(!this._isFalseStarted){
+        if (!this._isFalseStarted) {
             this._roundNumber += 1;
         }
 
@@ -166,11 +166,9 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _handleIsReadyEvent = () => {
-        this._to<ActionStateEnterParams>(ActionState.TAG, {
-            level: this._gameLevel,
-            round: this._roundNumber
-        });
+    private _onReady = () => {
+        const autoOpponentAttackInterval = (GAME_PARAMETERS.reaction_rate[this._gameLevel][this._roundNumber] * GAME_PARAMETERS.reaction_rate_tuning * 1000)
+        this._to<ActionStateEnterParams>(ActionState.TAG, {autoOpponentAttackInterval});
     };
 
     /**
