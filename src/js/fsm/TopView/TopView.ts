@@ -42,7 +42,7 @@ class TopViewState extends ViewContainer {
             [HowToPlayState.TAG]: new HowToPlayState(),
         });
 
-        this._topStateMachine.init(TitleState.TAG);
+        this._topStateMachine.change(TitleState.TAG);
         this.applicationLayer.addChild(this._topStateMachine.current);
 
         addEvents({

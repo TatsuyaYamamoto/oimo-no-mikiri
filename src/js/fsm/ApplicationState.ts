@@ -54,7 +54,7 @@ class ApplicationState extends Application {
         window.addEventListener('blur', toggleMute);
         window.addEventListener('focus', toggleMute);
 
-        this._viewStateMachine.init(InitialViewState.TAG);
+        this._viewStateMachine.change(InitialViewState.TAG);
         this.stage.addChild(this._viewStateMachine.current);
     }
 

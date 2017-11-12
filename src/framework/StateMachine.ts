@@ -29,21 +29,16 @@ class StateMachine<S extends State> {
         this._currentState.update(elapsedTime);
     }
 
-    public init(firstStateTag, params?: Deliverable): void {
-        this._currentState = this._states.get(firstStateTag);
-        this._currentState.onEnter(params);
-    }
-
     /**
      * Change state.
      * If there is not previous state, this method makes the state machine initialize.
      * Provided {@link params} is set as args of {@State#onEnter}.
      *
      * @param {string} stateTag
-     * @param {T} params
-     * @returns {State}
+     * @param {D} params
+     * @returns {S}
      */
-    public change<T extends Deliverable>(stateTag: string, params?: T): S {
+    public change<D extends Deliverable>(stateTag: string, params?: D): S {
         const nextState = this._states.get(stateTag);
 
         // Check provide state is defined.
