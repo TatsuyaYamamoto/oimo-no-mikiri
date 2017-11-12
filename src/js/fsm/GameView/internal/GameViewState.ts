@@ -1,9 +1,9 @@
 import {Graphics} from 'pixi.js';
-import ViewContainer from "../../../framework/ViewContainer";
+import ViewContainer from "../../../../framework/ViewContainer";
 
-import Player from "../../texture/sprite/character/Player";
-import Opponent from "../../texture/sprite/character/Opponent";
-import Oimo from "../../texture/sprite/character/Oimo";
+import Player from "../../../texture/sprite/character/Player";
+import Opponent from "../../../texture/sprite/character/Opponent";
+import Oimo from "../../../texture/sprite/character/Oimo";
 
 class WhiteLayer extends Graphics {
     constructor(width: number, height: number) {
@@ -14,7 +14,7 @@ class WhiteLayer extends Graphics {
     }
 }
 
-abstract class AbstractGameState extends ViewContainer {
+abstract class GameViewState extends ViewContainer {
     private _player: Player;
     private _opponent: Opponent;
     private _oimo: Oimo;
@@ -58,4 +58,4 @@ abstract class AbstractGameState extends ViewContainer {
     }
 }
 
-export default AbstractGameState;
+export default GameViewState;

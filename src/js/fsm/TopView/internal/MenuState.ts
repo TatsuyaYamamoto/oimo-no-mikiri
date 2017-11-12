@@ -1,16 +1,16 @@
-import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent} from "../../../framework/EventUtils";
+import Deliverable from "../../../../framework/Deliverable";
+import {dispatchEvent} from "../../../../framework/EventUtils";
 
-import {Events} from "../views/TopViewState";
-import AbstractTopState from "./AbstractTopState";
+import {Events} from "../TopView";
+import AbstractTopState from "./TopViewState";
 
-import MenuBoard from "../../texture/containers/MenuBoard";
-import SelectLevelBoard from "../../texture/containers/SelectLevelBoard";
-import CreditContainer from "../../texture/containers/CreditContainer";
+import MenuBoard from "../../../texture/containers/MenuBoard";
+import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
+import CreditContainer from "../../../texture/containers/CreditContainer";
 
-import {play, stop} from "../../helper/MusicPlayer";
+import {play, stop} from "../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../resources/sound';
+import {Ids as SoundIds} from '../../../resources/sound';
 
 class MenuState extends AbstractTopState {
     public static TAG = MenuState.name;

@@ -3,17 +3,17 @@ import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
-import TitleState from "../top/TitleState";
-import MenuState from "../top/MenuState";
+import TitleState from "./internal/TitleState";
+import MenuState from "./internal/MenuState";
 
 import {Events as AppEvents} from '../ApplicationState';
-import HowToPlayState from "../top/HowToPlayState";
+import HowToPlayState from "./internal/HowToPlayState";
 
 export enum Events {
-    TAP_TITLE = 'GameViewState@TAP_TITLE',
-    REQUEST_BACK_TO_MENU = 'GameViewState@REQUEST_BACK_TO_MENU',
-    REQUEST_HOW_TO_PLAY = 'GameViewState@REQUEST_HOW_TO_PLAY',
-    FIXED_PLAY_MODE = 'GameViewState@FIXED_PLAY_MODE',
+    TAP_TITLE = 'GameView@TAP_TITLE',
+    REQUEST_BACK_TO_MENU = 'GameView@REQUEST_BACK_TO_MENU',
+    REQUEST_HOW_TO_PLAY = 'GameView@REQUEST_HOW_TO_PLAY',
+    FIXED_PLAY_MODE = 'GameView@FIXED_PLAY_MODE',
 }
 
 class TopViewState extends ViewContainer {

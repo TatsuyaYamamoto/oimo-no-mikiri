@@ -1,14 +1,14 @@
-import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent} from '../../../framework/EventUtils';
+import Deliverable from "../../../../framework/Deliverable";
+import {dispatchEvent} from '../../../../framework/EventUtils';
 
-import AbstractTopState from "./AbstractTopState";
-import {Events} from "../views/TopViewState";
+import AbstractTopState from "./TopViewState";
+import {Events} from "../TopView";
 
-import TitleLogo from "../../texture/sprite/TitleLogo";
+import TitleLogo from "../../../texture/sprite/TitleLogo";
 
-import {play, playOnLoop} from "../../helper/MusicPlayer";
+import {play, playOnLoop} from "../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../resources/sound';
+import {Ids as SoundIds} from '../../../resources/sound';
 
 class TitleState extends AbstractTopState {
     public static TAG = TitleState.name;

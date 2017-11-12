@@ -1,27 +1,27 @@
-import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent} from "../../../framework/EventUtils";
+import Deliverable from "../../../../framework/Deliverable";
+import {dispatchEvent} from "../../../../framework/EventUtils";
 
-import AbstractGameState from "./AbstractGameState";
-import {Events} from '../views/GameViewState';
-import {Events as AppEvents} from '../ApplicationState';
+import AbstractGameState from "./GameViewState";
+import {Events} from '../GameView';
+import {Events as AppEvents} from '../../ApplicationState';
 
-import BackGround from "../../texture/containers/BackGround";
-import RestartButton from "../../texture/sprite/button/RestartButton";
-import BackToTopButton from "../../texture/sprite/button/BackToTopButton";
-import GameOverLogo from "../../texture/sprite/GameOverLogo";
-import GameResultPaper from "../../texture/containers/GameResultPaper";
+import BackGround from "../../../texture/containers/BackGround";
+import RestartButton from "../../../texture/sprite/button/RestartButton";
+import BackToTopButton from "../../../texture/sprite/button/BackToTopButton";
+import GameOverLogo from "../../../texture/sprite/GameOverLogo";
+import GameResultPaper from "../../../texture/containers/GameResultPaper";
 
-import {play, stop} from "../../helper/MusicPlayer";
+import {play, stop} from "../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../resources/sound';
+import {Ids as SoundIds} from '../../../resources/sound';
 
 export interface EnterParams extends Deliverable {
     bestTime: number,
     round: number,
 }
 
-class GameOverState extends AbstractGameState {
-    public static TAG = GameOverState.name;
+class OverState extends AbstractGameState {
+    public static TAG = OverState.name;
 
     private _background: BackGround;
 
@@ -113,4 +113,4 @@ class GameOverState extends AbstractGameState {
     };
 }
 
-export default GameOverState;
+export default OverState;

@@ -1,8 +1,8 @@
-import ViewContainer from "../../../framework/ViewContainer";
+import ViewContainer from "../../../../framework/ViewContainer";
 
-import BackGround from "../../texture/containers/BackGround";
+import BackGround from "../../../texture/containers/BackGround";
 
-abstract class AbstractTopState extends ViewContainer {
+abstract class TopViewState extends ViewContainer {
     private _background: BackGround;
 
     constructor() {
@@ -18,4 +18,4 @@ abstract class AbstractTopState extends ViewContainer {
     }
 }
 
-export default AbstractTopState;
+export default TopViewState;

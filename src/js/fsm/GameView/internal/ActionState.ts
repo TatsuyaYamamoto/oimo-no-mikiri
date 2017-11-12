@@ -1,17 +1,17 @@
-import {dispatchEvent} from "../../../framework/EventUtils";
-import Deliverable from "../../../framework/Deliverable";
-import {getRandomInteger} from "../../../framework/utils";
+import {dispatchEvent} from "../../../../framework/EventUtils";
+import Deliverable from "../../../../framework/Deliverable";
+import {getRandomInteger} from "../../../../framework/utils";
 
-import AbstractGameState from "./AbstractGameState";
-import {Events} from "../views/GameViewState";
+import AbstractGameState from "./GameViewState";
+import {Events} from "../GameView";
 
-import BackGround from "../../texture/containers/BackGround";
-import Signal from "../../texture/sprite/Signal";
+import BackGround from "../../../texture/containers/BackGround";
+import Signal from "../../../texture/sprite/Signal";
 
-import {play} from "../../helper/MusicPlayer";
+import {play} from "../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../resources/sound';
-import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
+import {Ids as SoundIds} from '../../../resources/sound';
+import {GAME_PARAMETERS, NPC_LEVELS} from "../../../Constants";
 
 export interface EnterParams extends Deliverable {
     level: NPC_LEVELS,

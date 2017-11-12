@@ -3,9 +3,9 @@ import StateMachine from "../../framework/StateMachine";
 import {getCurrentViewSize, getScale} from "../../framework/utils";
 import {addEvents, removeEvents} from '../../framework/EventUtils';
 
-import InitialViewState from "./views/InitialViewState";
-import GameViewState, {EnterParams as GameViewEnterParams} from "./views/GameViewState";
-import TopViewState from "./views/TopViewState";
+import InitialViewState from "./InitialView";
+import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
+import TopViewState from "./TopView";
 
 import {toggleMute} from '../helper/MusicPlayer';
 import {NPC_LEVELS} from "../Constants";

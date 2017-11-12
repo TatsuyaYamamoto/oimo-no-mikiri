@@ -1,11 +1,11 @@
 import {filters} from 'pixi.js';
 import * as anime from 'animejs'
 
-import Deliverable from "../../../../framework/Deliverable";
+import Deliverable from "../../../../../framework/Deliverable";
 
-import AbstractGameState from "../AbstractGameState";
+import AbstractGameState from "../GameViewState";
 
-import BackGround from "../../../texture/containers/BackGround";
+import BackGround from "../../../../texture/containers/BackGround";
 
 abstract class ResultState extends AbstractGameState {
     private _background: BackGround;

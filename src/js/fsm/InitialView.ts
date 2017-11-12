@@ -1,15 +1,15 @@
-import {addEvents, dispatchEvent, removeEvents} from '../../../framework/EventUtils';
-import ViewContainer from "../../../framework/ViewContainer";
-import Deliverable from "../../../framework/Deliverable";
-import AssetLoader from "../../../framework/AssetLoader";
+import {addEvents, dispatchEvent, removeEvents} from '../../framework/EventUtils';
+import ViewContainer from "../../framework/ViewContainer";
+import Deliverable from "../../framework/Deliverable";
+import AssetLoader from "../../framework/AssetLoader";
 
-import {Events as ApplicationEvents} from "../ApplicationState";
+import {Events as ApplicationEvents} from "./ApplicationState";
 
-import LoadingAnimationContainer from "../../texture/containers/LoadingAnimationContainer";
+import LoadingAnimationContainer from "../texture/containers/LoadingAnimationContainer";
 
-import imageManifest from '../../resources/image';
-import soundManifest from '../../resources/sound';
-import {SKIP_BRAND_LOGO_ANIMATION} from "../../Constants";
+import imageManifest from '../resources/image';
+import soundManifest from '../resources/sound';
+import {SKIP_BRAND_LOGO_ANIMATION} from "../Constants";
 
 export enum Events {
     COMPLETE_PRELOAD = "InitialViewState@COMPLETE_LOAD",

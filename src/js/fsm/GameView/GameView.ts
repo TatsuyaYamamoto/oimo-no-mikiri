@@ -3,14 +3,14 @@ import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
-import ReadyState from "../game/ReadyState";
-import ActionState, {EnterParams as ActionStateEnterParams} from "../game/ActionState";
-import ResultState from "../game/result/ResultState";
-import DrawState from "../game/result/DrawState";
-import PlayerWinState from "../game/result/PlayerWinState";
-import OpponentWinState from "../game/result/OpponentWinState";
-import FalseStartedState, {EnterParams as FalseStartedStateEnterParams} from "../game/result/FalseStartedState";
-import GameOverState, {EnterParams as GameOverEnterParams} from "../game/GameOverState";
+import ReadyState from "./internal/ReadyState";
+import ActionState, {EnterParams as ActionStateEnterParams} from "./internal/ActionState";
+import ResultState from "./internal/ResultState";
+import DrawState from "./internal/ResultState/DrawState";
+import PlayerWinState from "./internal/ResultState/PlayerWinState";
+import OpponentWinState from "./internal/ResultState/OpponentWinState";
+import FalseStartedState, {EnterParams as FalseStartedStateEnterParams} from "./internal/ResultState/FalseStartedState";
+import OverState, {EnterParams as OverEnterParams} from "./internal/OverState";
 
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
@@ -24,13 +24,13 @@ import Wataame from "../../texture/sprite/character/Wataame";
 import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
-    REQUEST_READY = 'GameViewState@REQUEST_READY',
-    IS_READY = 'GameViewState@IS_READY',
-    ACTION_SUCCESS = 'GameViewState@ACTION_SUCCESS',
-    ACTION_FAILURE = 'GameViewState@ACTION_FAILURE',
-    FALSE_START = 'GameViewState@FALSE_START',
-    FIXED_RESULT = 'GameViewState@FIXED_RESULT',
-    RESTART_GAME = 'GameViewState@RESTART_GAME',
+    REQUEST_READY = 'GameView@REQUEST_READY',
+    IS_READY = 'GameView@IS_READY',
+    ACTION_SUCCESS = 'GameView@ACTION_SUCCESS',
+    ACTION_FAILURE = 'GameView@ACTION_FAILURE',
+    FALSE_START = 'GameView@FALSE_START',
+    FIXED_RESULT = 'GameView@FIXED_RESULT',
+    RESTART_GAME = 'GameView@RESTART_GAME',
 }
 
 export interface EnterParams extends Deliverable {
@@ -48,7 +48,7 @@ class GameViewState extends ViewContainer {
     private _playerWinResultState: ResultState;
     private _opponentWinResultState: ResultState;
     private _falseStartedResultState: ResultState;
-    private _gameOverState: GameOverState;
+    private _overState: OverState;
 
     private _gameLevel: NPC_LEVELS = null;
     private _roundLength: number;
@@ -109,7 +109,7 @@ class GameViewState extends ViewContainer {
         this._falseStartedResultState = new FalseStartedState(
             this._player,
             this._opponents[1]);
-        this._gameOverState = new GameOverState(
+        this._overState = new OverState(
             this._player,
             this._opponents[1]);
 
@@ -120,7 +120,7 @@ class GameViewState extends ViewContainer {
             [PlayerWinState.TAG]: this._playerWinResultState,
             [OpponentWinState.TAG]: this._opponentWinResultState,
             [FalseStartedState.TAG]: this._falseStartedResultState,
-            [GameOverState.TAG]: this._gameOverState
+            [OverState.TAG]: this._overState
         });
 
         addEvents({
@@ -255,12 +255,12 @@ class GameViewState extends ViewContainer {
         const bestTime = Math.max(...times);
         const round = this._roundNumber;
 
-        this._gameStateMachine.change<GameOverEnterParams>(GameOverState.TAG, {
+        this._gameStateMachine.change<OverEnterParams>(OverState.TAG, {
             bestTime,
             round
         });
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameOverState);
+        this.applicationLayer.addChild(this._overState);
     };
 
     private _handleRestartGameEvent = () => {
@@ -284,7 +284,7 @@ class GameViewState extends ViewContainer {
         this._playerWinResultState.setOpponent(opponent);
         this._opponentWinResultState.setOpponent(opponent);
         this._falseStartedResultState.setOpponent(opponent);
-        this._gameOverState.setOpponent(opponent);
+        this._overState.setOpponent(opponent);
     };
 }
 

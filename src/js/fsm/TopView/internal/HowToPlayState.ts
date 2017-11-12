@@ -1,21 +1,21 @@
-import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent} from "../../../framework/EventUtils";
+import Deliverable from "../../../../framework/Deliverable";
+import {dispatchEvent} from "../../../../framework/EventUtils";
 
-import AbstractTopState from "./AbstractTopState";
-import {Events} from "../views/TopViewState";
+import AbstractTopState from "./TopViewState";
+import {Events} from "../TopView";
 
-import UsageTextArea from "../../texture/containers/UsageTextArea";
-import BackToMenuButton from "../../texture/sprite/button/BackToMenuButton";
+import UsageTextArea from "../../../texture/containers/UsageTextArea";
+import BackToMenuButton from "../../../texture/sprite/button/BackToMenuButton";
 
-import Player from "../../texture/sprite/character/Player";
-import Opponent from "../../texture/sprite/character/Opponent";
-import Hanamaru from "../../texture/sprite/character/Hanamaru";
-import Uchicchi from "../../texture/sprite/character/Uchicchi";
-import Oimo from "../../texture/sprite/character/Oimo";
+import Player from "../../../texture/sprite/character/Player";
+import Opponent from "../../../texture/sprite/character/Opponent";
+import Hanamaru from "../../../texture/sprite/character/Hanamaru";
+import Uchicchi from "../../../texture/sprite/character/Uchicchi";
+import Oimo from "../../../texture/sprite/character/Oimo";
 
-import {play} from "../../helper/MusicPlayer";
+import {play} from "../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../resources/sound';
+import {Ids as SoundIds} from '../../../resources/sound';
 
 class HowToPlayState extends AbstractTopState {
     public static TAG = HowToPlayState.name;

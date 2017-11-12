@@ -1,10 +1,10 @@
-import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from "../../../../framework/EventUtils";
+import Deliverable from "../../../../../framework/Deliverable";
+import {dispatchEvent} from "../../../../../framework/EventUtils";
 
-import {Events} from "../../views/GameViewState";
+import {Events} from "../../GameView";
 import ResultState from "./ResultState";
 
-import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
+import BattleResultLabelBoard from "../../../../texture/containers/BattleResultLabel";
 
 class OpponentWinState extends ResultState {
     public static TAG = OpponentWinState.name;
