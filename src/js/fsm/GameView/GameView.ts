@@ -102,7 +102,7 @@ class GameViewState extends ViewContainer {
         });
 
         addEvents({
-            [Events.REQUEST_READY]: this._handleRequestReadyEvent,
+            [Events.REQUEST_READY]: this._onRequestedReady,
             [Events.IS_READY]: this._handleIsReadyEvent,
             [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
             [Events.ACTION_FAILURE]: this._handleActionFailureEvent,
@@ -135,9 +135,7 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _handleRequestReadyEvent = () => {
-        console.log("round number", this._roundNumber);
-
+    private _onRequestedReady = () => {
         // is failed previous match?
         if (this._isGameFailed) {
             dispatchEvent(Events.FIXED_RESULT);
@@ -149,6 +147,13 @@ class GameViewState extends ViewContainer {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
+
+        // is retry battle by false-start?
+        if(!this._isFalseStarted){
+            this._roundNumber += 1;
+        }
+
+        console.log("round number", this._roundNumber);
 
         this._player.playWait();
         this._opponents[this._roundNumber].playWait();
@@ -175,7 +180,6 @@ class GameViewState extends ViewContainer {
     private _handleActionSuccessEvent = (e: CustomEvent) => {
         this._results[this._roundNumber] = e.detail.time;
         this._isFalseStarted = false;
-        this._roundNumber += 1;
 
         this._to(PlayerWinState.TAG);
     };
@@ -225,7 +229,7 @@ class GameViewState extends ViewContainer {
     };
 
     private _initState = () => {
-        this._roundNumber = 1;
+        this._roundNumber = 0;
         this._isFalseStarted = false;
         this._isGameFailed = false;
         this._results = {};
