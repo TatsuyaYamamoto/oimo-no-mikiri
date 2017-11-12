@@ -54,8 +54,7 @@ class ApplicationState extends Application {
         window.addEventListener('blur', toggleMute);
         window.addEventListener('focus', toggleMute);
 
-        this._viewStateMachine.change(InitialViewState.TAG);
-        this.stage.addChild(this._viewStateMachine.current);
+        this._to(InitialViewState.TAG);
     }
 
     /**
@@ -101,9 +100,7 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleInitializedEvent = () => {
-        this._viewStateMachine.change(TopViewState.TAG);
-        this.stage.removeChildren();
-        this.stage.addChild(this._viewStateMachine.current);
+        this._to(TopViewState.TAG);
     };
 
     /**
@@ -114,12 +111,10 @@ class ApplicationState extends Application {
         const mode: "beginner" | "novice" | "expert" = e.detail.mode;
         let level: NPC_LEVELS = NPC_LEVELS[mode.toUpperCase()];
 
-        this._viewStateMachine.change<GameViewEnterParams>(GameViewState.TAG, {
+        this._to<GameViewEnterParams>(GameViewState.TAG, {
             level,
             roundLength: 5,
         });
-        this.stage.removeChildren();
-        this.stage.addChild(this._viewStateMachine.current);
     };
 
     /**
@@ -127,10 +122,21 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleRequestedBackToTopEvent = () => {
-        this._viewStateMachine.change(TopViewState.TAG);
+        this._to(TopViewState.TAG);
+    };
+
+    /**
+     *
+     *
+     * @param {string} stateTag
+     * @param {T} params
+     * @private
+     */
+    private _to = <T>(stateTag: string, params?: T): void => {
+        this._viewStateMachine.change(stateTag, params);
         this.stage.removeChildren();
         this.stage.addChild(this._viewStateMachine.current);
-    };
+    }
 }
 
 export default ApplicationState;

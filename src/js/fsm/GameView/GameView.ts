@@ -153,9 +153,7 @@ class GameViewState extends ViewContainer {
         this._player.playWait();
         this._opponents[this._roundNumber].playWait();
 
-        this._gameStateMachine.change(ReadyState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
+        this._to(ReadyState.TAG);
 
     };
 
@@ -164,12 +162,10 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _handleIsReadyEvent = () => {
-        this._gameStateMachine.change<ActionStateEnterParams>(ActionState.TAG, {
+        this._to<ActionStateEnterParams>(ActionState.TAG, {
             level: this._gameLevel,
             round: this._roundNumber
         });
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -181,9 +177,7 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = false;
         this._roundNumber += 1;
 
-        this._gameStateMachine.change(PlayerWinState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
+        this._to(PlayerWinState.TAG);
     };
 
     /**
@@ -193,9 +187,7 @@ class GameViewState extends ViewContainer {
     private _handleActionFailureEvent = () => {
         this._isGameFailed = true;
 
-        this._gameStateMachine.change(OpponentWinState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
+        this._to(OpponentWinState.TAG);
     };
 
     /**
@@ -204,16 +196,12 @@ class GameViewState extends ViewContainer {
      */
     private _handleFalseStartEvent = () => {
         this._isGameFailed = this._isFalseStarted;
+        this._isFalseStarted = true;
 
-        this._gameStateMachine.change<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
+        this._to<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
             actor: 'player',
             isEnded: this._isGameFailed,
         });
-
-        this._isFalseStarted = true;
-
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -228,9 +216,7 @@ class GameViewState extends ViewContainer {
         const bestTime = Math.max(...times);
         const round = this._roundNumber;
 
-        this._gameStateMachine.change<OverEnterParams>(OverState.TAG, {bestTime, round});
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._gameStateMachine.current);
+        this._to<OverEnterParams>(OverState.TAG, {bestTime, round});
     };
 
     private _handleRestartGameEvent = () => {
@@ -244,6 +230,19 @@ class GameViewState extends ViewContainer {
         this._isGameFailed = false;
         this._results = {};
     };
+
+    /**
+     *
+     *
+     * @param {string} stateTag
+     * @param {T} params
+     * @private
+     */
+    private _to = <T>(stateTag: string, params?: T): void => {
+        this._gameStateMachine.change(stateTag, params);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._gameStateMachine.current);
+    }
 }
 
 export default GameViewState;

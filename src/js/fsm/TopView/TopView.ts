@@ -42,15 +42,14 @@ class TopViewState extends ViewContainer {
             [HowToPlayState.TAG]: new HowToPlayState(),
         });
 
-        this._topStateMachine.change(TitleState.TAG);
-        this.applicationLayer.addChild(this._topStateMachine.current);
-
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,
             [Events.REQUEST_BACK_TO_MENU]: this._handleRequestBackMenuEvent,
             [Events.REQUEST_HOW_TO_PLAY]: this._handleRequestHowToPlayEvent,
             [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
         });
+
+        this._to(TitleState.TAG);
     }
 
     /**
@@ -72,9 +71,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleTapTitleEvent = () => {
-        this._topStateMachine.change(MenuState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._topStateMachine.current);
+        this._to(MenuState.TAG);
     };
 
     /**
@@ -82,9 +79,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleRequestHowToPlayEvent = () => {
-        this._topStateMachine.change(HowToPlayState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._topStateMachine.current);
+        this._to(HowToPlayState.TAG);
     };
 
     /**
@@ -92,9 +87,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleRequestBackMenuEvent = () => {
-        this._topStateMachine.change(MenuState.TAG);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._topStateMachine.current);
+        this._to(MenuState.TAG);
     };
 
     /**
@@ -105,6 +98,12 @@ class TopViewState extends ViewContainer {
         console.log("Fixed play mode: ", e.detail.mode);
         dispatchEvent(AppEvents.REQUESTED_GAME_START, {mode: e.detail.mode});
     };
+
+    private _to = (stateTag: string) => {
+        this._topStateMachine.change(stateTag);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this._topStateMachine.current);
+    }
 }
 
 export default TopViewState;
