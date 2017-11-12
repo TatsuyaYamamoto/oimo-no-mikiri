@@ -41,14 +41,7 @@ export interface EnterParams extends Deliverable {
 class GameViewState extends ViewContainer {
     public static TAG = GameViewState.name;
 
-    private _gameStateMachine: StateMachine;
-    private _readyState: ReadyState;
-    private _actionState: ActionState;
-    private _drawResultState: ResultState;
-    private _playerWinResultState: ResultState;
-    private _opponentWinResultState: ResultState;
-    private _falseStartedResultState: ResultState;
-    private _overState: OverState;
+    private _gameStateMachine: StateMachine<ViewContainer>;
 
     private _gameLevel: NPC_LEVELS = null;
     private _roundLength: number;
@@ -98,22 +91,14 @@ class GameViewState extends ViewContainer {
         this._opponents[4] = new Uchicchi();
         this._opponents[5] = new LittleDaemon();
 
-        this._readyState = new ReadyState(this);
-        this._actionState = new ActionState(this);
-        this._drawResultState = new DrawState(this);
-        this._playerWinResultState = new PlayerWinState(this);
-        this._opponentWinResultState = new OpponentWinState(this);
-        this._falseStartedResultState = new FalseStartedState(this);
-        this._overState = new OverState(this);
-
         this._gameStateMachine = new StateMachine({
-            [ReadyState.TAG]: this._readyState,
-            [ActionState.TAG]: this._actionState,
-            [DrawState.TAG]: this._drawResultState,
-            [PlayerWinState.TAG]: this._playerWinResultState,
-            [OpponentWinState.TAG]: this._opponentWinResultState,
-            [FalseStartedState.TAG]: this._falseStartedResultState,
-            [OverState.TAG]: this._overState
+            [ReadyState.TAG]: new ReadyState(this),
+            [ActionState.TAG]:new ActionState(this),
+            [DrawState.TAG]: new DrawState(this),
+            [PlayerWinState.TAG]: new PlayerWinState(this),
+            [OpponentWinState.TAG]: new OpponentWinState(this),
+            [FalseStartedState.TAG]: new FalseStartedState(this),
+            [OverState.TAG]: new OverState(this)
         });
 
         addEvents({
@@ -170,7 +155,7 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine.change(ReadyState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._readyState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
 
     };
 
@@ -184,7 +169,7 @@ class GameViewState extends ViewContainer {
             round: this._roundNumber
         });
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._actionState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -198,7 +183,7 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine.change(PlayerWinState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._playerWinResultState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -210,7 +195,7 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine.change(OpponentWinState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._opponentWinResultState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -228,7 +213,7 @@ class GameViewState extends ViewContainer {
         this._isFalseStarted = true;
 
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._falseStartedResultState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     /**
@@ -243,12 +228,9 @@ class GameViewState extends ViewContainer {
         const bestTime = Math.max(...times);
         const round = this._roundNumber;
 
-        this._gameStateMachine.change<OverEnterParams>(OverState.TAG, {
-            bestTime,
-            round
-        });
+        this._gameStateMachine.change<OverEnterParams>(OverState.TAG, {bestTime, round});
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._overState);
+        this.applicationLayer.addChild(this._gameStateMachine.current);
     };
 
     private _handleRestartGameEvent = () => {

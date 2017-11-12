@@ -11,14 +11,18 @@ export type DeliverableConverter = (source?: Deliverable) => Deliverable;
  *
  * @class
  */
-class StateMachine {
-    private _currentState: State;
-    private _states: Map<String, State> = new Map();
+class StateMachine<S extends State> {
+    private _currentState: S;
+    private _states: Map<String, S> = new Map();
 
-    constructor(states: { [key: string]: State }) {
+    constructor(states: { [key: string]: S }) {
         Object.keys(states).forEach((key) => {
             this._states.set(key, states[key]);
         });
+    }
+
+    public get current(): S {
+        return this._currentState;
     }
 
     public update(elapsedTime: number): void {
@@ -39,7 +43,7 @@ class StateMachine {
      * @param {T} params
      * @returns {State}
      */
-    public change<T extends Deliverable>(stateTag: string, params?: T): State {
+    public change<T extends Deliverable>(stateTag: string, params?: T): S {
         const nextState = this._states.get(stateTag);
 
         // Check provide state is defined.

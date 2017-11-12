@@ -19,10 +19,7 @@ export enum Events {
 class TopViewState extends ViewContainer {
     public static TAG = TopViewState.name;
 
-    private _topStateMachine: StateMachine;
-    private _titleState: TitleState;
-    private _menuState: MenuState;
-    private _howToPlayState: HowToPlayState;
+    private _topStateMachine: StateMachine<ViewContainer>;
 
     /**
      * @override
@@ -39,18 +36,14 @@ class TopViewState extends ViewContainer {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._titleState = new TitleState();
-        this._menuState = new MenuState();
-        this._howToPlayState = new HowToPlayState();
-
         this._topStateMachine = new StateMachine({
-            [TitleState.TAG]: this._titleState,
-            [MenuState.TAG]: this._menuState,
-            [HowToPlayState.TAG]: this._howToPlayState,
+            [TitleState.TAG]: new TitleState(),
+            [MenuState.TAG]: new MenuState(),
+            [HowToPlayState.TAG]: new HowToPlayState(),
         });
 
         this._topStateMachine.init(TitleState.TAG);
-        this.applicationLayer.addChild(this._titleState);
+        this.applicationLayer.addChild(this._topStateMachine.current);
 
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,
@@ -81,7 +74,7 @@ class TopViewState extends ViewContainer {
     private _handleTapTitleEvent = () => {
         this._topStateMachine.change(MenuState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._menuState);
+        this.applicationLayer.addChild(this._topStateMachine.current);
     };
 
     /**
@@ -91,7 +84,7 @@ class TopViewState extends ViewContainer {
     private _handleRequestHowToPlayEvent = () => {
         this._topStateMachine.change(HowToPlayState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._howToPlayState);
+        this.applicationLayer.addChild(this._topStateMachine.current);
     };
 
     /**
@@ -101,7 +94,7 @@ class TopViewState extends ViewContainer {
     private _handleRequestBackMenuEvent = () => {
         this._topStateMachine.change(MenuState.TAG);
         this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._menuState);
+        this.applicationLayer.addChild(this._topStateMachine.current);
     };
 
     /**

@@ -9,6 +9,7 @@ import TopViewState from "./TopView";
 
 import {toggleMute} from '../helper/MusicPlayer';
 import {NPC_LEVELS} from "../Constants";
+import ViewContainer from "../../framework/ViewContainer";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -17,11 +18,7 @@ export enum Events {
 }
 
 class ApplicationState extends Application {
-    private _viewStateMachine: StateMachine;
-
-    private _initialViewState: InitialViewState;
-    private _topViewState: TopViewState;
-    private _gameViewState: GameViewState;
+    private _viewStateMachine: StateMachine<ViewContainer>;
 
     constructor() {
         super(getCurrentViewSize());
@@ -41,14 +38,10 @@ class ApplicationState extends Application {
         this._updateRendererSize();
         this._updateStageScale();
 
-        this._initialViewState = new InitialViewState();
-        this._topViewState = new TopViewState();
-        this._gameViewState = new GameViewState();
-
         this._viewStateMachine = new StateMachine({
-            [InitialViewState.TAG]: this._initialViewState,
-            [TopViewState.TAG]: this._topViewState,
-            [GameViewState.TAG]: this._gameViewState
+            [InitialViewState.TAG]: new InitialViewState(),
+            [TopViewState.TAG]: new TopViewState(),
+            [GameViewState.TAG]: new GameViewState(),
         });
 
         addEvents({
@@ -62,7 +55,7 @@ class ApplicationState extends Application {
         window.addEventListener('focus', toggleMute);
 
         this._viewStateMachine.init(InitialViewState.TAG);
-        this.stage.addChild(this._initialViewState);
+        this.stage.addChild(this._viewStateMachine.current);
     }
 
     /**
@@ -110,7 +103,7 @@ class ApplicationState extends Application {
     private _handleInitializedEvent = () => {
         this._viewStateMachine.change(TopViewState.TAG);
         this.stage.removeChildren();
-        this.stage.addChild(this._topViewState);
+        this.stage.addChild(this._viewStateMachine.current);
     };
 
     /**
@@ -126,7 +119,7 @@ class ApplicationState extends Application {
             roundLength: 5,
         });
         this.stage.removeChildren();
-        this.stage.addChild(this._gameViewState);
+        this.stage.addChild(this._viewStateMachine.current);
     };
 
     /**
@@ -136,7 +129,7 @@ class ApplicationState extends Application {
     private _handleRequestedBackToTopEvent = () => {
         this._viewStateMachine.change(TopViewState.TAG);
         this.stage.removeChildren();
-        this.stage.addChild(this._topViewState);
+        this.stage.addChild(this._viewStateMachine.current);
     };
 }
 
