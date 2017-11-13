@@ -5,10 +5,7 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import ReadyState from "./internal/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "./internal/ActionState";
-import DrawState from "./internal/ResultState/DrawState";
-import PlayerWinState from "./internal/ResultState/PlayerWinState";
-import OpponentWinState from "./internal/ResultState/OpponentWinState";
-import FalseStartedState, {EnterParams as FalseStartedStateEnterParams} from "./internal/ResultState/FalseStartedState";
+import ResultState from './internal/ResultState';
 import OverState, {EnterParams as OverEnterParams} from "./internal/OverState";
 
 import Player from "../../texture/sprite/character/Player";
@@ -89,10 +86,7 @@ class GameViewState extends ViewContainer {
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: new ReadyState(this),
             [ActionState.TAG]: new ActionState(this),
-            [DrawState.TAG]: new DrawState(this),
-            [PlayerWinState.TAG]: new PlayerWinState(this),
-            [OpponentWinState.TAG]: new OpponentWinState(this),
-            [FalseStartedState.TAG]: new FalseStartedState(this),
+            [ResultState.TAG]: new ResultState(this),
             [OverState.TAG]: new OverState(this)
         });
 
@@ -170,7 +164,7 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onPlayerWon = (e: CustomEvent) => {
-        this._to(PlayerWinState.TAG);
+        this._to(ResultState.TAG);
     };
 
     /**
@@ -178,7 +172,7 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onOpponentWon = () => {
-        this._to(OpponentWinState.TAG);
+        this._to(ResultState.TAG);
     };
 
     /**
@@ -186,10 +180,7 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onFalseStarted = () => {
-        this._to<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
-            actor: 'player',
-            isEnded: this.game.currentBattle.isFixed(),
-        });
+        this._to(ResultState.TAG);
     };
 
     /**

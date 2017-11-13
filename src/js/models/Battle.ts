@@ -57,7 +57,6 @@ export default class Battle {
 
         if (this._falseStartMap.get(actor)) {
             this._winner = actor === Actor.PLAYER ? Actor.OPPONENT : Actor.PLAYER;
-            this._winnerAttackTime = time;
             return;
         }
 
