@@ -88,12 +88,9 @@ class ResultState extends AbstractGameState {
         );
         this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this.applicationLayer.addChild(this._battleResultLabelBoard);
-
         this.whiteOut('player', () => {
-            window.setTimeout(function () {
-                dispatchEvent(Events.REQUEST_READY);
-            }, 3000);
+            this.applicationLayer.addChild(this._battleResultLabelBoard);
+            setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
         });
     }
 
@@ -106,12 +103,9 @@ class ResultState extends AbstractGameState {
         );
         this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
-        this.applicationLayer.addChild(this._battleResultLabelBoard);
-
         this.whiteOut('opponent', () => {
-            window.setTimeout(function () {
-                dispatchEvent(Events.REQUEST_READY);
-            }, 3000);
+            this.applicationLayer.addChild(this._battleResultLabelBoard);
+            setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
         });
     }
 
@@ -146,10 +140,7 @@ class ResultState extends AbstractGameState {
         this._hueFilter.hue(180);
         this._brightnessFilter.brightness(0.5);
 
-        // TODO: fire after completing animation.
-        window.setTimeout(function () {
-            dispatchEvent(Events.REQUEST_READY);
-        }, 3000);
+        setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
 
     private _showDraw(): void {
@@ -165,10 +156,7 @@ class ResultState extends AbstractGameState {
 
         this.applicationLayer.addChild(this._battleResultLabelBoard);
 
-        // TODO: fire after completing animation.
-        window.setTimeout(function () {
-            dispatchEvent(Events.REQUEST_READY);
-        }, 3000);
+        window.setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
 
     protected whiteOut = (winner: 'player' | 'opponent', callback: Function) => {
