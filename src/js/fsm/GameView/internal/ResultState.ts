@@ -86,59 +86,62 @@ class ResultState extends AbstractGameState {
     }
 
     private _showPlayerWon(): void {
-        this.whiteOut('player', () => {
-            this.applicationLayer.addChild(this._battleResultLabelBoard);
-            setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-        });
+        this.whiteOut(
+            () => {
+                this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+                this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+
+                this.oimo.visible = false;
+
+                this.player.playSuccessAttack();
+                this.opponent.playTryAttack();
+            },
+            () => {
+                this.player.playWin();
+                this.opponent.playLose();
+
+                this.applicationLayer.addChild(this._battleResultLabelBoard);
+
+                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+            });
     }
 
     private _showOpponentWon(): void {
-        this.whiteOut('opponent', () => {
-            this.applicationLayer.addChild(this._battleResultLabelBoard);
-            setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-        });
+        this.whiteOut(
+            () => {
+                this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+                this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+
+                this.oimo.visible = false;
+
+                this.player.playTryAttack();
+                this.opponent.playSuccessAttack();
+            },
+            () => {
+                this.player.playLose();
+                this.opponent.playWin();
+
+                this.applicationLayer.addChild(this._battleResultLabelBoard);
+
+                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+            });
     }
 
     private _showFalseStart(): void {
-        this.applicationLayer.addChild(this._battleResultLabelBoard);
-
         this._hueFilter.hue(180);
         this._brightnessFilter.brightness(0.5);
 
+        this.applicationLayer.addChild(this._battleResultLabelBoard);
+
         setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
-    
-    protected whiteOut = (winner: 'player' | 'opponent', callback: Function) => {
+
+    protected whiteOut = (onStartRefresh: Function, onComplete: Function) => {
 
         const timeLine = anime.timeline({
             targets: this.whiteLayer,
             easing: 'linear',
         });
-
-        const playAttack = () => {
-            this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-            this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-
-            this.oimo.visible = false;
-
-            if (winner === 'player') {
-                this.player.playSuccessAttack();
-                this.opponent.playTryAttack();
-            } else {
-                this.player.playTryAttack();
-                this.opponent.playSuccessAttack();
-            }
-        };
-
-        const playWinOrLose = () => {
-            if (winner === 'player') {
-                this.player.playWin();
-                this.opponent.playLose();
-            } else {
-                this.player.playLose();
-                this.opponent.playWin();
-            }
-        };
 
         timeLine
         // Start white out.
@@ -148,19 +151,14 @@ class ResultState extends AbstractGameState {
             })
             // Refresh white out.
             .add({
-                begin: () => {
-                    playAttack();
-                },
+                begin: onStartRefresh,
                 alpha: 0,
                 duration: 300,
             })
             // Show result animation.
             .add({
                 duration: 300,
-                complete: () => {
-                    callback();
-                    playWinOrLose();
-                }
+                complete: onComplete
             });
 
         timeLine.play();
