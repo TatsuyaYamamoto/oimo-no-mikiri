@@ -57,6 +57,21 @@ class Game {
         return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
     }
 
+    public get winner(): Actor {
+        let wins = 0;
+        let lose = 0;
+
+        this._battles.forEach((b) => {
+            b.winner === Actor.PLAYER ? wins++ : lose++;
+        });
+
+        if (this.isOnePlayerMode) {
+            return wins >= 5 ? Actor.PLAYER : Actor.OPPONENT;
+        } else {
+            return wins > lose ? Actor.PLAYER : Actor.OPPONENT;
+        }
+    }
+
     public get bestTime(): number {
         let time = 99999;
 

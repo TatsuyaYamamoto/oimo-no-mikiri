@@ -14,6 +14,7 @@ import GameResultPaper from "../../../texture/containers/GameResultPaper";
 import {play, stop} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
+import Actor from "../../../models/Actor";
 
 export interface EnterParams extends Deliverable {
     bestTime: number,
@@ -36,12 +37,19 @@ class OverState extends AbstractGameState {
 
         this._resultPaper = new GameResultPaper({
             height: this.viewHeight * 0.9,
-            straightWins: params.round,
-            playerName: 'playerName',
-            winnerName: 'winnerName',
-            topTime: params.bestTime,
-            player: this.player,
-            opponent: this.opponent,
+            straightWins: this.game.straightWins,
+            topTime: this.game.bestTime,
+            winnerName: this.game.winner === Actor.PLAYER?
+                this.player.name:
+                this.opponent.name,
+            playerTexture: this.game.winner === Actor.PLAYER?
+                this.player.winTexture:
+                this.player.loseTexture,
+            playerName: this.player.name,
+            opponentTexture: this.game.winner === Actor.PLAYER?
+                this.opponent.loseTexture:
+                this.opponent.winTexture,
+            opponentName: this.opponent.name,
         });
         this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 

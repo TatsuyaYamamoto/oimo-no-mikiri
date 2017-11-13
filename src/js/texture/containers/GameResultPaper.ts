@@ -147,11 +147,12 @@ class WinnerName extends Text {
 interface GameResultPaperOptions {
     height: number,
     straightWins: number,
-    playerName: string,
-    winnerName: string,
     topTime: number,
-    player: Player,
-    opponent: Opponent,
+    winnerName: string,
+    playerTexture: Texture,
+    playerName: string,
+    opponentTexture: Texture,
+    opponentName: string,
 }
 
 /**
@@ -183,16 +184,16 @@ class GameResultPaper extends Container {
         this._topTime = new TopTime(width, height, options.topTime);
         this._topTime.position.set(width * 0.45, -1 * height * 0.15);
 
-        this._playerName = new PlayerName(options.player.name);
+        this._playerName = new PlayerName(options.playerName);
         this._playerName.position.set(-1 * width * 0.4, height * 0.2);
 
-        this._winnerName = new WinnerName(options.player.name);
+        this._winnerName = new WinnerName(options.winnerName);
         this._winnerName.position.set(0, height * 0.05);
 
-        this._playerSprite = this._from(options.player.winTexture);
+        this._playerSprite = this._from(options.playerTexture);
         this._playerSprite.position.set(-1 * width * 0.2, height * 0.3);
 
-        this._opponentSprite = this._from(options.opponent.winTexture);
+        this._opponentSprite = this._from(options.opponentTexture);
         this._opponentSprite.position.set(width * 0.2, height * 0.3);
 
         this.addChild(

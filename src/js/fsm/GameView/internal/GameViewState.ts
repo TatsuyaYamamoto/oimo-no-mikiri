@@ -9,6 +9,7 @@ import Oimo from "../../../texture/sprite/character/Oimo";
 import BackGround from "../../../texture/containers/BackGround";
 
 import Battle from "../../../models/Battle";
+import Game from "../../../models/Game";
 
 class WhiteLayer extends Graphics {
     constructor(width: number, height: number) {
@@ -56,8 +57,15 @@ abstract class GameViewState extends ViewContainer {
         return this._gameView.opponent;
     }
 
+    /**
+     * @deprecated
+     */
     protected get battle(): Battle {
         return this._gameView.game.currentBattle;
+    }
+
+    protected get game(): Game {
+        return this._gameView.game;
     }
 
     protected get oimo(): Oimo {
