@@ -43,11 +43,22 @@ class ResultState extends AbstractGameState {
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
-        this.whiteLayer.alpha = 0;
+        if (this.battle.isFixed()) {
+            this._battleResultLabelBoard = new BattleResultLabelBoard(
+                this.viewWidth,
+                this.viewHeight,
+                this.battle.winner === Actor.PLAYER ? 'playerWin' : 'opponentWin',
+                this.battle.winner === Actor.PLAYER ? this.player.name : this.opponent.name);
+        } else {
+            this._battleResultLabelBoard = new BattleResultLabelBoard(this.viewWidth, this.viewHeight, 'falseStart');
+        }
+        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._hueFilter = new filters.ColorMatrixFilter();
         this._brightnessFilter = new filters.ColorMatrixFilter();
         this._background.filters = [this._hueFilter, this._brightnessFilter];
+
+        this.whiteLayer.alpha = 0;
 
         this.backGroundLayer.addChild(
             this._background,
@@ -61,17 +72,12 @@ class ResultState extends AbstractGameState {
         );
 
 
-        if (this.battle.winner && !this.battle.winnerAttackTime) {
-            this._showFalseStart();
-            return;
-        }
-
-        if (this.battle.winner === Actor.PLAYER) {
+        if (this.battle.winnerAttackTime && this.battle.winner === Actor.PLAYER) {
             this._showPlayerWon();
             return;
         }
 
-        if (this.battle.winner === Actor.OPPONENT) {
+        if (this.battle.winnerAttackTime && this.battle.winner === Actor.OPPONENT) {
             this._showOpponentWon();
             return;
         }
@@ -80,14 +86,6 @@ class ResultState extends AbstractGameState {
     }
 
     private _showPlayerWon(): void {
-        this._battleResultLabelBoard = new BattleResultLabelBoard(
-            this.viewWidth,
-            this.viewHeight,
-            'playerWin',
-            this.player.name
-        );
-        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-
         this.whiteOut('player', () => {
             this.applicationLayer.addChild(this._battleResultLabelBoard);
             setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
@@ -95,14 +93,6 @@ class ResultState extends AbstractGameState {
     }
 
     private _showOpponentWon(): void {
-        this._battleResultLabelBoard = new BattleResultLabelBoard(
-            this.viewWidth,
-            this.viewHeight,
-            'opponentWin',
-            this.opponent.name
-        );
-        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-
         this.whiteOut('opponent', () => {
             this.applicationLayer.addChild(this._battleResultLabelBoard);
             setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
@@ -110,31 +100,6 @@ class ResultState extends AbstractGameState {
     }
 
     private _showFalseStart(): void {
-        if (this.battle.isFixed()) {
-            const winnerName = this.battle.winner === Actor.PLAYER ?
-                this.player.name :
-                this.opponent.name;
-
-
-            const resultType = this.battle.winner === Actor.PLAYER ?
-                'playerWin' :
-                'opponentWin';
-
-
-            this._battleResultLabelBoard = new BattleResultLabelBoard(
-                this.viewWidth,
-                this.viewHeight,
-                resultType,
-                winnerName
-            );
-        } else {
-            this._battleResultLabelBoard = new BattleResultLabelBoard(
-                this.viewWidth,
-                this.viewHeight,
-                'falseStart'
-            );
-        }
-        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this.applicationLayer.addChild(this._battleResultLabelBoard);
 
         this._hueFilter.hue(180);
@@ -142,23 +107,7 @@ class ResultState extends AbstractGameState {
 
         setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
-
-    private _showDraw(): void {
-        this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-        this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-
-        this._battleResultLabelBoard = new BattleResultLabelBoard(
-            this.viewWidth,
-            this.viewHeight,
-            'draw'
-        );
-        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-
-        this.applicationLayer.addChild(this._battleResultLabelBoard);
-
-        window.setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-    }
-
+    
     protected whiteOut = (winner: 'player' | 'opponent', callback: Function) => {
 
         const timeLine = anime.timeline({
