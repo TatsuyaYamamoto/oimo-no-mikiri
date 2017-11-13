@@ -23,10 +23,8 @@ class ActionState extends AbstractGameState {
 
     private _signalTime: number;
     private _opponentAttackTime: number;
-
     private _isOpponentAttacked: boolean;
 
-    private _background: BackGround;
     private _signalSprite: Signal;
 
     /**
@@ -34,8 +32,6 @@ class ActionState extends AbstractGameState {
      */
     update(elapsedMS: number): void {
         super.update(elapsedMS);
-
-        this._background.progress(elapsedMS);
 
         const shouldSign = !this.battle.isSignaled() && this._signalTime < this.elapsedTimeMillis;
 
@@ -57,11 +53,7 @@ class ActionState extends AbstractGameState {
 
         this._signalTime = this._createSignalTime();
         this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
-
         this._isOpponentAttacked = false;
-
-        this._background = new BackGround();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
@@ -72,7 +64,7 @@ class ActionState extends AbstractGameState {
         this._signalSprite.hide();
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
         this.applicationLayer.addChild(
             this.oimo,

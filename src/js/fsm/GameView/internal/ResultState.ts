@@ -16,7 +16,6 @@ import Actor from '../../../models/Actor';
 class ResultState extends AbstractGameState {
     public static TAG = ResultState.name;
 
-    private _background: BackGround;
     private _battleResultLabelBoard: BattleResultLabelBoard;
 
     protected _hueFilter: filters.ColorMatrixFilter;
@@ -25,19 +24,8 @@ class ResultState extends AbstractGameState {
     /**
      * @override
      */
-    update(elapsedMS: number): void {
-        super.update(elapsedMS);
-        this._background.progress(elapsedMS);
-    }
-
-    /**
-     * @override
-     */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
-
-        this._background = new BackGround();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
@@ -56,12 +44,12 @@ class ResultState extends AbstractGameState {
 
         this._hueFilter = new filters.ColorMatrixFilter();
         this._brightnessFilter = new filters.ColorMatrixFilter();
-        this._background.filters = [this._hueFilter, this._brightnessFilter];
+        this.background.filters = [this._hueFilter, this._brightnessFilter];
 
         this.whiteLayer.alpha = 0;
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
 
         this.applicationLayer.addChild(

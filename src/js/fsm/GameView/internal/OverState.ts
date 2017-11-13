@@ -23,31 +23,16 @@ export interface EnterParams extends Deliverable {
 class OverState extends AbstractGameState {
     public static TAG = OverState.name;
 
-    private _background: BackGround;
-
     private _resultPaper: GameResultPaper;
-
     private _gameOverLogo: GameOverLogo;
-
     private _restartButton: RestartButton;
     private _backToTopButton: BackToTopButton;
 
     /**
      * @override
      */
-    update(elapsedMS: number): void {
-        super.update(elapsedMS);
-        this._background.progress(elapsedMS);
-    }
-
-    /**
-     * @override
-     */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
-
-        this._background = new BackGround();
-        this._background.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._resultPaper = new GameResultPaper({
             height: this.viewHeight * 0.9,
@@ -73,7 +58,7 @@ class OverState extends AbstractGameState {
         this._backToTopButton.setOnClickListener(this._onClickBackToTopButton);
 
         this.backGroundLayer.addChild(
-            this._background,
+            this.background,
         );
         this.applicationLayer.addChild(
             this._restartButton,
