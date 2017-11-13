@@ -7,6 +7,8 @@ import Player from "../../../texture/sprite/character/Player";
 import Opponent from "../../../texture/sprite/character/Opponent";
 import Oimo from "../../../texture/sprite/character/Oimo";
 
+import Battle from "../../../models/Battle";
+
 class WhiteLayer extends Graphics {
     constructor(width: number, height: number) {
         super();
@@ -41,6 +43,10 @@ abstract class GameViewState extends ViewContainer {
 
     protected get opponent(): Opponent {
         return this._gameView.opponent;
+    }
+
+    protected get battle(): Battle {
+        return this._gameView.game.currentBattle;
     }
 
     protected get oimo(): Oimo {

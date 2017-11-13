@@ -8,6 +8,8 @@ import {Events} from "../GameView";
 import BackGround from "../../../texture/containers/BackGround";
 import Signal from "../../../texture/sprite/Signal";
 
+import Actor from '../../../models/Actor';
+
 import {play} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
@@ -22,8 +24,6 @@ class ActionState extends AbstractGameState {
     private _signalTime: number;
     private _opponentAttackTime: number;
 
-    private _isSignaled: boolean;
-    private _isPlayerAttacked: boolean;
     private _isOpponentAttacked: boolean;
 
     private _background: BackGround;
@@ -37,7 +37,7 @@ class ActionState extends AbstractGameState {
 
         this._background.progress(elapsedMS);
 
-        const shouldSign = !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
+        const shouldSign = !this.battle.isSignaled() && this._signalTime < this.elapsedTimeMillis;
 
         if (shouldSign) this._onSignaled();
 
@@ -58,8 +58,6 @@ class ActionState extends AbstractGameState {
         this._signalTime = this._createSignalTime();
         this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
 
-        this._isSignaled = false;
-        this._isPlayerAttacked = false;
         this._isOpponentAttacked = false;
 
         this._background = new BackGround();
@@ -102,7 +100,7 @@ class ActionState extends AbstractGameState {
     private _onSignaled = () => {
         console.log("Signaled!");
 
-        this._isSignaled = true;
+        this.battle.signal();
         this._signalSprite.show();
 
         play(SoundIds.SOUND_HARISEN);
@@ -116,19 +114,19 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _onAttackedByPlayer = () => {
-        if (this._isOpponentAttacked) {
+        if (this.battle.isFixed()) {
             return;
         }
 
         const attackTime = this.elapsedTimeMillis - this._signalTime;
+        this.battle.attack(Actor.PLAYER, attackTime);
 
-        if (!this._isSignaled) {
+        if (this.battle.isFalseStarted(Actor.PLAYER)) {
             console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
             dispatchEvent(Events.FALSE_START);
             return;
         }
 
-        this._isPlayerAttacked = true;
         this._signalSprite.hide();
 
         console.log(`Tap! result time: ${attackTime}ms`);
@@ -140,13 +138,14 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _onAttackedByOpponent = () => {
-        if (this._isPlayerAttacked) {
+        if (this.battle.isFixed()) {
             return;
         }
 
         const attackTime = this.elapsedTimeMillis - this._signalTime;
+        this.battle.attack(Actor.OPPONENT, attackTime);
 
-        if (!this._isSignaled) {
+        if (this.battle.isFalseStarted(Actor.OPPONENT)) {
             console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
             dispatchEvent(Events.FALSE_START);
             return;

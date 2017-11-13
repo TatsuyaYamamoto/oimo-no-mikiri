@@ -5,7 +5,6 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import ReadyState from "./internal/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "./internal/ActionState";
-import ResultState from "./internal/ResultState";
 import DrawState from "./internal/ResultState/DrawState";
 import PlayerWinState from "./internal/ResultState/PlayerWinState";
 import OpponentWinState from "./internal/ResultState/OpponentWinState";
@@ -21,7 +20,9 @@ import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
 
-import {GAME_PARAMETERS, NPC_LEVELS} from "../../Constants";
+import Game from '../../models/Game';
+
+import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
@@ -43,24 +44,21 @@ class GameViewState extends ViewContainer {
 
     private _gameStateMachine: StateMachine<ViewContainer>;
 
-    private _gameLevel: NPC_LEVELS = null;
-    private _roundLength: number;
-    private _roundNumber: number;
-    private _isFalseStarted: boolean;
-    private _isGameFailed: boolean;
-    private _results: { [roundNumber: string]: number };
+    private _game: Game;
 
     private _player: Player;
-    private _opponents: {
-        [roundNumber: number]: Opponent
-    } = Object.create(null);
+    private _opponents: { [roundNumber: number]: Opponent };
 
     public get player(): Player {
         return this._player;
     }
 
     public get opponent(): Opponent {
-        return this._opponents[this._roundNumber];
+        return this._opponents[this._game.currentRound];
+    }
+
+    public get game(): Game {
+        return this._game;
     }
 
 
@@ -79,12 +77,9 @@ class GameViewState extends ViewContainer {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._gameLevel = params.level;
-        this._roundLength = params.roundLength;
-        this._initState();
-
         this._player = new Hanamaru();
 
+        this._opponents = {};
         this._opponents[1] = new Wataame();
         this._opponents[2] = new LittleDaemon();
         this._opponents[3] = new Shitake();
@@ -104,12 +99,16 @@ class GameViewState extends ViewContainer {
         addEvents({
             [Events.REQUEST_READY]: this._onRequestedReady,
             [Events.IS_READY]: this._onReady,
-            [Events.ACTION_SUCCESS]: this._handleActionSuccessEvent,
-            [Events.ACTION_FAILURE]: this._handleActionFailureEvent,
-            [Events.FALSE_START]: this._handleFalseStartEvent,
-            [Events.FIXED_RESULT]: this._handleFixedResultEvent,
-            [Events.RESTART_GAME]: this._handleRestartGameEvent,
+            [Events.ACTION_SUCCESS]: this._onPlayerWon,
+            [Events.ACTION_FAILURE]: this._onOpponentWon,
+            [Events.FALSE_START]: this._onFalseStarted,
+            [Events.FIXED_RESULT]: this._onFixedResult,
+            [Events.RESTART_GAME]: this._onRequestedRestart,
         });
+
+        this._game = Game.asOnePlayer(params.level);
+        this.game.start();
+        this.game.currentBattle.start();
 
         dispatchEvent(Events.REQUEST_READY);
     }
@@ -136,27 +135,21 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onRequestedReady = () => {
-        // is failed previous match?
-        if (this._isGameFailed) {
-            dispatchEvent(Events.FIXED_RESULT);
-            return;
-        }
-
-        // is finished every match?
-        if (this._roundNumber > this._roundLength) {
+        if (this.game.isFixed()) {
             dispatchEvent(Events.FIXED_RESULT);
             return;
         }
 
         // is retry battle by false-start?
-        if (!this._isFalseStarted) {
-            this._roundNumber += 1;
+        if (this.game.currentBattle.isFixed()) {
+            this.game.next();
+            this.game.currentBattle.start();
         }
 
-        console.log("round number", this._roundNumber);
+        console.log(`On requested ready. Round${this.game.currentRound}`);
 
-        this._player.playWait();
-        this._opponents[this._roundNumber].playWait();
+        this.player.playWait();
+        this.opponent.playWait();
 
         this._to(ReadyState.TAG);
 
@@ -167,42 +160,8 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onReady = () => {
-        const autoOpponentAttackInterval = (GAME_PARAMETERS.reaction_rate[this._gameLevel][this._roundNumber] * GAME_PARAMETERS.reaction_rate_tuning * 1000)
-        this._to<ActionStateEnterParams>(ActionState.TAG, {autoOpponentAttackInterval});
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _handleActionSuccessEvent = (e: CustomEvent) => {
-        this._results[this._roundNumber] = e.detail.time;
-        this._isFalseStarted = false;
-
-        this._to(PlayerWinState.TAG);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _handleActionFailureEvent = () => {
-        this._isGameFailed = true;
-
-        this._to(OpponentWinState.TAG);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _handleFalseStartEvent = () => {
-        this._isGameFailed = this._isFalseStarted;
-        this._isFalseStarted = true;
-
-        this._to<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
-            actor: 'player',
-            isEnded: this._isGameFailed,
+        this._to<ActionStateEnterParams>(ActionState.TAG, {
+            autoOpponentAttackInterval: this.game.npcAttackIntervalMillis,
         });
     };
 
@@ -210,27 +169,44 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _handleFixedResultEvent = () => {
-        // set max best time as constants.
-        const times: number[] = Object.keys(this._results).map((roundNumber) => this._results[roundNumber]);
-        times.push(99 * 1000);
+    private _onPlayerWon = (e: CustomEvent) => {
+        this._to(PlayerWinState.TAG);
+    };
 
-        const bestTime = Math.max(...times);
-        const round = this._roundNumber;
+    /**
+     *
+     * @private
+     */
+    private _onOpponentWon = () => {
+        this._to(OpponentWinState.TAG);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onFalseStarted = () => {
+        this._to<FalseStartedStateEnterParams>(FalseStartedState.TAG, {
+            actor: 'player',
+            isEnded: this.game.currentBattle.isFixed(),
+        });
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onFixedResult = () => {
+        const bestTime = this.game.bestTime;
+        const round = this.game.straightWins;
 
         this._to<OverEnterParams>(OverState.TAG, {bestTime, round});
     };
 
-    private _handleRestartGameEvent = () => {
-        this._initState();
+    private _onRequestedRestart = () => {
+        this.game.start();
+        this.game.currentBattle.start();
         dispatchEvent(Events.REQUEST_READY);
-    };
-
-    private _initState = () => {
-        this._roundNumber = 0;
-        this._isFalseStarted = false;
-        this._isGameFailed = false;
-        this._results = {};
     };
 
     /**
