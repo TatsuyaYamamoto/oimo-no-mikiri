@@ -11,6 +11,7 @@ export const Ids = {
     SOUND_ZENKAI: 'SOUND_ZENKAI',
     SOUND_WAVE_LOOP: 'SOUND_WAVE_LOOP',
     SOUND_HARISEN: 'SOUND_HARISEN',
+    SOUND_ATTACK: 'SOUND_ATTACK',
 };
 
 const manifest: SoundManifest = {
@@ -20,6 +21,7 @@ const manifest: SoundManifest = {
     [Ids.SOUND_ZENKAI]: 'zenkai.mp3',
     [Ids.SOUND_WAVE_LOOP]: 'wave_loop.mp3',
     [Ids.SOUND_HARISEN]: 'harisen.mp3',
+    [Ids.SOUND_ATTACK]: 'attack.mp3',
 };
 
 export default manifest;

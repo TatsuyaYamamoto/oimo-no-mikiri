@@ -5,7 +5,6 @@ import {getRandomInteger} from "../../../../framework/utils";
 import AbstractGameState from "./GameViewState";
 import {Events} from "../GameView";
 
-import BackGround from "../../../texture/containers/BackGround";
 import Signal from "../../../texture/sprite/Signal";
 
 import Actor from '../../../models/Actor';
@@ -118,7 +117,8 @@ class ActionState extends AbstractGameState {
             dispatchEvent(Events.FALSE_START);
             return;
         }
-
+        
+        play(SoundIds.SOUND_ATTACK);
         this._signalSprite.hide();
 
         console.log(`Tap! result time: ${attackTime}ms`);
@@ -143,6 +143,7 @@ class ActionState extends AbstractGameState {
             return;
         }
 
+        play(SoundIds.SOUND_ATTACK);
         this._isOpponentAttacked = true;
         this._signalSprite.hide();
 
