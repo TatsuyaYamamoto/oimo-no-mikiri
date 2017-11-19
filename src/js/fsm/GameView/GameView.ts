@@ -16,6 +16,7 @@ import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
+import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
 import Game from '../../models/Game';
 
@@ -81,7 +82,7 @@ class GameViewState extends ViewContainer {
         this._opponents[2] = new LittleDaemon();
         this._opponents[3] = new Shitake();
         this._opponents[4] = new Uchicchi();
-        this._opponents[5] = new LittleDaemon();
+        this._opponents[5] = new EnemyRuby();
 
         this._gameStateMachine = new StateMachine({
             [ReadyState.TAG]: new ReadyState(this),

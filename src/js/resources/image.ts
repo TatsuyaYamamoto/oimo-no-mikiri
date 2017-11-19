@@ -35,6 +35,8 @@ export const Ids = {
     CHARACTER_LITTLE_DAEMON_CLOSEUP: 'CHARACTER_LITTLE_DAEMON_CLOSEUP',
     CHARACTER_WATAAME: 'CHARACTER_WATAAME',
     CHARACTER_WATAAME_CLOSEUP: 'CHARACTER_WATAAME_CLOSEUP',
+    CHARACTER_ENEMY_RUBY: 'CHARACTER_ENEMY_RUBY',
+    CHARACTER_ENEMY_RUBY_CLOSEUP: 'CHARACTER_ENEMY_RUBY_CLOSEUP',
 
     LOGO_TITLE: 'LOGO_TITLE',
     LOGO_GAME_OVER: 'LOGO_GAME_OVER',
@@ -75,6 +77,8 @@ const manifest: ImageManifest = {
         [Ids.CHARACTER_LITTLE_DAEMON_CLOSEUP]: 'character_little_daemon_closeup.png',
         [Ids.CHARACTER_WATAAME]: 'character_wataame.json',
         [Ids.CHARACTER_WATAAME_CLOSEUP]: 'character_wataame_closeup.png',
+        [Ids.CHARACTER_ENEMY_RUBY]: 'character_enemy_ruby.json',
+        [Ids.CHARACTER_ENEMY_RUBY_CLOSEUP]: 'character_enemy_ruby_closeup.png',
 
         [Ids.LOGO_TITLE]: 'image_logo_title.png',
         [Ids.LOGO_GAME_OVER]: 'image_logo_gameover.png',

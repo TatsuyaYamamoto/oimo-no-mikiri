@@ -18,6 +18,7 @@ export const Ids = {
     CHARA_NAME_LITTLE_DAEMON: 'CHARA_NAME_LITTLE_DAEMON',
     CHARA_NAME_UCHICCHI: 'CHARA_NAME_UCHICCHI',
     CHARA_NAME_WATAAME: 'CHARA_NAME_WATAAME',
+    CHARA_NAME_ENEMY_RUBY: 'CHARA_NAME_ENEMY_RUBY',
 
     CREDIT_T28: "CREDIT_T28",
     CREDIT_SANZASHI: "CREDIT_SANZASHI",
@@ -52,6 +53,7 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.CHARA_NAME_LITTLE_DAEMON]: 'Little deamond',
             [Ids.CHARA_NAME_UCHICCHI]: 'Uchicchi',
             [Ids.CHARA_NAME_WATAAME]: 'Wataame',
+            [Ids.CHARA_NAME_ENEMY_RUBY]: 'Ruby',
 
             [Ids.CREDIT_T28]: 'Planning, Program, Music: T28',
             [Ids.CREDIT_SANZASHI]: 'Illustration: Sanzashi',
@@ -82,6 +84,7 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.CHARA_NAME_LITTLE_DAEMON]: 'リトルデーモン',
             [Ids.CHARA_NAME_UCHICCHI]: 'うちっちー',
             [Ids.CHARA_NAME_WATAAME]: 'わたあめ',
+            [Ids.CHARA_NAME_ENEMY_RUBY]: 'るびぃ',
 
             [Ids.CREDIT_T28]: '思いつき, プラグラム, 音楽: T28',
             [Ids.CREDIT_SANZASHI]: 'イラスト: さんざし',
