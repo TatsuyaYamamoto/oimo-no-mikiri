@@ -6,6 +6,7 @@ import AbstractGameState from "./GameViewState";
 import {Events} from "../GameView";
 
 import Signal from "../../../texture/sprite/Signal";
+import FalseStartCheck from "../../../texture/sprite/text/FalseStartCheck";
 
 import Actor from '../../../models/Actor';
 
@@ -25,6 +26,8 @@ class ActionState extends AbstractGameState {
     private _isOpponentAttacked: boolean;
 
     private _signalSprite: Signal;
+    private _playerFalseStartCheck: FalseStartCheck;
+    private _opponentFalseStartCheck: FalseStartCheck;
 
     /**
      * @override
@@ -62,6 +65,12 @@ class ActionState extends AbstractGameState {
         this._signalSprite.position.set(this.viewWidth * 0.5, this.viewHeight * 0.4);
         this._signalSprite.hide();
 
+        this._playerFalseStartCheck = new FalseStartCheck();
+        this._playerFalseStartCheck.position.set(this.viewWidth * 0.2, this.viewHeight * 0.2);
+
+        this._opponentFalseStartCheck = new FalseStartCheck();
+        this._opponentFalseStartCheck.position.set(this.viewWidth * 0.8, this.viewHeight * 0.2);
+
         this.backGroundLayer.addChild(
             this.background,
         );
@@ -69,8 +78,16 @@ class ActionState extends AbstractGameState {
             this.oimo,
             this.player,
             this.opponent,
-            this._signalSprite,
+            this._signalSprite
         );
+
+        if(this.battle.isFalseStarted(Actor.PLAYER)){
+            this.applicationLayer.addChild(this._playerFalseStartCheck);
+        }
+
+        if(this.battle.isFalseStarted(Actor.OPPONENT)){
+            this.applicationLayer.addChild(this._opponentFalseStartCheck);
+        }
 
         this.addClickWindowEventListener(this._onAttackedByPlayer);
 
