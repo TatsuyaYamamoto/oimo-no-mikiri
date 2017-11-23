@@ -13,6 +13,7 @@ export const Ids = {
     SOUND_HARISEN: 'SOUND_HARISEN',
     SOUND_ATTACK: 'SOUND_ATTACK',
     SOUND_READY: 'SOUND_READY',
+    SOUND_FALSE_START: 'SOUND_FALSE_START',
 };
 
 const manifest: SoundManifest = {
@@ -24,6 +25,7 @@ const manifest: SoundManifest = {
     [Ids.SOUND_HARISEN]: 'harisen.mp3',
     [Ids.SOUND_ATTACK]: 'attack.mp3',
     [Ids.SOUND_READY]: 'ready.mp3',
+    [Ids.SOUND_FALSE_START]: 'false_start.mp3',
 };
 
 export default manifest;

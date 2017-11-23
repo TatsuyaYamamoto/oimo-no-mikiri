@@ -116,6 +116,8 @@ class ActionState extends AbstractGameState {
 
         if (!this.battle.isSignaled()) {
             console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
+            
+            play(SoundIds.SOUND_FALSE_START);
             dispatchEvent(Events.FALSE_START);
             return;
         }
@@ -141,6 +143,8 @@ class ActionState extends AbstractGameState {
 
         if (!this.battle.isSignaled()) {
             console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
+
+            play(SoundIds.SOUND_FALSE_START);
             dispatchEvent(Events.FALSE_START);
             return;
         }
