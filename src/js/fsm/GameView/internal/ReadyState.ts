@@ -103,7 +103,7 @@ class ReadyState extends AbstractGameState {
             this._playAnimation();
         }
 
-        playOnLoop(SoundIds.SOUND_WAVE_LOOP);
+        playOnLoop(SoundIds.SOUND_WAVE_LOOP, 0.2);
     }
 
     /**
