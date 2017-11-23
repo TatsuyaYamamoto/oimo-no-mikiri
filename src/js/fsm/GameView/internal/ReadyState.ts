@@ -129,7 +129,7 @@ class ReadyState extends AbstractGameState {
      * @private
      */
     private _getSoundTimeLine = () => {
-        const timeLine = anime.timeline();
+        const timeLine = anime.timeline({autoplay: false});
 
         return timeLine;
     };
@@ -155,6 +155,7 @@ class ReadyState extends AbstractGameState {
         const timeLine = anime.timeline({
             targets: values,
             easing: 'linear',
+            autoplay: false,
             update: () => {
                 this._brightnessFilter.contrast(values.contrast);
                 this._contrastFilter.brightness(values.brightness);
@@ -202,6 +203,7 @@ class ReadyState extends AbstractGameState {
         const timeLine = anime.timeline({
             easing: 'linear',
             targets: values,
+            autoplay: false,
             update: () => {
                 this._playerCharacterCloseup.x = values.playerX;
                 this._opponentCharacterCloseup.x = values.opponentX;
