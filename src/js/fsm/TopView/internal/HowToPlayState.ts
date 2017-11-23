@@ -101,15 +101,9 @@ class HowToPlayState extends AbstractTopState {
      * @private
      */
     private _handleTapWindow = () => {
-        this._startGetOimoAnimation();
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _startGetOimoAnimation = () => {
-
+        this._player.playTryAttack();
+        play(SoundIds.SOUND_ATTACK);
+        setTimeout(() => this._player.playWait(), 1000);
     };
 }
 
