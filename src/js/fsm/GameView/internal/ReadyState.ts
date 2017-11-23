@@ -7,7 +7,6 @@ import Deliverable from "../../../../framework/Deliverable";
 import AbstractGameState from "./GameViewState";
 import {Events} from '../GameView';
 
-import BackGround from "../../../texture/containers/BackGround";
 import PlayerCloseUp from "../../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../../texture/sprite/character/OpponentCloseUp";
 
@@ -17,15 +16,15 @@ import {Ids as SoundIds} from '../../../resources/sound';
 import {SKIP_READY_ANIMATION} from '../../../Constants';
 
 const ANIMATION_TIME_LINE = {
-    START_INCREASING_BRIGHTNESS: 1000,
-    END_INCREASING_BRIGHTNESS: 2000,
-    PLAY_READY_SOUND: 3000,
-    SHOW_CLOSEUP_LINE_IMAGES: 3000,
-    START_MOVING_CLOSEUP_LINE_IMAGES: 4000,
-    END_MOVING_CLOSING_LINE_IMAGES: 5000,
-    HIDE_CLOSEUP_LINE_IMAGES: 6000,
-    START_DECREASING_BRIGHTNESS: 7000,
-    END_DECREASING_BRIGHTNESS: 8000,
+    START_INCREASING_BRIGHTNESS: 500,
+    END_INCREASING_BRIGHTNESS: 1000,
+    PLAY_READY_SOUND: 1200,
+    SHOW_CLOSEUP_LINE_IMAGES: 1200,
+    START_MOVING_CLOSEUP_LINE_IMAGES: 2500,
+    END_MOVING_CLOSING_LINE_IMAGES: 3000,
+    HIDE_CLOSEUP_LINE_IMAGES: 4000,
+    START_DECREASING_BRIGHTNESS: 4000,
+    END_DECREASING_BRIGHTNESS: 5000,
 };
 
 class ReadyState extends AbstractGameState {
@@ -129,7 +128,15 @@ class ReadyState extends AbstractGameState {
      * @private
      */
     private _getSoundTimeLine = () => {
+        const {
+            PLAY_READY_SOUND,
+        } = ANIMATION_TIME_LINE;
         const timeLine = anime.timeline({autoplay: false});
+
+        timeLine.add({
+            offset: PLAY_READY_SOUND,
+            begin: () => play(SoundIds.SOUND_READY),
+        });
 
         return timeLine;
     };
@@ -165,7 +172,7 @@ class ReadyState extends AbstractGameState {
         timeLine
         // black out
             .add({
-                brightness: 0.4,
+                brightness: 0.2,
                 contrast: 0.8,
                 offset: START_INCREASING_BRIGHTNESS,
                 duration: END_INCREASING_BRIGHTNESS - START_INCREASING_BRIGHTNESS,
@@ -226,9 +233,6 @@ class ReadyState extends AbstractGameState {
                 duration: END_MOVING_CLOSING_LINE_IMAGES - START_MOVING_CLOSEUP_LINE_IMAGES,
                 playerX: this.viewWidth * 2,
                 opponentX: -1 * this.viewWidth * 1,
-                begin: () => {
-                    play(SoundIds.SOUND_READY);
-                }
             })
             // hide
             .add({
