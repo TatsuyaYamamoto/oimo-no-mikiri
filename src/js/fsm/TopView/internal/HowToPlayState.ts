@@ -55,7 +55,7 @@ class HowToPlayState extends AbstractTopState {
         this._opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
 
         this._backToMenuButton = new BackToMenuButton();
-        this._backToMenuButton.position.set(this.viewWidth * 0.2, this.viewHeight * 0.9);
+        this._backToMenuButton.position.set(this.viewWidth * 0.85, this.viewHeight * 0.85);
         this._backToMenuButton.setOnClickListener(this._onBackToMenuClick);
 
         this.backGroundLayer.addChild(
