@@ -6,7 +6,6 @@ import AbstractTopState from "./TopViewState";
 
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
-import CreditContainer from "../../../texture/containers/CreditContainer";
 
 import {play, stop} from "../../../helper/MusicPlayer";
 
@@ -17,7 +16,6 @@ class MenuState extends AbstractTopState {
 
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
-    private _creditContainer: CreditContainer;
 
     /**
      * @override
@@ -42,10 +40,6 @@ class MenuState extends AbstractTopState {
         this._selectLevelBoard = new SelectLevelBoard(this.viewHeight, this.viewHeight);
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectLevelBoard.setOnSelectLevelListener(this._onSelectLevel);
-
-        this._creditContainer = new CreditContainer(this.viewHeight, this.viewHeight);
-        this._creditContainer.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        this._creditContainer.setOnBackToMenuButtonClickListener(this._onBackToMenuClick);
 
         this.backGroundLayer.addChild(
             this.background
@@ -93,29 +87,9 @@ class MenuState extends AbstractTopState {
      * @private
      */
     private _onSelectCredit = () => {
-        this.applicationLayer.removeChild(
-            this._menuBoard,
-        );
-        this.applicationLayer.addChild(
-            this._creditContainer,
-        );
+        dispatchEvent(Events.REQUEST_CREDIT);
 
         play(SoundIds.SOUND_OK);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _onBackToMenuClick = () => {
-        this.applicationLayer.removeChild(
-            this._creditContainer,
-        );
-        this.applicationLayer.addChild(
-            this._menuBoard,
-        );
-
-        play(SoundIds.SOUND_CANCEL);
     };
 
     /**

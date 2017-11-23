@@ -8,11 +8,13 @@ import MenuState from "./internal/MenuState";
 
 import {Events as AppEvents} from '../ApplicationState';
 import HowToPlayState from "./internal/HowToPlayState";
+import CreditState from "./internal/CreditState";
 
 export enum Events {
     TAP_TITLE = 'GameView@TAP_TITLE',
     REQUEST_BACK_TO_MENU = 'GameView@REQUEST_BACK_TO_MENU',
     REQUEST_HOW_TO_PLAY = 'GameView@REQUEST_HOW_TO_PLAY',
+    REQUEST_CREDIT = 'GameView@REQUEST_CREDIT',
     FIXED_PLAY_MODE = 'GameView@FIXED_PLAY_MODE',
 }
 
@@ -40,12 +42,14 @@ class TopViewState extends ViewContainer {
             [TitleState.TAG]: new TitleState(),
             [MenuState.TAG]: new MenuState(),
             [HowToPlayState.TAG]: new HowToPlayState(),
+            [CreditState.TAG]: new CreditState(),
         });
 
         addEvents({
             [Events.TAP_TITLE]: this._handleTapTitleEvent,
             [Events.REQUEST_BACK_TO_MENU]: this._handleRequestBackMenuEvent,
             [Events.REQUEST_HOW_TO_PLAY]: this._handleRequestHowToPlayEvent,
+            [Events.REQUEST_CREDIT]: this._handleRequestCredit,
             [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
         });
 
@@ -88,6 +92,14 @@ class TopViewState extends ViewContainer {
      */
     private _handleRequestBackMenuEvent = () => {
         this._to(MenuState.TAG);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _handleRequestCredit = () => {
+        this._to(CreditState.TAG);
     };
 
     /**
