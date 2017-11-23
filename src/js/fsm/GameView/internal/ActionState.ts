@@ -73,6 +73,8 @@ class ActionState extends AbstractGameState {
         );
 
         this.addClickWindowEventListener(this._onAttackedByPlayer);
+
+        this.battle.start();
     }
 
     /**
@@ -112,12 +114,12 @@ class ActionState extends AbstractGameState {
         const attackTime = this.elapsedTimeMillis - this._signalTime;
         this.battle.attack(Actor.PLAYER, attackTime);
 
-        if (this.battle.isFalseStarted(Actor.PLAYER)) {
+        if (!this.battle.isSignaled()) {
             console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
             dispatchEvent(Events.FALSE_START);
             return;
         }
-        
+
         play(SoundIds.SOUND_ATTACK);
         this._signalSprite.hide();
 
@@ -137,7 +139,7 @@ class ActionState extends AbstractGameState {
         const attackTime = this.elapsedTimeMillis - this._signalTime;
         this.battle.attack(Actor.OPPONENT, attackTime);
 
-        if (this.battle.isFalseStarted(Actor.OPPONENT)) {
+        if (!this.battle.isSignaled()) {
             console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
             dispatchEvent(Events.FALSE_START);
             return;

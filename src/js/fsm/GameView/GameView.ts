@@ -103,7 +103,6 @@ class GameViewState extends ViewContainer {
 
         this._game = Game.asOnePlayer(params.level);
         this.game.start();
-        this.game.currentBattle.start();
 
         dispatchEvent(Events.REQUEST_READY);
     }
@@ -138,7 +137,6 @@ class GameViewState extends ViewContainer {
         // is retry battle by false-start?
         if (this.game.currentBattle.isFixed()) {
             this.game.next();
-            this.game.currentBattle.start();
         }
 
         console.log(`On requested ready. Round${this.game.currentRound}`);
@@ -197,7 +195,6 @@ class GameViewState extends ViewContainer {
 
     private _onRequestedRestart = () => {
         this.game.start();
-        this.game.currentBattle.start();
         dispatchEvent(Events.REQUEST_READY);
     };
 

@@ -6,6 +6,14 @@ export default class Battle {
     private _winnerAttackTime: number;
     private _falseStartMap: Map<Actor, boolean>;
 
+    constructor(){
+        this._winner = null;
+        this._isSignaled = false;
+        this._falseStartMap = new Map();
+        this._falseStartMap.set(Actor.PLAYER, false);
+        this._falseStartMap.set(Actor.OPPONENT, false);
+    }
+
     public get winner(): Actor {
         return this._winner;
     }
@@ -32,11 +40,7 @@ export default class Battle {
             return;
         }
 
-        this._winner = null;
         this._isSignaled = false;
-        this._falseStartMap = new Map();
-        this._falseStartMap.set(Actor.PLAYER, false);
-        this._falseStartMap.set(Actor.OPPONENT, false);
     }
 
     public signal(): void {
@@ -52,14 +56,17 @@ export default class Battle {
         if (this.isSignaled()) {
             this._winner = actor;
             this._winnerAttackTime = time;
+            console.info(`Attack! => winner actor: ${actor}, time: ${time}`);
             return;
         }
 
         if (this._falseStartMap.get(actor)) {
             this._winner = actor === Actor.PLAYER ? Actor.OPPONENT : Actor.PLAYER;
+            console.info(`Attack! => false-start and lose. winner actor: ${actor}, time: ${time}`);
             return;
         }
 
+        console.info(`Attack! => false-start. actor: ${actor}, time: ${time}`);
         this._falseStartMap.set(actor, true);
     }
 }
