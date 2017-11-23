@@ -11,7 +11,7 @@ import BackGround from "../../../texture/containers/BackGround";
 import PlayerCloseUp from "../../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../../texture/sprite/character/OpponentCloseUp";
 
-import {playOnLoop} from "../../../helper/MusicPlayer";
+import {playOnLoop, play} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import {SKIP_READY_ANIMATION} from '../../../Constants';
@@ -224,6 +224,9 @@ class ReadyState extends AbstractGameState {
                 duration: END_MOVING_CLOSING_LINE_IMAGES - START_MOVING_CLOSEUP_LINE_IMAGES,
                 playerX: this.viewWidth * 2,
                 opponentX: -1 * this.viewWidth * 1,
+                begin: () => {
+                    play(SoundIds.SOUND_READY);
+                }
             })
             // hide
             .add({
