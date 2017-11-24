@@ -22,6 +22,8 @@ export const Ids = {
     BUTTON_LEVEL_BEGINNER: 'BUTTON_LEVEL_BEGINNER',
     BUTTON_LEVEL_NOVICE: 'BUTTON_LEVEL_NOVICE',
     BUTTON_LEVEL_EXPERT: 'BUTTON_LEVEL_EXPERT',
+    BUTTON_HOME: 'BUTTON_HOME',
+    BUTTON_SOUND: 'BUTTON_SOUND',
 
     CHARACTER_OIMO: 'CHARACTER_OIMO',
 
@@ -65,6 +67,8 @@ const manifest: ImageManifest = {
         [Ids.BUTTON_LEVEL_BEGINNER]: 'button_level_beginner.png',
         [Ids.BUTTON_LEVEL_NOVICE]: 'button_level_novice.png',
         [Ids.BUTTON_LEVEL_EXPERT]: 'button_level_expert.png',
+        [Ids.BUTTON_HOME]: 'button_home.png',
+        [Ids.BUTTON_SOUND]: 'button_sound.json',
 
         [Ids.CHARACTER_OIMO]: 'character_oimo.json',
 

@@ -33,6 +33,8 @@ class MenuState extends AbstractTopState {
 
         this._menuBoard = new MenuBoard(this.viewHeight, this.viewHeight);
         this._menuBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._menuBoard.setOnSelectHomeListener(this._onSelectHome);
+        this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnSelectGameStartListener(this._onSelectGameStart);
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
@@ -56,6 +58,22 @@ class MenuState extends AbstractTopState {
     onExit(): void {
         super.onExit();
     }
+
+    /**
+     *
+     * @private
+     */
+    private _onSelectHome = () => {
+        console.log('go to home')
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onToggleSound = () => {
+        console.log('toggle sound');
+    };
 
     /**
      *
