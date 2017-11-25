@@ -54,3 +54,7 @@ export function toggleMute(): boolean {
 
     return PixiSound.context.muted;
 }
+
+export function isMute():boolean{
+    return PixiSound.context.muted;
+}
