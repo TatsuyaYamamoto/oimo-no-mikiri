@@ -7,7 +7,7 @@ import AbstractTopState from "./TopViewState";
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
-import {play, stop} from "../../../helper/MusicPlayer";
+import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 
@@ -72,7 +72,8 @@ class MenuState extends AbstractTopState {
      * @private
      */
     private _onToggleSound = () => {
-        console.log('toggle sound');
+        play(SoundIds.SOUND_TOGGLE_SOUND);
+        toggleMute();
     };
 
     /**

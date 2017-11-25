@@ -7,6 +7,7 @@ import {SoundManifest} from "../../framework/AssetLoader";
 export const Ids = {
     SOUND_OK: 'SOUND_OK',
     SOUND_CANCEL: 'SOUND_CANCEL',
+    SOUND_TOGGLE_SOUND: 'SOUND_TOGGLE_SOUND',
 
     SOUND_ZENKAI: 'SOUND_ZENKAI',
     SOUND_WAVE_LOOP: 'SOUND_WAVE_LOOP',
@@ -19,6 +20,7 @@ export const Ids = {
 const manifest: SoundManifest = {
     [Ids.SOUND_OK]: 'ok.mp3',
     [Ids.SOUND_CANCEL]: 'cancel.mp3',
+    [Ids.SOUND_TOGGLE_SOUND]: 'toggle_sound.mp3',
 
     [Ids.SOUND_ZENKAI]: 'zenkai.mp3',
     [Ids.SOUND_WAVE_LOOP]: 'wave_loop.mp3',
