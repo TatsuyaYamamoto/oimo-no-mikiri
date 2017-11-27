@@ -5,7 +5,7 @@ import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUt
 
 import ReadyState from "./internal/ReadyState";
 import ActionState, {EnterParams as ActionStateEnterParams} from "./internal/ActionState";
-import ResultState from './internal/ResultState';
+import ResultState, {EnterParams as ResultStateEnterParams} from './internal/ResultState';
 import OverState, {EnterParams as OverEnterParams} from "./internal/OverState";
 
 import Player from "../../texture/sprite/character/Player";
@@ -97,6 +97,7 @@ class GameViewState extends ViewContainer {
             [Events.IS_READY]: this._onReady,
             [Events.ATTACK_SUCCESS]: this._onAttackSucceed,
             [Events.FALSE_START]: this._onFalseStarted,
+            [Events.DRAW]: this._onDrew,
             [Events.FIXED_RESULT]: this._onFixedResult,
             [Events.RESTART_GAME]: this._onRequestedRestart,
         });
@@ -118,6 +119,7 @@ class GameViewState extends ViewContainer {
             Events.IS_READY,
             Events.ATTACK_SUCCESS,
             Events.FALSE_START,
+            Events.DRAW,
             Events.FIXED_RESULT,
             Events.RESTART_GAME,
         ])
@@ -168,7 +170,7 @@ class GameViewState extends ViewContainer {
     private _onAttackSucceed = (e: CustomEvent) => {
         const {actor, attackTime} = e.detail;
         this.game.currentBattle.attack(actor, attackTime);
-        this._to(ResultState.TAG);
+        this._to<ResultStateEnterParams>(ResultState.TAG, {winner: actor});
     };
 
     /**
@@ -176,8 +178,22 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onFalseStarted = (e: CustomEvent) => {
-        this.game.currentBattle.falseStart(e.detail.actor);
-        this._to(ResultState.TAG);
+        const {actor} = e.detail;
+        this.game.currentBattle.falseStart(actor);
+        this._to<ResultStateEnterParams>(ResultState.TAG, {
+            winner: this.game.currentBattle.winner,
+            falseStarter: actor
+        });
+
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onDrew = (e: CustomEvent) => {
+        this.game.currentBattle.draw();
+        this._to<ResultStateEnterParams>(ResultState.TAG);
     };
 
     /**

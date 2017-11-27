@@ -7,11 +7,15 @@ import {dispatchEvent} from "../../../../framework/EventUtils";
 import {Events} from "../GameView";
 import AbstractGameState from "./GameViewState";
 
-import BackGround from "../../../texture/containers/BackGround";
 import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
 
 import Actor from '../../../models/Actor';
+import {isUndefined} from "util";
 
+export interface EnterParams extends Deliverable {
+    winner?: Actor,
+    falseStarter?: Actor,
+}
 
 class ResultState extends AbstractGameState {
     public static TAG = ResultState.name;
@@ -24,22 +28,22 @@ class ResultState extends AbstractGameState {
     /**
      * @override
      */
-    onEnter(params: Deliverable): void {
+    onEnter(params: EnterParams = {}): void {
         super.onEnter(params);
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
-        if (this.battle.isFixed()) {
-            this._battleResultLabelBoard = new BattleResultLabelBoard(
-                this.viewWidth,
-                this.viewHeight,
-                this.battle.winner === Actor.PLAYER ? 'playerWin' : 'opponentWin',
-                this.battle.winner === Actor.PLAYER ? this.player.name : this.opponent.name);
-        } else {
-            this._battleResultLabelBoard = new BattleResultLabelBoard(this.viewWidth, this.viewHeight, 'falseStart');
-        }
+        const type = params.winner ?
+            params.winner === Actor.PLAYER ?
+                'playerWin' : 'opponentWin' :
+            params.falseStarter ?
+                'falseStart' : 'draw';
+        const name = params.winner ?
+            params.winner === Actor.PLAYER ? this.player.name : this.opponent.name:
+            null;
+        this._battleResultLabelBoard = new BattleResultLabelBoard(this.viewWidth, this.viewHeight, type, name);
         this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
         this._hueFilter = new filters.ColorMatrixFilter();
@@ -60,17 +64,22 @@ class ResultState extends AbstractGameState {
         );
 
 
-        if (this.battle.winnerAttackTime && this.battle.winner === Actor.PLAYER) {
+        if (params.falseStarter) {
+            this._showFalseStart();
+            return;
+        }
+
+        if (params.winner === Actor.PLAYER) {
             this._showPlayerWon();
             return;
         }
 
-        if (this.battle.winnerAttackTime && this.battle.winner === Actor.OPPONENT) {
+        if (params.winner === Actor.OPPONENT) {
             this._showOpponentWon();
             return;
         }
 
-        this._showFalseStart();
+        this._showDraw();
     }
 
     private _showPlayerWon(): void {
@@ -113,6 +122,12 @@ class ResultState extends AbstractGameState {
 
                 setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
             });
+    }
+
+    private _showDraw(): void {
+        this.applicationLayer.addChild(this._battleResultLabelBoard);
+
+        setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
 
     private _showFalseStart(): void {
