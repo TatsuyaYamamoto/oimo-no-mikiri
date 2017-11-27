@@ -8,9 +8,9 @@ import {Events} from "../GameView";
 import AbstractGameState from "./GameViewState";
 
 import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
+import Character from "../../../texture/sprite/character/Character";
 
 import Actor from '../../../models/Actor';
-import {isUndefined} from "util";
 
 export interface EnterParams extends Deliverable {
     winner?: Actor,
@@ -41,7 +41,7 @@ class ResultState extends AbstractGameState {
             params.falseStarter ?
                 'falseStart' : 'draw';
         const name = params.winner ?
-            params.winner === Actor.PLAYER ? this.player.name : this.opponent.name:
+            params.winner === Actor.PLAYER ? this.player.name : this.opponent.name :
             null;
         this._battleResultLabelBoard = new BattleResultLabelBoard(this.viewWidth, this.viewHeight, type, name);
         this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -127,7 +127,14 @@ class ResultState extends AbstractGameState {
     private _showDraw(): void {
         this.applicationLayer.addChild(this._battleResultLabelBoard);
 
-        setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+        Promise
+            .all([
+                this.vibrate(this.player),
+                this.vibrate(this.opponent),
+            ])
+            .then(() => {
+                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+            });
     }
 
     private _showFalseStart(): void {
@@ -138,6 +145,27 @@ class ResultState extends AbstractGameState {
 
         setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
     }
+
+    protected vibrate = (target: Character): Promise<void> => {
+        const center = target.position.x;
+        const right = target.position.x + this.viewWidth * 0.005;
+        const left = target.position.x - this.viewWidth * 0.005;
+        const periodTimeMillis = 100;
+
+        const timeLine = anime.timeline({
+            targets: target.position,
+            easing: 'linear',
+            loop: 3,
+        });
+
+        timeLine
+            .add({x: right, duration: periodTimeMillis / 4})
+            .add({x: center, duration: periodTimeMillis / 4})
+            .add({x: left, duration: periodTimeMillis / 4})
+            .add({x: center, duration: periodTimeMillis / 4});
+
+        return timeLine.finished;
+    };
 
     protected whiteOut = (onStartRefresh: Function, onComplete: Function) => {
 
