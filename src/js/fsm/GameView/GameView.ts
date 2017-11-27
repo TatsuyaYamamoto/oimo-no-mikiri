@@ -19,14 +19,14 @@ import Wataame from "../../texture/sprite/character/Wataame";
 import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
 import Game from '../../models/Game';
+import Actor from "../../models/Actor";
 
 import {NPC_LEVELS} from "../../Constants";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
     IS_READY = 'GameView@IS_READY',
-    ACTION_SUCCESS = 'GameView@ACTION_SUCCESS',
-    ACTION_FAILURE = 'GameView@ACTION_FAILURE',
+    ATTACK_SUCCESS = 'GameView@ATTACK_SUCCESS',
     FALSE_START = 'GameView@FALSE_START',
     FIXED_RESULT = 'GameView@FIXED_RESULT',
     RESTART_GAME = 'GameView@RESTART_GAME',
@@ -94,8 +94,7 @@ class GameViewState extends ViewContainer {
         addEvents({
             [Events.REQUEST_READY]: this._onRequestedReady,
             [Events.IS_READY]: this._onReady,
-            [Events.ACTION_SUCCESS]: this._onPlayerWon,
-            [Events.ACTION_FAILURE]: this._onOpponentWon,
+            [Events.ATTACK_SUCCESS]: this._onAttackSucceed,
             [Events.FALSE_START]: this._onFalseStarted,
             [Events.FIXED_RESULT]: this._onFixedResult,
             [Events.RESTART_GAME]: this._onRequestedRestart,
@@ -116,8 +115,7 @@ class GameViewState extends ViewContainer {
         removeEvents([
             Events.REQUEST_READY,
             Events.IS_READY,
-            Events.ACTION_SUCCESS,
-            Events.ACTION_FAILURE,
+            Events.ATTACK_SUCCESS,
             Events.FALSE_START,
             Events.FIXED_RESULT,
             Events.RESTART_GAME,
@@ -155,6 +153,10 @@ class GameViewState extends ViewContainer {
     private _onReady = () => {
         this._to<ActionStateEnterParams>(ActionState.TAG, {
             autoOpponentAttackInterval: this.game.npcAttackIntervalMillis,
+            isFalseStarted: {
+                player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
+                opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
+            },
         });
     };
 
@@ -162,7 +164,9 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _onPlayerWon = (e: CustomEvent) => {
+    private _onAttackSucceed = (e: CustomEvent) => {
+        const {actor, attackTime} = e.detail;
+        this.game.currentBattle.attack(actor, attackTime);
         this._to(ResultState.TAG);
     };
 
@@ -170,15 +174,8 @@ class GameViewState extends ViewContainer {
      *
      * @private
      */
-    private _onOpponentWon = () => {
-        this._to(ResultState.TAG);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _onFalseStarted = () => {
+    private _onFalseStarted = (e: CustomEvent) => {
+        this.game.currentBattle.falseStart(e.detail.actor);
         this._to(ResultState.TAG);
     };
 

@@ -15,13 +15,15 @@ import {play} from "../../../helper/MusicPlayer";
 import {Ids as SoundIds} from '../../../resources/sound';
 
 export interface EnterParams extends Deliverable {
-    autoOpponentAttackInterval?: number
+    autoOpponentAttackInterval?: number,
+    isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
 class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
 
     private _signalTime: number;
+    private _isSignaled: boolean;
     private _opponentAttackTime: number;
     private _isOpponentAttacked: boolean;
 
@@ -35,7 +37,7 @@ class ActionState extends AbstractGameState {
     update(elapsedMS: number): void {
         super.update(elapsedMS);
 
-        const shouldSign = !this.battle.isSignaled() && this._signalTime < this.elapsedTimeMillis;
+        const shouldSign = !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
 
         if (shouldSign) this._onSignaled();
 
@@ -54,6 +56,7 @@ class ActionState extends AbstractGameState {
         super.onEnter(params);
 
         this._signalTime = this._createSignalTime();
+        this._isSignaled = false;
         this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
         this._isOpponentAttacked = false;
 
@@ -81,17 +84,15 @@ class ActionState extends AbstractGameState {
             this._signalSprite
         );
 
-        if(this.battle.isFalseStarted(Actor.PLAYER)){
+        if (params.isFalseStarted && params.isFalseStarted.player) {
             this.applicationLayer.addChild(this._playerFalseStartCheck);
         }
 
-        if(this.battle.isFalseStarted(Actor.OPPONENT)){
+        if (params.isFalseStarted && params.isFalseStarted.opponent) {
             this.applicationLayer.addChild(this._opponentFalseStartCheck);
         }
 
         this.addClickWindowEventListener(this._onAttackedByPlayer);
-
-        this.battle.start();
     }
 
     /**
@@ -110,7 +111,7 @@ class ActionState extends AbstractGameState {
     private _onSignaled = () => {
         console.log("Signaled!");
 
-        this.battle.signal();
+        this._isSignaled = true;
         this._signalSprite.show();
 
         play(SoundIds.SOUND_HARISEN);
@@ -124,18 +125,15 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _onAttackedByPlayer = () => {
-        if (this.battle.isFixed()) {
-            return;
-        }
+        // TODO: Exclusive process
 
         const attackTime = this.elapsedTimeMillis - this._signalTime;
-        this.battle.attack(Actor.PLAYER, attackTime);
 
-        if (!this.battle.isSignaled()) {
+        if (!this._isSignaled) {
             console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
-            
+
             play(SoundIds.SOUND_FALSE_START);
-            dispatchEvent(Events.FALSE_START);
+            dispatchEvent(Events.FALSE_START, {actor: Actor.PLAYER});
             return;
         }
 
@@ -143,7 +141,10 @@ class ActionState extends AbstractGameState {
         this._signalSprite.hide();
 
         console.log(`Tap! result time: ${attackTime}ms`);
-        dispatchEvent(Events.ACTION_SUCCESS, {attackTime});
+        dispatchEvent(Events.ATTACK_SUCCESS, {
+            actor: Actor.PLAYER,
+            attackTime
+        });
     };
 
     /**
@@ -151,18 +152,15 @@ class ActionState extends AbstractGameState {
      * @private
      */
     private _onAttackedByOpponent = () => {
-        if (this.battle.isFixed()) {
-            return;
-        }
+        // TODO: Exclusive process
 
         const attackTime = this.elapsedTimeMillis - this._signalTime;
-        this.battle.attack(Actor.OPPONENT, attackTime);
 
-        if (!this.battle.isSignaled()) {
+        if (!this._isSignaled) {
             console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
 
             play(SoundIds.SOUND_FALSE_START);
-            dispatchEvent(Events.FALSE_START);
+            dispatchEvent(Events.FALSE_START, {actor: Actor.OPPONENT});
             return;
         }
 
@@ -171,7 +169,10 @@ class ActionState extends AbstractGameState {
         this._signalSprite.hide();
 
         console.log(`Opponent attacked! ${attackTime}ms`);
-        dispatchEvent(Events.ACTION_FAILURE);
+        dispatchEvent(Events.ATTACK_SUCCESS, {
+            actor: Actor.OPPONENT,
+            attackTime
+        });
     };
 }
 
