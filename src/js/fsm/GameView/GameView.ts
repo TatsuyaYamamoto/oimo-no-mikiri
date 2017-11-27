@@ -28,6 +28,7 @@ export enum Events {
     IS_READY = 'GameView@IS_READY',
     ATTACK_SUCCESS = 'GameView@ATTACK_SUCCESS',
     FALSE_START = 'GameView@FALSE_START',
+    DRAW = 'GameView@DRAW',
     FIXED_RESULT = 'GameView@FIXED_RESULT',
     RESTART_GAME = 'GameView@RESTART_GAME',
 }

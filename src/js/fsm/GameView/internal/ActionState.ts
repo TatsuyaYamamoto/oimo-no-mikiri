@@ -19,11 +19,14 @@ export interface EnterParams extends Deliverable {
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
+const ACCEPTABLE_ATTACK_TIME_DISTANCE = 16; // [ms]
+
 class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
 
     private _signalTime: number;
     private _isSignaled: boolean;
+    private _isJudging: boolean;
     private _opponentAttackTime: number;
     private _isOpponentAttacked: boolean;
 
@@ -57,6 +60,7 @@ class ActionState extends AbstractGameState {
 
         this._signalTime = this._createSignalTime();
         this._isSignaled = false;
+        this._isJudging = false;
         this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
         this._isOpponentAttacked = false;
 
@@ -137,14 +141,10 @@ class ActionState extends AbstractGameState {
             return;
         }
 
-        play(SoundIds.SOUND_ATTACK);
-        this._signalSprite.hide();
+        // play(SoundIds.SOUND_ATTACK);
+        // this._signalSprite.hide();
 
-        console.log(`Tap! result time: ${attackTime}ms`);
-        dispatchEvent(Events.ATTACK_SUCCESS, {
-            actor: Actor.PLAYER,
-            attackTime
-        });
+        this._judge(Actor.PLAYER, attackTime);
     };
 
     /**
@@ -164,16 +164,32 @@ class ActionState extends AbstractGameState {
             return;
         }
 
-        play(SoundIds.SOUND_ATTACK);
+        // play(SoundIds.SOUND_ATTACK);
         this._isOpponentAttacked = true;
-        this._signalSprite.hide();
+        // this._signalSprite.hide();
 
-        console.log(`Opponent attacked! ${attackTime}ms`);
-        dispatchEvent(Events.ATTACK_SUCCESS, {
-            actor: Actor.OPPONENT,
-            attackTime
-        });
+        this._judge(Actor.OPPONENT, attackTime);
     };
+
+    private _judge = (actor: Actor, attackTime: number): void => {
+        console.log(`Judge attack. actor: ${actor}, time: ${attackTime}ms`);
+
+        if (this._isJudging) {
+            this._isJudging = false;
+            console.log("=> draw.");
+            dispatchEvent(Events.DRAW);
+            return;
+        }
+
+        this._isJudging = true;
+        setTimeout(() => {
+            if (this._isJudging) {
+                console.log(`=> Succeed attack! actor: ${actor}, time: ${attackTime}ms`);
+                play(SoundIds.SOUND_ATTACK);
+                dispatchEvent(Events.ATTACK_SUCCESS, {actor, attackTime});
+            }
+        }, ACCEPTABLE_ATTACK_TIME_DISTANCE)
+    }
 }
 
 export default ActionState;

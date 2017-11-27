@@ -66,4 +66,8 @@ export default class Battle {
 
         this._falseStartMap.set(actor, true);
     }
+
+    public draw(): void {
+        // do nothing.
+    }
 }
