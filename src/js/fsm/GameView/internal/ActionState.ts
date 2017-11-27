@@ -19,7 +19,7 @@ export interface EnterParams extends Deliverable {
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
-const ACCEPTABLE_ATTACK_TIME_DISTANCE = 16; // [ms]
+const ACCEPTABLE_ATTACK_TIME_DISTANCE = 17; // [ms]
 
 class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
