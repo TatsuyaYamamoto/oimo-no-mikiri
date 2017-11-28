@@ -169,7 +169,7 @@ class GameViewState extends ViewContainer {
      */
     private _onAttackSucceed = (e: CustomEvent) => {
         const {actor, attackTime} = e.detail;
-        this.game.currentBattle.attack(actor, attackTime);
+        this.game.currentBattle.win(actor, attackTime);
         this._to<ResultStateEnterParams>(ResultState.TAG, {winner: actor});
     };
 
