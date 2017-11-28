@@ -57,17 +57,6 @@ abstract class GameViewState extends ViewContainer {
         return this._gameView.opponent;
     }
 
-    /**
-     * @deprecated
-     */
-    protected get battle(): Battle {
-        return this._gameView.game.currentBattle;
-    }
-
-    protected get game(): Game {
-        return this._gameView.game;
-    }
-
     protected get oimo(): Oimo {
         return this._oimo;
     }

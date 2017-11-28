@@ -202,9 +202,14 @@ class GameViewState extends ViewContainer {
      */
     private _onFixedResult = () => {
         const bestTime = this.game.bestTime;
-        const round = this.game.straightWins;
+        const straightWins = this.game.straightWins;
+        const winner = this.game.winner;
 
-        this._to<OverEnterParams>(OverState.TAG, {bestTime, round});
+        this._to<OverEnterParams>(OverState.TAG, {
+            winner,
+            bestTime,
+            straightWins
+        });
     };
 
     private _onRequestedRestart = () => {

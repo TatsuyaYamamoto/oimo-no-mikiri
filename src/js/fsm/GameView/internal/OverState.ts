@@ -18,8 +18,9 @@ import {Ids as SoundIds} from '../../../resources/sound';
 import Actor from "../../../models/Actor";
 
 export interface EnterParams extends Deliverable {
-    bestTime: number,
-    round: number,
+    winner: Actor;
+    bestTime: number;
+    straightWins: number;
 }
 
 class OverState extends AbstractGameState {
@@ -39,18 +40,12 @@ class OverState extends AbstractGameState {
 
         this._resultPaper = new GameResultPaper({
             height: this.viewHeight * 0.9,
-            straightWins: this.game.straightWins,
-            topTime: this.game.bestTime,
-            winnerName: this.game.winner === Actor.PLAYER ?
-                this.player.name :
-                this.opponent.name,
-            playerTexture: this.game.winner === Actor.PLAYER ?
-                this.player.winTexture :
-                this.player.loseTexture,
+            straightWins: params.straightWins,
+            topTime: params.bestTime,
+            winnerName: params.winner === Actor.PLAYER ? this.player.name : this.opponent.name,
+            playerTexture: params.winner === Actor.PLAYER ? this.player.winTexture : this.player.loseTexture,
             playerName: this.player.name,
-            opponentTexture: this.game.winner === Actor.PLAYER ?
-                this.opponent.loseTexture :
-                this.opponent.winTexture,
+            opponentTexture: params.winner === Actor.PLAYER ? this.opponent.loseTexture : this.opponent.winTexture,
             opponentName: this.opponent.name,
         });
         this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -113,7 +108,7 @@ class OverState extends AbstractGameState {
     };
 
     private _onClickTweetButton = () => {
-        tweetGameResult(`score ${this.battle.winner}`);
+        tweetGameResult(`score`);
     };
 }
 
