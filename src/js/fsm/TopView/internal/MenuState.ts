@@ -8,8 +8,11 @@ import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
 import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
+import {goTo} from "../../../helper/network";
 
+import {URL} from '../../../Constants';
 import {Ids as SoundIds} from '../../../resources/sound';
+
 
 class MenuState extends AbstractTopState {
     public static TAG = MenuState.name;
@@ -64,7 +67,7 @@ class MenuState extends AbstractTopState {
      * @private
      */
     private _onSelectHome = () => {
-        console.log('go to home')
+        goTo(URL.TWITTER_HOME_T28)
     };
 
     /**
