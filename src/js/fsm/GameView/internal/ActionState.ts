@@ -123,7 +123,7 @@ class ActionState extends AbstractGameState {
         const attackTime = this.elapsedTimeMillis - this._signalTime;
         this._attackTimeMap.set(actor, attackTime);
 
-        if (!this.isSignaled) {
+        if (!this.isSignaled()) {
             console.log(`It's fault tap. actor: ${actor}, time: ${attackTime}ms.`);
 
             play(SoundIds.SOUND_FALSE_START);
