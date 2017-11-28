@@ -1,0 +1,46 @@
+- var title = "おいものみきり！ -そこんところ工房-"
+- var siteName = "おいものみきり！"
+- var description = "まるの大事なおいもが狙われている！押し寄せる敵より早く、タップでおいもを捕まえるブラウザゲームです！そこんところ工房のファンゲームです。"
+- var siteUrl = "http://games.sokontokoro-factory.net/oimo/"
+
+doctype html
+html
+    head
+        //Global site tag (gtag.js) - Google Analytics
+        script(async src="https://www.googletagmanager.com/gtag/js?id=UA-64858827-7")
+        script.
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'UA-64858827-7');
+
+        meta(charset="utf-8")
+        title #{title}
+        meta(name="viewport", content="width=device-width, initial-scale=1")
+        meta(name="description", content=`${description}`)
+
+        meta(property="og:title" content=`${title}`)
+        meta(property="og:site_name" content=`${siteName}`)
+        meta(property="og:type" content="article")
+        meta(property="og:description" content=`${description}`)
+        meta(property="og:url" content=`${siteUrl}`)
+        meta(property="og:image" content=`${siteUrl}assets/image/ogp.png`)
+
+        style(type="text/css").
+            body {
+                margin: 0;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            #main {
+                text-align: center;
+            }
+
+            canvas {
+                vertical-align: bottom;
+            }
+    body
+        div#main
