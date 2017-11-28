@@ -14,12 +14,12 @@ import {play} from "../../../helper/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 
+import {GAME_PARAMETERS} from '../../../Constants';
+
 export interface EnterParams extends Deliverable {
     autoOpponentAttackInterval?: number,
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
-
-const ACCEPTABLE_ATTACK_TIME_DISTANCE = 17; // [ms]
 
 class ActionState extends AbstractGameState {
     public static TAG = ActionState.name;
@@ -27,8 +27,8 @@ class ActionState extends AbstractGameState {
     private _signalTime: number;
     private _isSignaled: boolean;
     private _isJudging: boolean;
-    private _opponentAttackTime: number;
-    private _isOpponentAttacked: boolean;
+    private _attackTimeMap: Map<Actor, number>;
+    private _autoAttackTime: number;
 
     private _signalSprite: Signal;
     private _playerFalseStartCheck: FalseStartCheck;
@@ -40,16 +40,9 @@ class ActionState extends AbstractGameState {
     update(elapsedMS: number): void {
         super.update(elapsedMS);
 
-        const shouldSign = !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
+        this.shouldSign() && this.onSignaled();
 
-        if (shouldSign) this._onSignaled();
-
-        const shouldAutoAttack = this._opponentAttackTime &&
-            !this._isOpponentAttacked
-            && this._opponentAttackTime < this.elapsedTimeMillis;
-
-        if (shouldAutoAttack) this._onAttackedByOpponent();
-
+        this.shouldAutoAttack() && this.onAttacked(Actor.OPPONENT);
     }
 
     /**
@@ -58,11 +51,11 @@ class ActionState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._signalTime = this._createSignalTime();
+        this._signalTime = this.createSignalTime();
         this._isSignaled = false;
         this._isJudging = false;
-        this._opponentAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
-        this._isOpponentAttacked = false;
+        this._autoAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
+        this._attackTimeMap = new Map();
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
@@ -74,9 +67,12 @@ class ActionState extends AbstractGameState {
 
         this._playerFalseStartCheck = new FalseStartCheck();
         this._playerFalseStartCheck.position.set(this.viewWidth * 0.2, this.viewHeight * 0.2);
+        this._playerFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.player;
 
         this._opponentFalseStartCheck = new FalseStartCheck();
         this._opponentFalseStartCheck.position.set(this.viewWidth * 0.8, this.viewHeight * 0.2);
+        this._opponentFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.opponent;
+
 
         this.backGroundLayer.addChild(
             this.background,
@@ -85,16 +81,10 @@ class ActionState extends AbstractGameState {
             this.oimo,
             this.player,
             this.opponent,
+            this._playerFalseStartCheck,
+            this._opponentFalseStartCheck,
             this._signalSprite
         );
-
-        if (params.isFalseStarted && params.isFalseStarted.player) {
-            this.applicationLayer.addChild(this._playerFalseStartCheck);
-        }
-
-        if (params.isFalseStarted && params.isFalseStarted.opponent) {
-            this.applicationLayer.addChild(this._opponentFalseStartCheck);
-        }
 
         this.addClickWindowEventListener(this._onAttackedByPlayer);
     }
@@ -108,11 +98,10 @@ class ActionState extends AbstractGameState {
         this.removeClickWindowEventListener(this._onAttackedByPlayer);
     }
 
-    private _createSignalTime = (): number => {
-        return getRandomInteger(3000, 5000);
-    };
-
-    private _onSignaled = () => {
+    /**
+     * Fired when attack of the battle is available.
+     */
+    protected onSignaled = () => {
         console.log("Signaled!");
 
         this._isSignaled = true;
@@ -122,53 +111,79 @@ class ActionState extends AbstractGameState {
     };
 
     /**
-     * Handle player tap.
-     * If it's active to tap, after signal time, dispatch {@link Events.DETERMINED_OUTCOME}.
-     * Otherwise, it's dispatched {@link Event.FALSE_START}
+     * Fired when provided actor requests to attack.
      *
-     * @private
+     * @param {Actor} actor
      */
-    private _onAttackedByPlayer = () => {
-        // TODO: Exclusive process
-
-        const attackTime = this.elapsedTimeMillis - this._signalTime;
-
-        if (!this._isSignaled) {
-            console.log(`It's fault tap. Player false-started. ${attackTime}ms`);
-
-            play(SoundIds.SOUND_FALSE_START);
-            dispatchEvent(Events.FALSE_START, {actor: Actor.PLAYER});
+    protected onAttacked = (actor: Actor): void => {
+        if (this.isAttacked(actor)) {
             return;
         }
 
-        // play(SoundIds.SOUND_ATTACK);
-        // this._signalSprite.hide();
+        const attackTime = this.elapsedTimeMillis - this._signalTime;
+        this._attackTimeMap.set(actor, attackTime);
 
-        this._judge(Actor.PLAYER, attackTime);
+        if (!this.isSignaled) {
+            console.log(`It's fault tap. actor: ${actor}, time: ${attackTime}ms.`);
+
+            play(SoundIds.SOUND_FALSE_START);
+            dispatchEvent(Events.FALSE_START, {actor});
+            return;
+        }
+
+        this._judge(actor, attackTime);
     };
 
     /**
+     * Return true if player and opponent' attack is available.
      *
-     * @private
+     * @return {boolean}
      */
-    private _onAttackedByOpponent = () => {
-        // TODO: Exclusive process
+    protected shouldSign = (): boolean => {
+        return !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
+    };
 
-        const attackTime = this.elapsedTimeMillis - this._signalTime;
+    /**
+     * Return true if the opponent is NPC and it's time to attack automatically.
+     *
+     * @return {boolean}
+     */
+    protected shouldAutoAttack = (): boolean => {
+        return this._autoAttackTime &&
+            !this.isAttacked(Actor.OPPONENT)
+            && this._autoAttackTime < this.elapsedTimeMillis;
+    };
 
-        if (!this._isSignaled) {
-            console.log(`It's fault tap. Opponent false-started. ${attackTime}ms`);
+    /**
+     * Create time that the battle signs, attack is available.
+     *
+     * @return {number}
+     */
+    protected createSignalTime = (): number => {
+        return getRandomInteger(3000, 5000);
+    };
 
-            play(SoundIds.SOUND_FALSE_START);
-            dispatchEvent(Events.FALSE_START, {actor: Actor.OPPONENT});
-            return;
-        }
+    /**
+     * Return true if the battle is already signed.
+     *
+     * @return {boolean}
+     */
+    protected isSignaled = (): boolean => {
+        return this._isSignaled;
+    };
 
-        // play(SoundIds.SOUND_ATTACK);
-        this._isOpponentAttacked = true;
-        // this._signalSprite.hide();
+    /**
+     * Return true if provided actor already attacked.
+     *
+     * @param {Actor} actor
+     * @return {boolean}
+     */
+    protected isAttacked = (actor: Actor): boolean => {
+        return !!this._attackTimeMap.get(actor);
+    };
 
-        this._judge(Actor.OPPONENT, attackTime);
+    private _onAttackedByPlayer = () => {
+        this.onAttacked(Actor.PLAYER);
     };
 
     private _judge = (actor: Actor, attackTime: number): void => {
@@ -188,7 +203,7 @@ class ActionState extends AbstractGameState {
                 play(SoundIds.SOUND_ATTACK);
                 dispatchEvent(Events.ATTACK_SUCCESS, {actor, attackTime});
             }
-        }, ACCEPTABLE_ATTACK_TIME_DISTANCE)
+        }, GAME_PARAMETERS.acceptable_attack_time_distance)
     }
 }
 

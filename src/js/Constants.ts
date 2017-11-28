@@ -36,7 +36,12 @@ export const GAME_PARAMETERS = {
             4: 9 / 60,
             5: 7 / 60
         }
-    }
+    },
+
+    /**
+     * Attack time distance time[ms] of player and opponent as draw.
+     */
+    acceptable_attack_time_distance: 17
 };
 
 export enum NPC_LEVELS {
