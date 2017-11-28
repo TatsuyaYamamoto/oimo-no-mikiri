@@ -54,7 +54,7 @@ class Game {
             reaction_rate_tuning
         } = GAME_PARAMETERS;
 
-        return Math.round(reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000);
+        return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
     }
 
     public get winner(): Actor {
@@ -87,7 +87,7 @@ class Game {
             }
 
         });
-        return time;
+        return Math.round(time);
     }
 
     public get straightWins(): number {
