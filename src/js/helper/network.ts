@@ -1,6 +1,10 @@
 /**
  * @fileOverview convenience functions related to network, WebAPI and browser location.
  */
+import {t} from '../../framework/i18n';
+import {getRandomInteger} from "../../framework/utils";
+
+import {Ids as StringIds} from '../resources/string';
 import {APP_SERVER_BASE_URL, URL} from '../Constants';
 
 /**
@@ -15,10 +19,26 @@ export function goTo(href: string): void {
 /**
  * Change browser location to ResultState tweet view in Twitter.
  *
- * @param {string} text
+ * @param {number} bestTime
+ * @param {number} wins
  */
-export function tweetGameResult(text: string): void {
-    goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${text}&url=${URL.OIMO_NO_MIKIRI}`);
+export function tweetGameResult(bestTime: number, wins: number): void {
+    let tweetText = t(StringIds.GAME_RESULT_TWEET_ZERO_POINT, {wins});
+    if (wins !== 5) {
+        tweetText = t(StringIds.GAME_RESULT_TWEET_COMPLETE, {bestTime, wins});
+    } else {
+        switch (getRandomInteger(0, 2)) {
+            case 0:
+                tweetText = t(StringIds.GAME_RESULT_TWEET1, {bestTime, wins});
+                break;
+            case 1:
+            default:
+                tweetText = t(StringIds.GAME_RESULT_TWEET2, {bestTime, wins});
+                break;
+        }
+    }
+
+    goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
 }
 
 /**

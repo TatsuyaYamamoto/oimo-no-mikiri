@@ -23,7 +23,12 @@ export const Ids = {
     CREDIT_T28: "CREDIT_T28",
     CREDIT_SANZASHI: "CREDIT_SANZASHI",
     CREDIT_ON_JIN: "CREDIT_ON_JIN",
-    CREDIT_LOVELIVE: "CREDIT_LOVELIVE"
+    CREDIT_LOVELIVE: "CREDIT_LOVELIVE",
+
+    GAME_RESULT_TWEET1: 'GAME_RESULT_TWEET1',
+    GAME_RESULT_TWEET2: 'GAME_RESULT_TWEET2',
+    GAME_RESULT_TWEET_COMPLETE: 'GAME_RESULT_TWEET_COMPLETE',
+    GAME_RESULT_TWEET_ZERO_POINT: 'GAME_RESULT_TWEET_ZERO_POINT',
 };
 
 export default {
@@ -58,7 +63,12 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.CREDIT_T28]: 'Planning, Program, Music: T28',
             [Ids.CREDIT_SANZASHI]: 'Illustration: Sanzashi',
             [Ids.CREDIT_ON_JIN]: 'Sound effect: On-Jin ～音人～',
-            [Ids.CREDIT_LOVELIVE]: 'PROJECT Lovelive!'
+            [Ids.CREDIT_LOVELIVE]: 'PROJECT Lovelive!',
+
+            [Ids.GAME_RESULT_TWEET1]: `はなまる「おいも焼けたず、、、まるのおいもが！」ベストタイム {{bestTime}}、{{wins}}人抜き！`,
+            [Ids.GAME_RESULT_TWEET2]: `???「はなまるちゃんのおいも、おいしいね。    うゆ。」 ベストタイム {{bestTime}}、{{wins}}人抜き！`,
+            [Ids.GAME_RESULT_TWEET_COMPLETE]: `はなまる「素敵な人生(おいも)ずら〜」ベストタイム {{bestTime}}、{{wins}}人抜き！`,
+            [Ids.GAME_RESULT_TWEET_ZERO_POINT]: `はなまる「もういいずら、ぴよこ万十食べるずら」{{wins}}人抜き、、、、`,
         }
     },
     ja: {
@@ -89,7 +99,7 @@ Tap display or click any key immediately when you see "!".`,
             [Ids.CREDIT_T28]: '思いつき, プラグラム, 音楽: T28',
             [Ids.CREDIT_SANZASHI]: 'イラスト: さんざし',
             [Ids.CREDIT_ON_JIN]: '効果音: On-Jin ～音人～',
-            [Ids.CREDIT_LOVELIVE]: 'プロジェクト ラブライブ！'
+            [Ids.CREDIT_LOVELIVE]: 'プロジェクト ラブライブ！',
         }
     }
 }

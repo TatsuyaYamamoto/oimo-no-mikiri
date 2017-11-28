@@ -64,7 +64,7 @@ class OverState extends AbstractGameState {
 
         this._tweetButton = new TweetButton();
         this._tweetButton.position.set(this.viewWidth * 0.15, this.viewHeight * 0.2);
-        this._tweetButton.setOnClickListener(this._onClickTweetButton);
+        this._tweetButton.setOnClickListener(() => this._onClickTweetButton(params.bestTime, params.straightWins));
 
         this.backGroundLayer.addChild(
             this.background,
@@ -107,8 +107,8 @@ class OverState extends AbstractGameState {
         play(SoundIds.SOUND_CANCEL);
     };
 
-    private _onClickTweetButton = () => {
-        tweetGameResult(`score`);
+    private _onClickTweetButton = (bestTime: number, wins: number) => {
+        tweetGameResult(bestTime, wins);
     };
 }
 
