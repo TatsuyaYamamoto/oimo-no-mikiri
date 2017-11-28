@@ -38,7 +38,7 @@ export default {
 ...No! Someone is coming close to take it!
 
 It’s not going to work that way, zura!
-Tap display or click any key immediately when you see "!".`,
+Tap display or click "a" key immediately when you see "!".`,
 
             [Ids.ONE_PLAYER]: '1P',
             [Ids.TWO_PLAYERS]: '2P',
@@ -77,7 +77,7 @@ Tap display or click any key immediately when you see "!".`,
 ...大変！まるのお芋を狙ってる子達が次々とやってくるずら！
 
 そうはいかないずら！
-"!"マークが現れたら、すかさずタップ、またはキーを押そう！`,
+"!"マークが現れたら、すかさずタップ、または"a"キーを押そう！`,
 
             [Ids.BEGINNER]: '易',
             [Ids.NOVICE]: '中',

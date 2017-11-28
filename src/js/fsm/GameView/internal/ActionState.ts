@@ -1,3 +1,5 @@
+import * as Mousetrap from 'mousetrap';
+
 import {dispatchEvent} from "../../../../framework/EventUtils";
 import Deliverable from "../../../../framework/Deliverable";
 import {getRandomInteger} from "../../../../framework/utils";
@@ -87,6 +89,7 @@ class ActionState extends AbstractGameState {
         );
 
         this.addClickWindowEventListener(this._onAttackedByPlayer);
+        Mousetrap.bind('a', this._onAttackedByPlayer);
     }
 
     /**
@@ -96,6 +99,7 @@ class ActionState extends AbstractGameState {
         super.onExit();
 
         this.removeClickWindowEventListener(this._onAttackedByPlayer);
+        Mousetrap.unbind('a');
     }
 
     /**
