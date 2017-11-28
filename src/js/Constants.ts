@@ -6,7 +6,7 @@ export const GAME_PARAMETERS = {
      * for tuning NPC's reaction rate.
      * {@link GAME_PARAMETERS.reaction_rate} according to original is too short for test player.
      */
-    reaction_rate_tuning: 1.7,
+    reaction_rate_tuning: 2.0,
 
     /**
      * NPC's reaction rate after turning action active.
