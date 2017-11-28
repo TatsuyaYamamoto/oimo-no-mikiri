@@ -192,6 +192,7 @@ class ActionState extends AbstractGameState {
         if (this._isJudging) {
             this._isJudging = false;
             console.log("=> draw.");
+            play(SoundIds.SOUND_DRAW);
             dispatchEvent(Events.DRAW);
             return;
         }
