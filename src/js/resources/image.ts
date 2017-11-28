@@ -6,7 +6,6 @@ import {ImageManifest} from "../../framework/AssetLoader";
 
 export const Ids = {
     BACKGROUND_TOP: 'BACKGROUND_TOP',
-    BACKGROUND_GAME: 'BACKGROUND_GAME',
     BACKGROUND_CLOUD: 'BACKGROUND_CLOUD',
     BACKGROUND_SKY: 'BACKGROUND_SKY',
     BACKGROUND_BEACH: 'BACKGROUND_BEACH',
@@ -51,7 +50,6 @@ export const Ids = {
 const manifest: ImageManifest = {
     en: {
         [Ids.BACKGROUND_TOP]: 'background_top.png',
-        [Ids.BACKGROUND_GAME]: 'background_game.png',
         [Ids.BACKGROUND_CLOUD]: 'background_cloud.png',
         [Ids.BACKGROUND_SKY]: 'background_sky.png',
         [Ids.BACKGROUND_BEACH]: 'background_beach.json',
