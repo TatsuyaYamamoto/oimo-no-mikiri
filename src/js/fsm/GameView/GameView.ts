@@ -38,9 +38,14 @@ export interface EnterParams extends Deliverable {
     roundLength: number,
 }
 
-class GameViewState extends ViewContainer {
-    public static TAG = GameViewState.name;
+enum InnerStates {
+    READY = "ready",
+    ACTION = "action",
+    RESULT = "result",
+    OVER = "over",
+}
 
+class GameViewState extends ViewContainer {
     private _gameStateMachine: StateMachine<ViewContainer>;
 
     private _game: Game;
@@ -86,10 +91,10 @@ class GameViewState extends ViewContainer {
         this._opponents[5] = new EnemyRuby();
 
         this._gameStateMachine = new StateMachine({
-            [ReadyState.TAG]: new ReadyState(this),
-            [ActionState.TAG]: new ActionState(this),
-            [ResultState.TAG]: new ResultState(this),
-            [OverState.TAG]: new OverState(this)
+            [InnerStates.READY]: new ReadyState(this),
+            [InnerStates.ACTION]: new ActionState(this),
+            [InnerStates.RESULT]: new ResultState(this),
+            [InnerStates.OVER]: new OverState(this)
         });
 
         addEvents({
@@ -145,7 +150,7 @@ class GameViewState extends ViewContainer {
         this.player.playWait();
         this.opponent.playWait();
 
-        this._to(ReadyState.TAG);
+        this._to(InnerStates.READY);
 
     };
 
@@ -154,7 +159,7 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onReady = () => {
-        this._to<ActionStateEnterParams>(ActionState.TAG, {
+        this._to<ActionStateEnterParams>(InnerStates.ACTION, {
             autoOpponentAttackInterval: this.game.npcAttackIntervalMillis,
             isFalseStarted: {
                 player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
@@ -170,7 +175,7 @@ class GameViewState extends ViewContainer {
     private _onAttackSucceed = (e: CustomEvent) => {
         const {actor, attackTime} = e.detail;
         this.game.currentBattle.win(actor, attackTime);
-        this._to<ResultStateEnterParams>(ResultState.TAG, {winner: actor});
+        this._to<ResultStateEnterParams>(InnerStates.RESULT, {winner: actor});
     };
 
     /**
@@ -180,7 +185,7 @@ class GameViewState extends ViewContainer {
     private _onFalseStarted = (e: CustomEvent) => {
         const {actor} = e.detail;
         this.game.currentBattle.falseStart(actor);
-        this._to<ResultStateEnterParams>(ResultState.TAG, {
+        this._to<ResultStateEnterParams>(InnerStates.RESULT, {
             winner: this.game.currentBattle.winner,
             falseStarter: actor
         });
@@ -193,7 +198,7 @@ class GameViewState extends ViewContainer {
      */
     private _onDrew = (e: CustomEvent) => {
         this.game.currentBattle.draw();
-        this._to<ResultStateEnterParams>(ResultState.TAG);
+        this._to<ResultStateEnterParams>(InnerStates.RESULT);
     };
 
     /**
@@ -205,7 +210,7 @@ class GameViewState extends ViewContainer {
         const straightWins = this.game.straightWins;
         const winner = this.game.winner;
 
-        this._to<OverEnterParams>(OverState.TAG, {
+        this._to<OverEnterParams>(InnerStates.OVER, {
             winner,
             bestTime,
             straightWins

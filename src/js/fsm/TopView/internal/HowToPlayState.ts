@@ -18,8 +18,6 @@ import {play} from "../../../helper/MusicPlayer";
 import {Ids as SoundIds} from '../../../resources/sound';
 
 class HowToPlayState extends AbstractTopState {
-    public static TAG = HowToPlayState.name;
-
     private _usageTextArea: UsageTextArea;
 
     private _oimo: Oimo;

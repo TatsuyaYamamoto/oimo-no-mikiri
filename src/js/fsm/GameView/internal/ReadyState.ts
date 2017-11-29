@@ -28,8 +28,6 @@ const ANIMATION_TIME_LINE = {
 };
 
 class ReadyState extends AbstractGameState {
-    public static TAG = ReadyState.name;
-
     private _playerCharacterCloseup: PlayerCloseUp;
     private _opponentCharacterCloseup: OpponentCloseUp;
 

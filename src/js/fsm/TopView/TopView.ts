@@ -18,9 +18,14 @@ export enum Events {
     FIXED_PLAY_MODE = 'GameView@FIXED_PLAY_MODE',
 }
 
-class TopViewState extends ViewContainer {
-    public static TAG = TopViewState.name;
+enum InnerStates {
+    TITLE = "title",
+    MENU = "menu",
+    HOW_TO_PLAY = "how_to_play",
+    CREDIT = "credit",
+}
 
+class TopViewState extends ViewContainer {
     private _topStateMachine: StateMachine<ViewContainer>;
 
     /**
@@ -39,10 +44,10 @@ class TopViewState extends ViewContainer {
         super.onEnter(params);
 
         this._topStateMachine = new StateMachine({
-            [TitleState.TAG]: new TitleState(),
-            [MenuState.TAG]: new MenuState(),
-            [HowToPlayState.TAG]: new HowToPlayState(),
-            [CreditState.TAG]: new CreditState(),
+            [InnerStates.TITLE]: new TitleState(),
+            [InnerStates.MENU]: new MenuState(),
+            [InnerStates.HOW_TO_PLAY]: new HowToPlayState(),
+            [InnerStates.CREDIT]: new CreditState(),
         });
 
         addEvents({
@@ -53,7 +58,7 @@ class TopViewState extends ViewContainer {
             [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
         });
 
-        this._to(TitleState.TAG);
+        this._to(InnerStates.TITLE);
     }
 
     /**
@@ -75,7 +80,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleTapTitleEvent = () => {
-        this._to(MenuState.TAG);
+        this._to(InnerStates.MENU);
     };
 
     /**
@@ -83,7 +88,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleRequestHowToPlayEvent = () => {
-        this._to(HowToPlayState.TAG);
+        this._to(InnerStates.HOW_TO_PLAY);
     };
 
     /**
@@ -91,7 +96,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleRequestBackMenuEvent = () => {
-        this._to(MenuState.TAG);
+        this._to(InnerStates.MENU);
     };
 
     /**
@@ -99,7 +104,7 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleRequestCredit = () => {
-        this._to(CreditState.TAG);
+        this._to(InnerStates.CREDIT);
     };
 
     /**

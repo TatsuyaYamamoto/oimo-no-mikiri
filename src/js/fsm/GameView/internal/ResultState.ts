@@ -18,8 +18,6 @@ export interface EnterParams extends Deliverable {
 }
 
 class ResultState extends AbstractGameState {
-    public static TAG = ResultState.name;
-
     private _battleResultLabelBoard: BattleResultLabelBoard;
 
     protected _hueFilter: filters.ColorMatrixFilter;

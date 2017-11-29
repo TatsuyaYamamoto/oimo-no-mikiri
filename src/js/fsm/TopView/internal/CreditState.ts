@@ -16,8 +16,6 @@ import {Ids as StringIds} from "../../../resources/string";
 import {URL} from "../../../Constants";
 
 class CreditState extends AbstractTopState {
-    public static TAG = CreditState.name;
-
     private _t28Credit: CreditItem;
     private _sanzashiCredit: CreditItem;
     private _onjinCredit: CreditItem;

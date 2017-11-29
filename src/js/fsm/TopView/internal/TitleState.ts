@@ -11,8 +11,6 @@ import {play, playOnLoop} from "../../../helper/MusicPlayer";
 import {Ids as SoundIds} from '../../../resources/sound';
 
 class TitleState extends AbstractTopState {
-    public static TAG = TitleState.name;
-
     private _titleLogo: TitleLogo;
 
     /**

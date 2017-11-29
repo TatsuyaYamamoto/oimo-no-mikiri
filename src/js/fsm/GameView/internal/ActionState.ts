@@ -24,8 +24,6 @@ export interface EnterParams extends Deliverable {
 }
 
 class ActionState extends AbstractGameState {
-    public static TAG = ActionState.name;
-
     private _signalTime: number;
     private _isSignaled: boolean;
     private _isJudging: boolean;

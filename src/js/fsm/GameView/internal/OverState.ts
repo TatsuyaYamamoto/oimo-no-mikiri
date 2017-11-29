@@ -24,8 +24,6 @@ export interface EnterParams extends Deliverable {
 }
 
 class OverState extends AbstractGameState {
-    public static TAG = OverState.name;
-
     private _resultPaper: GameResultPaper;
     private _gameOverLogo: GameOverLogo;
     private _restartButton: RestartButton;

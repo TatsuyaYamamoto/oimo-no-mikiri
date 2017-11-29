@@ -15,8 +15,6 @@ import {Ids as SoundIds} from '../../../resources/sound';
 
 
 class MenuState extends AbstractTopState {
-    public static TAG = MenuState.name;
-
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
 

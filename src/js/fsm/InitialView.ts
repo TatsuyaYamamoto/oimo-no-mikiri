@@ -17,8 +17,6 @@ export enum Events {
 }
 
 class InitialViewState extends ViewContainer {
-    public static TAG = InitialViewState.name;
-
     private _loader: AssetLoader;
 
     private _loadingAnimation: LoadingAnimationContainer;

@@ -17,6 +17,12 @@ export enum Events {
     REQUESTED_BACK_TO_TOP = "ApplicationState@REQUESTED_BACK_TO_TOP",
 }
 
+enum InnerStates {
+    INITIAL = "initial",
+    TOP = "top",
+    GAME = "game",
+}
+
 class ApplicationState extends Application {
     private _viewStateMachine: StateMachine<ViewContainer>;
 
@@ -39,9 +45,9 @@ class ApplicationState extends Application {
         this._updateStageScale();
 
         this._viewStateMachine = new StateMachine({
-            [InitialViewState.TAG]: new InitialViewState(),
-            [TopViewState.TAG]: new TopViewState(),
-            [GameViewState.TAG]: new GameViewState(),
+            [InnerStates.INITIAL]: new InitialViewState(),
+            [InnerStates.TOP]: new TopViewState(),
+            [InnerStates.GAME]: new GameViewState(),
         });
 
         addEvents({
@@ -54,7 +60,7 @@ class ApplicationState extends Application {
         window.addEventListener('blur', toggleMute);
         window.addEventListener('focus', toggleMute);
 
-        this._to(InitialViewState.TAG);
+        this._to(InnerStates.INITIAL);
     }
 
     /**
@@ -100,7 +106,7 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleInitializedEvent = () => {
-        this._to(TopViewState.TAG);
+        this._to(InnerStates.TOP);
     };
 
     /**
@@ -111,7 +117,7 @@ class ApplicationState extends Application {
         const mode: "beginner" | "novice" | "expert" = e.detail.mode;
         let level: NPC_LEVELS = NPC_LEVELS[mode.toUpperCase()];
 
-        this._to<GameViewEnterParams>(GameViewState.TAG, {
+        this._to<GameViewEnterParams>(InnerStates.GAME, {
             level,
             roundLength: 5,
         });
@@ -122,7 +128,7 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleRequestedBackToTopEvent = () => {
-        this._to(TopViewState.TAG);
+        this._to(InnerStates.TOP);
     };
 
     /**
