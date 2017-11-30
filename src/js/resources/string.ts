@@ -1,4 +1,5 @@
 export const Ids = {
+    TAP_DISPLAY_INFO: 'TAP_DISPLAY_INFO',
     HOW_TO_PLAY_INFORMATION: 'HOW_TO_PLAY_INFORMATION',
 
     ONE_PLAYER: 'string@one_player',
@@ -34,6 +35,7 @@ export const Ids = {
 export default {
     en: {
         translation: {
+            [Ids.TAP_DISPLAY_INFO]: "- Please tap on the display! -",
             [Ids.HOW_TO_PLAY_INFORMATION]: `An oimo, sweet potato, has baked, zura!.
 ...No! Someone is coming close to take it!
 
