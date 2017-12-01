@@ -106,6 +106,11 @@ class OverState extends AbstractGameState {
         dispatchEvent(Events.RESTART_GAME);
 
         play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "restart_game");
     };
 
     /**
@@ -118,9 +123,19 @@ class OverState extends AbstractGameState {
 
         stop(SoundIds.SOUND_WAVE_LOOP);
         play(SoundIds.SOUND_CANCEL);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "back_to_menu");
     };
 
     private _onClickTweetButton = (bestTime: number, wins: number) => {
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "result_tweet");
+
         tweetGameResult(bestTime, wins);
     };
 

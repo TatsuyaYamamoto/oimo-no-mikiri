@@ -1,0 +1,102 @@
+{"frames": {
+
+"ruby1.png":
+{
+	"frame": {"x":1,"y":1,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby2.png":
+{
+	"frame": {"x":274,"y":1,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby3.png":
+{
+	"frame": {"x":547,"y":1,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby4.png":
+{
+	"frame": {"x":1,"y":261,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby5.png":
+{
+	"frame": {"x":274,"y":261,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby6.png":
+{
+	"frame": {"x":547,"y":261,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby7.png":
+{
+	"frame": {"x":1,"y":521,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby8.png":
+{
+	"frame": {"x":274,"y":521,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby9.png":
+{
+	"frame": {"x":547,"y":521,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ruby10.png":
+{
+	"frame": {"x":1,"y":781,"w":271,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":271,"h":258},
+	"sourceSize": {"w":271,"h":258},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "character_enemy_ruby.png",
+	"format": "RGBA8888",
+	"size": {"w":819,"h":1040},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f35ceae2a8724c58c125f851d1d3bbea:e07310f04f60dcbd59fda88ac5c1380d:f764bcf475ed39941f65fce8ced0dd0f$"
+}
+}
