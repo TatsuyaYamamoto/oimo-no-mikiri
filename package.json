@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/TatsuyaYamamoto/oimo-no-mikiri#readme",
   "devDependencies": {
+    "@types/google.analytics": "^0.0.36",
     "@types/i18next": "^8.4.2",
     "@types/i18next-browser-languagedetector": "^2.0.0",
     "@types/mousetrap": "^1.5.34",

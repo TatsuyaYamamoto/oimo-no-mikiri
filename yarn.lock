@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/google.analytics@^0.0.36":
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/@types/google.analytics/-/google.analytics-0.0.36.tgz#2a71cfc91a7a7e2adc9777e051278bc8d667fa2c"
+
 "@types/i18next-browser-languagedetector@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/i18next-browser-languagedetector/-/i18next-browser-languagedetector-2.0.0.tgz#b6c1b87d2de4213414290efd4af1f45ed9fbdb1a"

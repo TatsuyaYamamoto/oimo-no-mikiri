@@ -118,3 +118,7 @@ export const URL = {
     ONJIN_TOP: 'https://on-jin.com/',
     LOVELIVE_TOP: 'http://www.lovelive-anime.jp/',
 };
+
+export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production' ?
+    "UA-64858827-7" :   // For oimo production tracking.
+    "UA-64858827-8";    // For test tracking.
