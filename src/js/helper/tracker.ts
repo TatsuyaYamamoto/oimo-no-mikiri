@@ -112,7 +112,11 @@ export function trackPageView(path: VirtualPageViews): void {
  * @param {Label} label
  * @param {string | number} value
  */
-export function trackEvent(category: Category, action: Action, label: Label, value: string | number): void {
+export function trackEvent(category: Category, action: Action, label: Label, value: number): void {
+    if (!Number.isInteger(value)) {
+        console.error("GA event value is supporting to integer only.");
+        return;
+    }
     ga('send', {
         hitType: 'event',
         eventCategory: category,
@@ -124,7 +128,7 @@ export function trackEvent(category: Category, action: Action, label: Label, val
 }
 
 /**
- * Send exception tracking.
+ * Send error tracking.
  *
  * @param {Error} err
  */
@@ -132,8 +136,8 @@ export function trackError(err: Error): void {
     ga('send', {
         hitType: 'event',
         eventCategory: Category.JS_ERROR,
-        eventAction: err.name,
-        eventValue: err.message
+        eventAction: err.message,
+        eventLabel: err.stack,
     });
 }
 
