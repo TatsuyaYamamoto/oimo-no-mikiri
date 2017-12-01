@@ -96,7 +96,7 @@ export function trackPageView(path: VirtualPageViews): void {
  * @param {string} label
  * @param {number} value
  */
-export function trackEvent(category: Category, action: Action, label?: string, value?: number): void {
+export function trackEvent(category: Category, action: string, label?: string, value?: number): void {
     if (!Number.isInteger(value)) {
         console.error("GA event value is supporting to integer only.");
         return;

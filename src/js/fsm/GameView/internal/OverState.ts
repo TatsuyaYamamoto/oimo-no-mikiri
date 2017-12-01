@@ -13,6 +13,7 @@ import GameResultPaper from "../../../texture/containers/GameResultPaper";
 
 import {play, stop} from "../../../helper/MusicPlayer";
 import {postPlayLog, tweetGameResult} from "../../../helper/network";
+import {Action, Category, trackEvent} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import Actor from "../../../models/Actor";
@@ -86,6 +87,8 @@ class OverState extends AbstractGameState {
         // logging result.
         postPlayLog(bestTime, mode, straightWins);
 
+        // track result
+        this._trackAchievementToGa(bestTime, straightWins, mode);
     }
 
     /**
@@ -120,6 +123,14 @@ class OverState extends AbstractGameState {
     private _onClickTweetButton = (bestTime: number, wins: number) => {
         tweetGameResult(bestTime, wins);
     };
+
+    private _trackAchievementToGa = (bestTime, straightWins, mode) => {
+        trackEvent(
+            Category.ACHIEVEMENT,
+            `${straightWins}-straight-wins`,
+            mode,
+            bestTime);
+    }
 }
 
 export default OverState;
