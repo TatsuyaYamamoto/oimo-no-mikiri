@@ -50,7 +50,8 @@ export enum VirtualPageViews {
 export enum Category {
     BATTLE = "battle",
     ACHIEVEMENT = "achievement",
-    BUTTON = "link"
+    BUTTON = "link",
+    JS_ERROR = "js_error",
 }
 
 /**
@@ -125,13 +126,14 @@ export function trackEvent(category: Category, action: Action, label: Label, val
 /**
  * Send exception tracking.
  *
- * @param {string} description
- * @param {boolean} fatal
+ * @param {Error} err
  */
-export function trackError(description: string, fatal: boolean): void {
-    ga('send', 'exception', {
-        'exDescription': description,
-        'exFatal': fatal
+export function trackError(err: Error): void {
+    ga('send', {
+        hitType: 'event',
+        eventCategory: Category.JS_ERROR,
+        eventAction: err.name,
+        eventValue: err.message
     });
 }
 

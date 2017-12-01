@@ -6,7 +6,7 @@ import {initI18n} from "../framework/i18n";
 
 import ApplicationState from "./fsm/ApplicationState";
 import resources from './resources/string';
-import {init as initTracker} from './helper/tracker';
+import {init as initTracker, trackError} from './helper/tracker';
 import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE,
@@ -61,3 +61,7 @@ function init() {
 
 // Fire init() on page loaded.
 window.addEventListener('load', init);
+
+window.onerror = function (msg, file, line, column, err) {
+    trackError(err);
+};
