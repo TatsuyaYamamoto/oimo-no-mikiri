@@ -209,11 +209,13 @@ class GameViewState extends ViewContainer {
         const bestTime = this.game.bestTime;
         const straightWins = this.game.straightWins;
         const winner = this.game.winner;
+        const mode = this.game.mode;
 
         this._to<OverEnterParams>(InnerStates.OVER, {
             winner,
             bestTime,
-            straightWins
+            straightWins,
+            mode
         });
     };
 

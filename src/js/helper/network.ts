@@ -26,7 +26,7 @@ export function tweetGameResult(bestTime: number, wins: number): void {
     let tweetText = getRandomInteger(0, 1) === 0 ?
         t(StringIds.GAME_RESULT_TWEET1, {bestTime, wins}) :
         t(StringIds.GAME_RESULT_TWEET2, {bestTime, wins});
-    
+
     if (wins === 0) {
         tweetText = t(StringIds.GAME_RESULT_TWEET_ZERO_POINT, {wins});
     }
@@ -40,12 +40,22 @@ export function tweetGameResult(bestTime: number, wins: number): void {
 
 /**
  * Post play log to Sokontokoro app server
- * TODO: change this app support in app server.
+ * Before connecting, format bestTime, mode and straightWins to supporting Integer.
  *
- * @param {number} point
- * @returns {Promise<Response>}
+ *
+ * @param {number} bestTime
+ * @param {"beginner" | "novice" | "expert" | "two-players"} mode
+ * @param {number} straightWins
+ * @return {Promise<Response>}
+ * @see https://github.com/TatsuyaYamamoto/lovelive-ranking/blob/master-javaee/src/main/java/net/sokontokoro_factory/lovelive/persistence/entity/ScoreEntity.java
  */
-export function postPlayLog(point: number): Promise<Response> {
+export function postPlayLog(bestTime: number, mode: 'beginner' | 'novice' | 'expert' | 'two-players', straightWins: number): Promise<Response> {
+    const numberLevel = mode === 'beginner' ? 1
+        : mode === "novice" ? 2
+            : mode === "expert" ? 3
+                : 4;
+    const point = `${bestTime}${numberLevel}${straightWins}`;
+
     return fetch(`${APP_SERVER_BASE_URL}scores/oimo/playlog/`, {
         method: 'POST',
         headers: {

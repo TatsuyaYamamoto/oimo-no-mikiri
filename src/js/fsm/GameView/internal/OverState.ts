@@ -12,7 +12,7 @@ import GameOverLogo from "../../../texture/sprite/GameOverLogo";
 import GameResultPaper from "../../../texture/containers/GameResultPaper";
 
 import {play, stop} from "../../../helper/MusicPlayer";
-import {tweetGameResult} from "../../../helper/network";
+import {postPlayLog, tweetGameResult} from "../../../helper/network";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import Actor from "../../../models/Actor";
@@ -21,6 +21,7 @@ export interface EnterParams extends Deliverable {
     winner: Actor;
     bestTime: number;
     straightWins: number;
+    mode: 'beginner' | 'novice' | 'expert' | 'two-players';
 }
 
 class OverState extends AbstractGameState {
@@ -36,14 +37,21 @@ class OverState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
+        const {
+            winner,
+            straightWins,
+            bestTime,
+            mode
+        } = params;
+
         this._resultPaper = new GameResultPaper({
             height: this.viewHeight * 0.9,
-            straightWins: params.straightWins,
-            topTime: params.bestTime,
-            winnerName: params.winner === Actor.PLAYER ? this.player.name : this.opponent.name,
-            playerTexture: params.winner === Actor.PLAYER ? this.player.winTexture : this.player.loseTexture,
+            straightWins: straightWins,
+            topTime: bestTime,
+            winnerName: winner === Actor.PLAYER ? this.player.name : this.opponent.name,
+            playerTexture: winner === Actor.PLAYER ? this.player.winTexture : this.player.loseTexture,
             playerName: this.player.name,
-            opponentTexture: params.winner === Actor.PLAYER ? this.opponent.loseTexture : this.opponent.winTexture,
+            opponentTexture: winner === Actor.PLAYER ? this.opponent.loseTexture : this.opponent.winTexture,
             opponentName: this.opponent.name,
         });
         this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
@@ -62,7 +70,7 @@ class OverState extends AbstractGameState {
 
         this._tweetButton = new TweetButton();
         this._tweetButton.position.set(this.viewWidth * 0.15, this.viewHeight * 0.2);
-        this._tweetButton.setOnClickListener(() => this._onClickTweetButton(params.bestTime, params.straightWins));
+        this._tweetButton.setOnClickListener(() => this._onClickTweetButton(bestTime, straightWins));
 
         this.backGroundLayer.addChild(
             this.background,
@@ -74,6 +82,10 @@ class OverState extends AbstractGameState {
             this._gameOverLogo,
             this._tweetButton,
         );
+
+        // logging result.
+        postPlayLog(bestTime, mode, straightWins);
+
     }
 
     /**
