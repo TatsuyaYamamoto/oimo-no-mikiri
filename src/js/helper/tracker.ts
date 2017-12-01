@@ -10,7 +10,7 @@
  * @param accountId
  */
 export function init(accountId) {
-    console.log(`Initialize GA tracker. AccountID: ${accountId}`);
+    console.log(`Initialize GA tracker. AccountID: ${accountId}, location path: ${location.pathname}`);
 
     (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;
@@ -34,12 +34,12 @@ export function init(accountId) {
  * @enum
  */
 export enum VirtualPageViews {
-    INITIAL = "/#initial",
-    TITLE = "/#title",
-    MENU = "/#menu",
-    HOW_TO_USE = "/#how-to-use",
-    CREDIT = "/#credit",
-    GAME = "/#game",
+    INITIAL = "#initial",
+    TITLE = "#title",
+    MENU = "#menu",
+    HOW_TO_USE = "#how-to-use",
+    CREDIT = "#credit",
+    GAME = "#game",
 }
 
 /**
@@ -99,7 +99,7 @@ export enum TimingVariable {
  * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/pages?hl=ja
  */
 export function trackPageView(path: VirtualPageViews): void {
-    ga('set', 'page', path);
+    ga('set', 'page', `${location.pathname}${path}`);
     ga('send', 'pageview');
 }
 

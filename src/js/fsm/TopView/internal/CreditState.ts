@@ -9,6 +9,7 @@ import CreditItem from "../../../texture/sprite/text/CreditItem";
 import BackToMenuButton from "../../../texture/sprite/button/BackToMenuButton";
 
 import {play} from "../../../helper/MusicPlayer";
+import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import {Ids as StringIds} from "../../../resources/string";
@@ -36,6 +37,9 @@ class CreditState extends AbstractTopState {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.CREDIT);
 
         this._t28Credit = new CreditItem(t(StringIds.CREDIT_T28), URL.SOKONTOKORO_HOME);
         this._t28Credit.position.set(this.viewWidth * 0.3, this.viewHeight * 0.2);

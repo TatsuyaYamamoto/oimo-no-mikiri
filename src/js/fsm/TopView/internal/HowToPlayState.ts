@@ -14,6 +14,7 @@ import Uchicchi from "../../../texture/sprite/character/Uchicchi";
 import Oimo from "../../../texture/sprite/character/Oimo";
 
 import {play} from "../../../helper/MusicPlayer";
+import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 
@@ -39,6 +40,9 @@ class HowToPlayState extends AbstractTopState {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.HOW_TO_USE);
 
         this._usageTextArea = new UsageTextArea();
         this._usageTextArea.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);

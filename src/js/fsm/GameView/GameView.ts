@@ -18,6 +18,8 @@ import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
 import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
+import {trackPageView, VirtualPageViews} from "../../helper/tracker";
+
 import Game from '../../models/Game';
 import Actor from "../../models/Actor";
 
@@ -80,6 +82,9 @@ class GameViewState extends ViewContainer {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.GAME);
 
         this._player = new Hanamaru();
 

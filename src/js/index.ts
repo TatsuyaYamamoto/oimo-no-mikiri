@@ -6,11 +6,13 @@ import {initI18n} from "../framework/i18n";
 
 import ApplicationState from "./fsm/ApplicationState";
 import resources from './resources/string';
+import {init as initTracker} from './helper/tracker';
 import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE,
     BASIC_IMAGE_WIDTH,
     BASIC_IMAGE_HEIGHT,
+    GOOGLE_ANALYTICS_ACCOUNT_ID
 } from "./Constants";
 
 // Network fetch module
@@ -19,6 +21,9 @@ import 'whatwg-fetch';
 // Brand logo text font
 require('../fonts/PixelMplus10-Regular.css');
 require('../fonts/g_brushtappitsu_freeH.css');
+
+// initialize tracker
+initTracker(GOOGLE_ANALYTICS_ACCOUNT_ID);
 
 /**
  * Rendering target on html.

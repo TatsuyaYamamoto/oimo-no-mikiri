@@ -11,6 +11,8 @@ import imageManifest from '../resources/image';
 import soundManifest from '../resources/sound';
 import {SKIP_BRAND_LOGO_ANIMATION} from "../Constants";
 
+import {trackPageView, VirtualPageViews} from "../helper/tracker";
+
 export enum Events {
     COMPLETE_PRELOAD = "InitialViewState@COMPLETE_LOAD",
     COMPLETE_LOGO_ANIMATION = "InitialViewState@COMPLETE_LOGO_ANIMATION",
@@ -29,6 +31,9 @@ class InitialViewState extends ViewContainer {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.INITIAL);
 
         addEvents({
             [Events.COMPLETE_PRELOAD]: this._handleLoadCompleteEvent,

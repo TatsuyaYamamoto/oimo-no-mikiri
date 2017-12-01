@@ -9,6 +9,7 @@ import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
 import {play, playOnLoop} from "../../../helper/MusicPlayer";
+import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import {Ids as StringIds} from '../../../resources/string';
@@ -33,6 +34,9 @@ class TitleState extends AbstractTopState {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.TITLE);
 
         this._titleLogo = new TitleLogo();
         this._titleLogo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);

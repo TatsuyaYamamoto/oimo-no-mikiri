@@ -9,6 +9,7 @@ import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
 import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
 import {goTo} from "../../../helper/network";
+import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {URL} from '../../../Constants';
 import {Ids as SoundIds} from '../../../resources/sound';
@@ -31,6 +32,9 @@ class MenuState extends AbstractTopState {
      */
     onEnter(params: Deliverable): void {
         super.onEnter(params);
+
+        // Tracking
+        trackPageView(VirtualPageViews.MENU);
 
         this._menuBoard = new MenuBoard(this.viewHeight, this.viewHeight);
         this._menuBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
