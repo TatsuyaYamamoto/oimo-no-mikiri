@@ -2,6 +2,7 @@ import {Container} from 'pixi.js';
 import {isSupportTouchEvent} from "../../../../framework/utils";
 
 import Text from "../../internal/Text";
+import {Action, Category, trackEvent} from "../../../helper/tracker";
 
 class CreditItem extends Container {
     private _name: Text;
@@ -26,7 +27,10 @@ class CreditItem extends Container {
 
         this.buttonMode = true;
         this.interactive = true;
-        this.on(isSupportTouchEvent() ? 'touchstart' : 'click', () => window.location.href = url);
+        this.on(isSupportTouchEvent() ? 'touchstart' : 'click', () => {
+            trackEvent(Category.BUTTON, Action.TAP, `credit: ${url}`);
+            window.location.href = url
+        });
     }
 
 }

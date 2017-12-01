@@ -50,7 +50,7 @@ export enum VirtualPageViews {
 export enum Category {
     BATTLE = "battle",
     ACHIEVEMENT = "achievement",
-    BUTTON = "link",
+    BUTTON = "button",
     PERFORMANCE = "performance",
     JS_ERROR = "js_error",
 }
@@ -64,7 +64,6 @@ export enum Action {
     TAP = "tap",
     SUCCESS_ATTACK = "success_attack",
     FALSE_START = "false_start",
-
     COMPLETE_ALL_ROUNDS = "complete",
     LOSE = "lose",
 }
