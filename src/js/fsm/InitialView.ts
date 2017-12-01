@@ -11,7 +11,7 @@ import imageManifest from '../resources/image';
 import soundManifest from '../resources/sound';
 import {SKIP_BRAND_LOGO_ANIMATION} from "../Constants";
 
-import {trackPageView, VirtualPageViews} from "../helper/tracker";
+import {Category, TimingVariable, trackPageView, trackTiming, VirtualPageViews} from "../helper/tracker";
 
 export enum Events {
     COMPLETE_PRELOAD = "InitialViewState@COMPLETE_LOAD",
@@ -57,7 +57,11 @@ class InitialViewState extends ViewContainer {
         this._loader.setImageManifest(imageManifest);
         this._loader.setSoundManifest(soundManifest);
         this._loader.onProgress.add(this._onLoadProgress);
-        this._loader.load(() => dispatchEvent(Events.COMPLETE_PRELOAD));
+        const loadStartTime = Date.now();
+        this._loader.load(() => {
+            this._trackPreloadPerformance(Date.now() - loadStartTime);
+            dispatchEvent(Events.COMPLETE_PRELOAD)
+        });
 
         this._loadingAnimation
             .start()
@@ -109,6 +113,14 @@ class InitialViewState extends ViewContainer {
             dispatchEvent(ApplicationEvents.INITIALIZED);
         }
     };
+
+    private _trackPreloadPerformance = (timeMillis: number) => {
+        trackTiming(
+            Category.PERFORMANCE,
+            TimingVariable.LOAD,
+            timeMillis,
+            "preload_resources");
+    }
 }
 
 export default InitialViewState;

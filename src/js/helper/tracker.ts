@@ -51,6 +51,7 @@ export enum Category {
     BATTLE = "battle",
     ACHIEVEMENT = "achievement",
     BUTTON = "link",
+    PERFORMANCE = "performance",
     JS_ERROR = "js_error",
 }
 
@@ -69,28 +70,12 @@ export enum Action {
 }
 
 /**
- * Tracking labels.
- *
- * @enum
- */
-export enum Label {
-    LEVEL_BEGINNER = "Beginner_Game",
-    LEVEL_NOVICE = "Novice_Game",
-    LEVEL_EXPERT = "Expert_Game",
-
-    MENU_BACK_TO_TOP = "menu_back_to_top",
-    MENU_RESTART = "menu_restart",
-    LINK_HOME = "home_link",
-    LINK_CREDIT = "credit_link",
-}
-
-/**
  * Tracking variables for timing.
  *
  * @enum
  */
 export enum TimingVariable {
-    LOAD_TIME = "load_time",
+    LOAD = "load",
 }
 
 /**
@@ -109,10 +94,10 @@ export function trackPageView(path: VirtualPageViews): void {
  *
  * @param {Category} category
  * @param {Action} action
- * @param {Label} label
- * @param {string | number} value
+ * @param {string} label
+ * @param {number} value
  */
-export function trackEvent(category: Category, action: Action, label: Label, value: number): void {
+export function trackEvent(category: Category, action: Action, label?: string, value?: number): void {
     if (!Number.isInteger(value)) {
         console.error("GA event value is supporting to integer only.");
         return;
@@ -147,14 +132,19 @@ export function trackError(err: Error): void {
  *
  * @param {Category} category
  * @param {TimingVariable} variable
- * @param {string | number} time
- * @param {Label} label
+ * @param {number} time
+ * @param {string} label
  */
-export function trackTiming(category: Category, variable: TimingVariable, time: string | number, label: Label): void {
-    ga('send', {
-        hitType: 'timing',
+export function trackTiming(category: Category, variable: TimingVariable, time: number, label?: string): void {
+    if (!Number.isInteger(time)) {
+        console.error("GA event value is supporting to integer only.");
+        return;
+    }
+
+    ga('send', 'timing', {
         timingCategory: category,
         timingVar: variable,
-        timingValue: time
+        timingValue: time,
+        timingLabel: label,
     });
 }
