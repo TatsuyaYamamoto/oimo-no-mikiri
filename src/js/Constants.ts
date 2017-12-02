@@ -110,7 +110,7 @@ export const APP_SERVER_BASE_URL = process.env.NODE_ENV === 'production' ?
  * External URLs.
  */
 export const URL = {
-    OIMO_NO_MIKIRI: "http://games.sokontokoro-factory.net/oimo-no-mikiri/",
+    OIMO_NO_MIKIRI: "http://games.sokontokoro-factory.net/oimo/",
     SOKONTOKORO_HOME: 'http://sokontokoro-factory.net',
     TWITTER_HOME_T28: "https://twitter.com/t28_tatsuya",
     TWITTER_HOME_SANZASHI: "https://twitter.com/xxsanzashixx",
