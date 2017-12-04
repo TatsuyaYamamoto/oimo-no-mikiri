@@ -117,6 +117,7 @@ export const URL = {
     TWITTER_TWEET_PAGE: "https://twitter.com/intent/tweet",
     ONJIN_TOP: 'https://on-jin.com/',
     LOVELIVE_TOP: 'http://www.lovelive-anime.jp/',
+    KIRBY_HOME: 'https://www.nintendo.co.jp/n02/shvc/p_akfj/',
 };
 
 export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production' ?

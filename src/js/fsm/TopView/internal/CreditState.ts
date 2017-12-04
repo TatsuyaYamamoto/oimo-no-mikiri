@@ -21,6 +21,7 @@ class CreditState extends AbstractTopState {
     private _sanzashiCredit: CreditItem;
     private _onjinCredit: CreditItem;
     private _loveliveCredit: CreditItem;
+    private _kirbyCredit: CreditItem;
 
     private _backToMenuButton: BackToMenuButton;
 
@@ -48,10 +49,13 @@ class CreditState extends AbstractTopState {
         this._sanzashiCredit.position.set(this.viewWidth * 0.8, this.viewHeight * 0.3);
 
         this._onjinCredit = new CreditItem(t(StringIds.CREDIT_ON_JIN), URL.ONJIN_TOP);
-        this._onjinCredit.position.set(this.viewWidth * 0.7, this.viewHeight * 0.6);
+        this._onjinCredit.position.set(this.viewWidth * 0.2, this.viewHeight * 0.8);
 
         this._loveliveCredit = new CreditItem(t(StringIds.CREDIT_LOVELIVE), URL.LOVELIVE_TOP);
         this._loveliveCredit.position.set(this.viewWidth * 0.3, this.viewHeight * 0.5);
+
+        this._kirbyCredit = new CreditItem(t(StringIds.CREDIT_KIRBY), URL.KIRBY_HOME);
+        this._kirbyCredit.position.set(this.viewWidth * 0.7, this.viewHeight * 0.6);
 
         this._backToMenuButton = new BackToMenuButton();
         this._backToMenuButton.position.set(this.viewWidth * 0.85, this.viewHeight * 0.85);
@@ -67,6 +71,7 @@ class CreditState extends AbstractTopState {
             this._sanzashiCredit,
             this._onjinCredit,
             this._loveliveCredit,
+            this._kirbyCredit
         );
     }
 

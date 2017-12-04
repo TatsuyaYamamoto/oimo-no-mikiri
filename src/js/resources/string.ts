@@ -25,6 +25,7 @@ export const Ids = {
     CREDIT_SANZASHI: "CREDIT_SANZASHI",
     CREDIT_ON_JIN: "CREDIT_ON_JIN",
     CREDIT_LOVELIVE: "CREDIT_LOVELIVE",
+    CREDIT_KIRBY: "CREDIT_KIRBY",
 
     GAME_RESULT_TWEET1: 'GAME_RESULT_TWEET1',
     GAME_RESULT_TWEET2: 'GAME_RESULT_TWEET2',
@@ -66,6 +67,7 @@ Tap display or click "a" key immediately when you see "!".`,
             [Ids.CREDIT_SANZASHI]: 'Illustration: Sanzashi',
             [Ids.CREDIT_ON_JIN]: 'Sound effect: On-Jin ～音人～',
             [Ids.CREDIT_LOVELIVE]: 'PROJECT Lovelive!',
+            [Ids.CREDIT_KIRBY]: 'Memory: Kirby Super Star',
 
             [Ids.GAME_RESULT_TWEET1]: `はなまる「おいも焼けたず、、、まるのおいもが！」ベストタイム {{bestTime}}、{{wins}}人抜き！`,
             [Ids.GAME_RESULT_TWEET2]: `???「はなまるちゃんのおいも、おいしいね。    うゆ。」 ベストタイム {{bestTime}}、{{wins}}人抜き！`,
@@ -102,6 +104,7 @@ Tap display or click "a" key immediately when you see "!".`,
             [Ids.CREDIT_SANZASHI]: 'イラスト: さんざし',
             [Ids.CREDIT_ON_JIN]: '効果音: On-Jin ～音人～',
             [Ids.CREDIT_LOVELIVE]: 'プロジェクト ラブライブ！',
+            [Ids.CREDIT_KIRBY]: '思い出: 星のカービィ',
         }
     }
 }
