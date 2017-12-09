@@ -30,7 +30,8 @@ class MenuBoard extends Container {
 
     private _homeButton: HomeButton;
     private _soundButton: SoundButton;
-    private _gameStartButton: GameStartButton;
+    private _onePlayerGameStartButton: GameStartButton;
+    private _twoPlayerGameStartButton: GameStartButton;
     private _howToPlayButton: HowToPlayButton;
     private _creditButton: CreditButton;
     private _selectCharacterButton: SelectCharacterButton;
@@ -47,11 +48,14 @@ class MenuBoard extends Container {
         this._soundButton = new SoundButton();
         this._soundButton.position.set(width * 0.55, -1 * height * 0.33);
 
-        this._gameStartButton = new GameStartButton();
-        this._gameStartButton.position.set(-1 * width * 0.35, height * 0.05);
+        this._onePlayerGameStartButton = new GameStartButton();
+        this._onePlayerGameStartButton.position.set(-1 * width * 0.5, height * 0.05);
+
+        this._twoPlayerGameStartButton = new GameStartButton();
+        this._twoPlayerGameStartButton.position.set(-1 * width * 0.25, height * 0.05);
 
         this._howToPlayButton = new HowToPlayButton();
-        this._howToPlayButton.position.set(-1 * width * 0.05, height * 0.05);
+        this._howToPlayButton.position.set(0, height * 0.05);
 
         this._creditButton = new CreditButton();
         this._creditButton.position.set(width * 0.25, height * 0.05);
@@ -61,7 +65,8 @@ class MenuBoard extends Container {
 
         this.addChild(
             this._backGround,
-            this._gameStartButton,
+            this._onePlayerGameStartButton,
+            this._twoPlayerGameStartButton,
             this._howToPlayButton,
             this._creditButton,
             this._selectCharacterButton,
@@ -80,9 +85,14 @@ class MenuBoard extends Container {
         this._soundButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
     }
 
-    public setOnSelectGameStartListener(fn: (event: interaction.InteractionEvent) => void) {
-        this._gameStartButton.interactive = true;
-        this._gameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
+    public setOnOnePlayerGameStartClickListener(fn: (event: interaction.InteractionEvent) => void) {
+        this._onePlayerGameStartButton.interactive = true;
+        this._onePlayerGameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
+    }
+
+    public setOnTwoPlayerGameStartClickListener(fn: (event: interaction.InteractionEvent) => void) {
+        this._twoPlayerGameStartButton.interactive = true;
+        this._twoPlayerGameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
     }
 
     public setOnSelectHowToPlayListener(fn: (event: interaction.InteractionEvent) => void) {

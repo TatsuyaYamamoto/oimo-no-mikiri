@@ -86,8 +86,13 @@ class ActionState extends AbstractGameState {
             this._signalSprite
         );
 
-        this.addClickWindowEventListener(this._onAttackedByPlayer);
-        Mousetrap.bind('a', this._onAttackedByPlayer);
+        this.addClickWindowEventListener(this._onWindowTaped);
+        Mousetrap.bind('a', () => {
+            this.onAttacked(Actor.PLAYER);
+        });
+        Mousetrap.bind('l', () => {
+            this.onAttacked(Actor.OPPONENT);
+        });
     }
 
     /**
@@ -96,8 +101,9 @@ class ActionState extends AbstractGameState {
     onExit(): void {
         super.onExit();
 
-        this.removeClickWindowEventListener(this._onAttackedByPlayer);
+        this.removeClickWindowEventListener(this._onWindowTaped);
         Mousetrap.unbind('a');
+        Mousetrap.unbind('l');
     }
 
     /**
@@ -184,8 +190,17 @@ class ActionState extends AbstractGameState {
         return !!this._attackTimeMap.get(actor);
     };
 
-    private _onAttackedByPlayer = () => {
-        this.onAttacked(Actor.PLAYER);
+    private _onWindowTaped = (e: MouseEvent) => {
+        if (this._autoAttackTime) {
+            this.onAttacked(Actor.PLAYER);
+            return;
+        }
+
+        if (e.clientX < this.viewWidth / 2) {
+            this.onAttacked(Actor.PLAYER);
+        } else {
+            this.onAttacked(Actor.OPPONENT);
+        }
     };
 
     private _judge = (actor: Actor, attackTime: number): void => {

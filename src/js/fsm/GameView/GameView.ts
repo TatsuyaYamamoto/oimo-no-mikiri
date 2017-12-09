@@ -22,8 +22,7 @@ import {trackPageView, VirtualPageViews} from "../../helper/tracker";
 
 import Game from '../../models/Game';
 import Actor from "../../models/Actor";
-
-import {NPC_LEVELS} from "../../Constants";
+import Mode from "../../models/Mode";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
@@ -36,8 +35,7 @@ export enum Events {
 }
 
 export interface EnterParams extends Deliverable {
-    level: NPC_LEVELS,
-    roundLength: number,
+    mode: Mode;
 }
 
 enum InnerStates {
@@ -112,7 +110,7 @@ class GameViewState extends ViewContainer {
             [Events.RESTART_GAME]: this._onRequestedRestart,
         });
 
-        this._game = Game.asOnePlayer(params.level);
+        this._game = new Game(params.mode);
         this.game.start();
 
         dispatchEvent(Events.REQUEST_READY);
@@ -165,7 +163,7 @@ class GameViewState extends ViewContainer {
      */
     private _onReady = () => {
         this._to<ActionStateEnterParams>(InnerStates.ACTION, {
-            autoOpponentAttackInterval: this.game.npcAttackIntervalMillis,
+            autoOpponentAttackInterval: this.game.isOnePlayerMode ? this.game.npcAttackIntervalMillis : null,
             isFalseStarted: {
                 player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
                 opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
@@ -211,6 +209,8 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onFixedResult = () => {
+        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`)
+
         const bestTime = this.game.bestTime;
         const straightWins = this.game.straightWins;
         const winner = this.game.winner;

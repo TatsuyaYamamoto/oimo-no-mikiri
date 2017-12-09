@@ -11,18 +11,20 @@ import TweetButton from "../../../texture/sprite/button/TweetButton";
 import GameOverLogo from "../../../texture/sprite/GameOverLogo";
 import GameResultPaper from "../../../texture/containers/GameResultPaper";
 
+import Actor from "../../../models/Actor";
+import Mode from "../../../models/Mode";
+
 import {play, stop} from "../../../helper/MusicPlayer";
 import {postPlayLog, tweetGameResult} from "../../../helper/network";
 import {Action, Category, trackEvent} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';
-import Actor from "../../../models/Actor";
 
 export interface EnterParams extends Deliverable {
     winner: Actor;
     bestTime: number;
     straightWins: number;
-    mode: 'beginner' | 'novice' | 'expert' | 'two-players';
+    mode: Mode;
 }
 
 class OverState extends AbstractGameState {
