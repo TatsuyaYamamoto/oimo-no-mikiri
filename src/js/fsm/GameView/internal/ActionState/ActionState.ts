@@ -1,48 +1,58 @@
-import * as Mousetrap from 'mousetrap';
+import {dispatchEvent} from "../../../../../framework/EventUtils";
+import Deliverable from "../../../../../framework/Deliverable";
+import {getRandomInteger} from "../../../../../framework/utils";
 
-import {dispatchEvent} from "../../../../framework/EventUtils";
-import Deliverable from "../../../../framework/Deliverable";
-import {getRandomInteger} from "../../../../framework/utils";
+import AbstractGameState from "../GameViewState";
+import {Events} from "../../GameView";
 
-import AbstractGameState from "./GameViewState";
-import {Events} from "../GameView";
+import Signal from "../../../../texture/sprite/Signal";
+import FalseStartCheck from "../../../../texture/sprite/text/FalseStartCheck";
 
-import Signal from "../../../texture/sprite/Signal";
-import FalseStartCheck from "../../../texture/sprite/text/FalseStartCheck";
+import Actor from '../../../../models/Actor';
 
-import Actor from '../../../models/Actor';
+import {play} from "../../../../helper/MusicPlayer";
 
-import {play} from "../../../helper/MusicPlayer";
+import {Ids as SoundIds} from '../../../../resources/sound';
 
-import {Ids as SoundIds} from '../../../resources/sound';
-
-import {GAME_PARAMETERS} from '../../../Constants';
+import {GAME_PARAMETERS} from '../../../../Constants';
 
 export interface EnterParams extends Deliverable {
-    autoOpponentAttackInterval?: number,
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
-class ActionState extends AbstractGameState {
+abstract class ActionState extends AbstractGameState {
     private _signalTime: number;
     private _isSignaled: boolean;
     private _isJudging: boolean;
     private _attackTimeMap: Map<Actor, number>;
-    private _autoAttackTime: number;
 
     private _signalSprite: Signal;
     private _playerFalseStartCheck: FalseStartCheck;
     private _opponentFalseStartCheck: FalseStartCheck;
 
+    protected get signalTime(): number {
+        return this._signalTime;
+    }
+
     /**
-     * @override
+     * Return true if the battle is already signed.
+     *
+     * @return {boolean}
      */
-    update(elapsedMS: number): void {
-        super.update(elapsedMS);
+    protected get isSignaled(): boolean {
+        return this._isSignaled;
+    }
 
-        this.shouldSign() && this.onSignaled();
+    protected get signalSprite(): Signal {
+        return this._signalSprite;
+    }
 
-        this.shouldAutoAttack() && this.onAttacked(Actor.OPPONENT);
+    protected get playerFalseStartCheck(): FalseStartCheck {
+        return this._playerFalseStartCheck;
+    }
+
+    protected get opponentFalseStartCheck(): FalseStartCheck {
+        return this._opponentFalseStartCheck;
     }
 
     /**
@@ -54,7 +64,6 @@ class ActionState extends AbstractGameState {
         this._signalTime = this.createSignalTime();
         this._isSignaled = false;
         this._isJudging = false;
-        this._autoAttackTime = params.autoOpponentAttackInterval && this._signalTime + params.autoOpponentAttackInterval;
         this._attackTimeMap = new Map();
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
@@ -73,26 +82,8 @@ class ActionState extends AbstractGameState {
         this._opponentFalseStartCheck.position.set(this.viewWidth * 0.8, this.viewHeight * 0.2);
         this._opponentFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.opponent;
 
-
-        this.backGroundLayer.addChild(
-            this.background,
-        );
-        this.applicationLayer.addChild(
-            this.oimo,
-            this.player,
-            this.opponent,
-            this._playerFalseStartCheck,
-            this._opponentFalseStartCheck,
-            this._signalSprite
-        );
-
-        this.addClickWindowEventListener(this._onWindowTaped);
-        Mousetrap.bind('a', () => {
-            this.onAttacked(Actor.PLAYER);
-        });
-        Mousetrap.bind('l', () => {
-            this.onAttacked(Actor.OPPONENT);
-        });
+        this.bindKeyboardEvents();
+        this.addClickWindowEventListener(this.onWindowTaped);
     }
 
     /**
@@ -101,10 +92,15 @@ class ActionState extends AbstractGameState {
     onExit(): void {
         super.onExit();
 
-        this.removeClickWindowEventListener(this._onWindowTaped);
-        Mousetrap.unbind('a');
-        Mousetrap.unbind('l');
+        this.unbindKeyboardEvents();
+        this.removeClickWindowEventListener(this.onWindowTaped);
     }
+
+    abstract bindKeyboardEvents();
+
+    abstract unbindKeyboardEvents();
+
+    abstract onWindowTaped(e: MouseEvent);
 
     /**
      * Fired when attack of the battle is available.
@@ -128,10 +124,10 @@ class ActionState extends AbstractGameState {
             return;
         }
 
-        const attackTime = this.elapsedTimeMillis - this._signalTime;
+        const attackTime = this.elapsedTimeMillis - this.signalTime;
         this._attackTimeMap.set(actor, attackTime);
 
-        if (!this.isSignaled()) {
+        if (!this.isSignaled) {
             console.log(`It's fault tap. actor: ${actor}, time: ${attackTime}ms.`);
 
             play(SoundIds.SOUND_FALSE_START);
@@ -148,18 +144,7 @@ class ActionState extends AbstractGameState {
      * @return {boolean}
      */
     protected shouldSign = (): boolean => {
-        return !this._isSignaled && this._signalTime < this.elapsedTimeMillis;
-    };
-
-    /**
-     * Return true if the opponent is NPC and it's time to attack automatically.
-     *
-     * @return {boolean}
-     */
-    protected shouldAutoAttack = (): boolean => {
-        return this._autoAttackTime &&
-            !this.isAttacked(Actor.OPPONENT)
-            && this._autoAttackTime < this.elapsedTimeMillis;
+        return !this.isSignaled && this.signalTime < this.elapsedTimeMillis;
     };
 
     /**
@@ -172,15 +157,6 @@ class ActionState extends AbstractGameState {
     };
 
     /**
-     * Return true if the battle is already signed.
-     *
-     * @return {boolean}
-     */
-    protected isSignaled = (): boolean => {
-        return this._isSignaled;
-    };
-
-    /**
      * Return true if provided actor already attacked.
      *
      * @param {Actor} actor
@@ -188,19 +164,6 @@ class ActionState extends AbstractGameState {
      */
     protected isAttacked = (actor: Actor): boolean => {
         return !!this._attackTimeMap.get(actor);
-    };
-
-    private _onWindowTaped = (e: MouseEvent) => {
-        if (this._autoAttackTime) {
-            this.onAttacked(Actor.PLAYER);
-            return;
-        }
-
-        if (e.clientX < this.viewWidth / 2) {
-            this.onAttacked(Actor.PLAYER);
-        } else {
-            this.onAttacked(Actor.OPPONENT);
-        }
     };
 
     private _judge = (actor: Actor, attackTime: number): void => {
