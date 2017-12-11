@@ -143,7 +143,6 @@ class Game {
 
         // Is last round battle fixed?
         const lastBattle = this._battles.get(this.roundSize);
-        console.log(lastBattle, this._battles, this.roundSize)
 
         return !!lastBattle && lastBattle.isFixed();
     }

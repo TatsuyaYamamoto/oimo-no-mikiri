@@ -5,14 +5,22 @@ import Deliverable from "../../../../../framework/Deliverable";
 import ActionState from "./ActionState";
 
 import Actor from "../../../../models/Actor";
+import BattleStatusBoard from "../../../../texture/containers/label/BattleStatusBoard";
 
 
 export interface EnterParams extends Deliverable {
-    autoOpponentAttackInterval?: number,
+    battleLeft: number,
+    wins: { onePlayer: number, twoPlayer: number }
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
 class MultiPlayActionState extends ActionState {
+    private _battleStatusBoard: BattleStatusBoard;
+
+    protected get battleStatusBoard(): BattleStatusBoard {
+        return this._battleStatusBoard;
+    }
+
 
     /**
      * @override
@@ -30,6 +38,12 @@ class MultiPlayActionState extends ActionState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
+        this._battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
+        this._battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
+        this._battleStatusBoard.battleLeft = params.battleLeft;
+        this._battleStatusBoard.onePlayerWins = params.wins.onePlayer;
+        this._battleStatusBoard.twoPlayerWins = params.wins.twoPlayer;
+
         this.backGroundLayer.addChild(
             this.background,
         );
@@ -39,7 +53,8 @@ class MultiPlayActionState extends ActionState {
             this.opponent,
             this.playerFalseStartCheck,
             this.opponentFalseStartCheck,
-            this.signalSprite
+            this.signalSprite,
+            this.battleStatusBoard,
         );
 
         Mousetrap.bind('a', () => {

@@ -179,6 +179,11 @@ class GameViewState extends ViewContainer {
             });
         } else {
             this._to<MultiPlayActionStateEnterParams>(InnerStates.ACTION, {
+                battleLeft: this.game.roundSize - this.game.currentRound + 1,
+                wins: {
+                    onePlayer: this.game.getWins(Actor.PLAYER),
+                    twoPlayer: this.game.getWins(Actor.OPPONENT),
+                },
                 isFalseStarted: {
                     player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
                     opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
