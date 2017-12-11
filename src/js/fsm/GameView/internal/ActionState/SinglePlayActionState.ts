@@ -1,3 +1,5 @@
+import * as Mousetrap from 'mousetrap';
+
 import ActionState, {EnterParams as ActionEnterParams} from "./ActionState";
 
 import Actor from "../../../../models/Actor";

@@ -1,3 +1,5 @@
+import * as Mousetrap from 'mousetrap';
+
 import Deliverable from "../../../../../framework/Deliverable";
 
 import ActionState from "./ActionState";
@@ -73,7 +75,9 @@ class MultiPlayActionState extends ActionState {
      * @param e
      * @override
      */
-    onWindowTaped(e:MouseEvent) {
+    onWindowTaped(e: MouseEvent): void {
+        console.log(this);
+
         if (e.clientX < this.viewWidth / 2) {
             this.onAttacked(Actor.PLAYER);
         } else {

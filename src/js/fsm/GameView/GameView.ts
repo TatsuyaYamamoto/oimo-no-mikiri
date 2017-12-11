@@ -4,7 +4,13 @@ import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
 import ReadyState from "./internal/ReadyState";
-import ActionState, {EnterParams as ActionStateEnterParams} from "./internal/ActionState";
+import ActionState from "./internal/ActionState";
+import SinglePlayActionState, {
+    EnterParams as SinglePlayActionStateEnterParams
+} from "./internal/ActionState/SinglePlayActionState";
+import MultiPlayActionState, {
+    EnterParams as MultiPlayActionStateEnterParams
+} from "./internal/ActionState/MultiPlayActionState";
 import ResultState, {EnterParams as ResultStateEnterParams} from './internal/ResultState';
 import OverState, {EnterParams as OverEnterParams} from "./internal/OverState";
 
@@ -84,6 +90,8 @@ class GameViewState extends ViewContainer {
         // Tracking
         trackPageView(VirtualPageViews.GAME);
 
+        this._game = new Game(params.mode);
+
         this._player = new Hanamaru();
 
         this._opponents = {};
@@ -95,7 +103,7 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
-            [InnerStates.ACTION]: new ActionState(this),
+            [InnerStates.ACTION]: this.game.isOnePlayerMode ? new SinglePlayActionState(this) : new MultiPlayActionState(this),
             [InnerStates.RESULT]: new ResultState(this),
             [InnerStates.OVER]: new OverState(this)
         });
@@ -110,7 +118,6 @@ class GameViewState extends ViewContainer {
             [Events.RESTART_GAME]: this._onRequestedRestart,
         });
 
-        this._game = new Game(params.mode);
         this.game.start();
 
         dispatchEvent(Events.REQUEST_READY);
@@ -162,13 +169,22 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onReady = () => {
-        this._to<ActionStateEnterParams>(InnerStates.ACTION, {
-            autoOpponentAttackInterval: this.game.isOnePlayerMode ? this.game.npcAttackIntervalMillis : null,
-            isFalseStarted: {
-                player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
-                opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
-            },
-        });
+        if (this.game.isOnePlayerMode) {
+            this._to<SinglePlayActionStateEnterParams>(InnerStates.ACTION, {
+                autoOpponentAttackInterval: this.game.isOnePlayerMode ? this.game.npcAttackIntervalMillis : null,
+                isFalseStarted: {
+                    player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
+                    opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
+                },
+            });
+        } else {
+            this._to<MultiPlayActionStateEnterParams>(InnerStates.ACTION, {
+                isFalseStarted: {
+                    player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
+                    opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
+                },
+            });
+        }
     };
 
     /**

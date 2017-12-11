@@ -34,6 +34,15 @@ abstract class ActionState extends AbstractGameState {
         return this._signalTime;
     }
 
+    constructor(params) {
+        super(params);
+
+        // Bind this instance to class' abstract methods that can't define as bind property.
+        this.bindKeyboardEvents = this.bindKeyboardEvents.bind(this);
+        this.unbindKeyboardEvents = this.unbindKeyboardEvents.bind(this);
+        this.onWindowTaped = this.onWindowTaped.bind(this);
+    }
+
     /**
      * Return true if the battle is already signed.
      *
@@ -96,11 +105,11 @@ abstract class ActionState extends AbstractGameState {
         this.removeClickWindowEventListener(this.onWindowTaped);
     }
 
-    abstract bindKeyboardEvents();
+    abstract bindKeyboardEvents(): void;
 
-    abstract unbindKeyboardEvents();
+    abstract unbindKeyboardEvents(): void;
 
-    abstract onWindowTaped(e: MouseEvent);
+    abstract onWindowTaped(e: MouseEvent): void;
 
     /**
      * Fired when attack of the battle is available.
