@@ -84,11 +84,11 @@ abstract class ActionState extends AbstractGameState {
         this._signalSprite.hide();
 
         this._playerFalseStartCheck = new FalseStartCheck();
-        this._playerFalseStartCheck.position.set(this.viewWidth * 0.2, this.viewHeight * 0.2);
+        this._playerFalseStartCheck.position.set(this.viewWidth * 0.1, this.viewHeight * 0.3);
         this._playerFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.player;
 
         this._opponentFalseStartCheck = new FalseStartCheck();
-        this._opponentFalseStartCheck.position.set(this.viewWidth * 0.8, this.viewHeight * 0.2);
+        this._opponentFalseStartCheck.position.set(this.viewWidth * 0.9, this.viewHeight * 0.3);
         this._opponentFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.opponent;
 
         this.bindKeyboardEvents();
