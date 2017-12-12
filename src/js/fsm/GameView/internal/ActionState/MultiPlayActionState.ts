@@ -91,8 +91,6 @@ class MultiPlayActionState extends ActionState {
      * @override
      */
     onWindowTaped(e: MouseEvent): void {
-        console.log(this);
-
         if (e.clientX < this.viewWidth / 2) {
             this.onAttacked(Actor.PLAYER);
         } else {

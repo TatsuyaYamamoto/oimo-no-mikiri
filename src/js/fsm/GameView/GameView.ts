@@ -4,15 +4,23 @@ import Deliverable from "../../../framework/Deliverable";
 import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
 
 import ReadyState from "./internal/ReadyState";
-import ActionState from "./internal/ActionState";
-import SinglePlayActionState, {
+import {
+    default as SinglePlayActionState,
     EnterParams as SinglePlayActionStateEnterParams
 } from "./internal/ActionState/SinglePlayActionState";
-import MultiPlayActionState, {
+import {
+    default as MultiPlayActionState,
     EnterParams as MultiPlayActionStateEnterParams
 } from "./internal/ActionState/MultiPlayActionState";
 import ResultState, {EnterParams as ResultStateEnterParams} from './internal/ResultState';
-import OverState, {EnterParams as OverEnterParams} from "./internal/OverState";
+import {
+    default as SinglePlayOverState,
+    EnterParams as SinglePlayOverStateEnterParams
+} from "./internal/OverState/SinglePlayOverState";
+import {
+    default as MultiPlayOverState,
+    EnterParams as MultiPlayOverStateEnterParams
+} from "./internal/OverState/MultiPlayOverState";
 
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
@@ -103,9 +111,13 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
-            [InnerStates.ACTION]: this.game.isOnePlayerMode ? new SinglePlayActionState(this) : new MultiPlayActionState(this),
+            [InnerStates.ACTION]: this.game.isOnePlayerMode ?
+                new SinglePlayActionState(this) :
+                new MultiPlayActionState(this),
             [InnerStates.RESULT]: new ResultState(this),
-            [InnerStates.OVER]: new OverState(this)
+            [InnerStates.OVER]: this.game.isOnePlayerMode ?
+                new SinglePlayOverState(this) :
+                new MultiPlayOverState(this)
         });
 
         addEvents({
@@ -233,16 +245,25 @@ class GameViewState extends ViewContainer {
         console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`)
 
         const bestTime = this.game.bestTime;
-        const straightWins = this.game.straightWins;
         const winner = this.game.winner;
         const mode = this.game.mode;
 
-        this._to<OverEnterParams>(InnerStates.OVER, {
-            winner,
-            bestTime,
-            straightWins,
-            mode
-        });
+        if (this.game.isOnePlayerMode) {
+            this._to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {
+                winner,
+                bestTime,
+                mode,
+                straightWins:  this.game.straightWins,
+            });
+        } else {
+            this._to<MultiPlayOverStateEnterParams>(InnerStates.OVER, {
+                winner,
+                bestTime,
+                mode,
+                onePlayerWins: this.game.getWins(Actor.PLAYER),
+                twoPlayerWins: this.game.getWins(Actor.OPPONENT),
+            });
+        }
     };
 
     private _onRequestedRestart = () => {
