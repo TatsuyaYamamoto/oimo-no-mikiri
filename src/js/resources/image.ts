@@ -10,7 +10,8 @@ export const Ids = {
     BACKGROUND_SKY: 'BACKGROUND_SKY',
     BACKGROUND_BEACH: 'BACKGROUND_BEACH',
 
-    BUTTON_MENU_GAME_START: 'BUTTON_MENU_GAME_START',
+    BUTTON_MENU_SINGLE_PLAY_GAME_START: 'BUTTON_MENU_SINGLE_PLAY_GAME_START',
+    BUTTON_MENU_MULTI_PLAY_GAME_START: 'BUTTON_MENU_MULTI_PLAY_GAME_START',
     BUTTON_MENU_HOW_TO_PLAY: 'BUTTON_MENU_HOW_TO_PLAY',
     BUTTON_MENU_CREDIT: 'BUTTON_MENU_CREDIT',
     BUTTON_MENU_BACK_TO_MENU: 'BUTTON_MENU_BACK_TO_MENU',
@@ -54,7 +55,8 @@ const manifest: ImageManifest = {
         [Ids.BACKGROUND_SKY]: 'background_sky.png',
         [Ids.BACKGROUND_BEACH]: 'background_beach.json',
 
-        [Ids.BUTTON_MENU_GAME_START]: 'button_menu_game_start.png',
+        [Ids.BUTTON_MENU_SINGLE_PLAY_GAME_START]: 'button_menu_single_play_game_start.png',
+        [Ids.BUTTON_MENU_MULTI_PLAY_GAME_START]: 'button_menu_multi_play_game_start.png',
         [Ids.BUTTON_MENU_HOW_TO_PLAY]: 'button_menu_how_to_play.png',
         [Ids.BUTTON_MENU_CREDIT]: 'button_menu_credit.png',
         [Ids.BUTTON_MENU_BACK_TO_MENU]: 'button_menu_back_to_menu.png',

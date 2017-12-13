@@ -4,14 +4,14 @@ import {loadTexture} from "../../../framework/AssetLoader";
 import {isSupportTouchEvent} from "../../../framework/utils";
 
 import Sprite from "../internal/Sprite";
-import GameStartButton from "../sprite/button/GameStartButton";
+import Button from "../internal/Button";
 import HowToPlayButton from "../sprite/button/HowToPlayButton";
 import CreditButton from "../sprite/button/CreditButton";
 import SelectCharacterButton from "../sprite/button/SelectCharacterButton";
 import HomeButton from "../sprite/button/HomeButton";
+import SoundButton from "../sprite/button/SoundButton";
 
 import {Ids} from "../../resources/image";
-import SoundButton from "../sprite/button/SoundButton";
 
 /**
  * @class
@@ -30,8 +30,8 @@ class MenuBoard extends Container {
 
     private _homeButton: HomeButton;
     private _soundButton: SoundButton;
-    private _onePlayerGameStartButton: GameStartButton;
-    private _twoPlayerGameStartButton: GameStartButton;
+    private _onePlayerGameStartButton: Button;
+    private _twoPlayerGameStartButton: Button;
     private _howToPlayButton: HowToPlayButton;
     private _creditButton: CreditButton;
     private _selectCharacterButton: SelectCharacterButton;
@@ -48,10 +48,10 @@ class MenuBoard extends Container {
         this._soundButton = new SoundButton();
         this._soundButton.position.set(width * 0.55, -1 * height * 0.33);
 
-        this._onePlayerGameStartButton = new GameStartButton();
+        this._onePlayerGameStartButton = new Button(loadTexture(Ids.BUTTON_MENU_SINGLE_PLAY_GAME_START));
         this._onePlayerGameStartButton.position.set(-1 * width * 0.5, height * 0.05);
 
-        this._twoPlayerGameStartButton = new GameStartButton();
+        this._twoPlayerGameStartButton = new Button(loadTexture(Ids.BUTTON_MENU_MULTI_PLAY_GAME_START));
         this._twoPlayerGameStartButton.position.set(-1 * width * 0.25, height * 0.05);
 
         this._howToPlayButton = new HowToPlayButton();
