@@ -141,10 +141,10 @@ class Game {
             }
         }
 
-        // Is last round battle fixed?
-        const lastBattle = this._battles.get(this.roundSize);
-
-        return !!lastBattle && lastBattle.isFixed();
+        // Player or opponent won required time?
+        const requiredWins = Math.ceil(this.roundSize / 2);
+        return this.getWins(Actor.PLAYER) >= requiredWins
+            || this.getWins(Actor.OPPONENT) >= requiredWins;
     }
 }
 
