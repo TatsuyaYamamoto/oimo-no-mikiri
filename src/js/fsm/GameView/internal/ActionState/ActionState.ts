@@ -109,7 +109,7 @@ abstract class ActionState extends AbstractGameState {
 
     abstract unbindKeyboardEvents(): void;
 
-    abstract onWindowTaped(e: MouseEvent): void;
+    abstract onWindowTaped(e: MouseEvent | TouchEvent): void;
 
     /**
      * Fired when attack of the battle is available.

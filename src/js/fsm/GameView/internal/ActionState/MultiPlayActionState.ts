@@ -90,11 +90,23 @@ class MultiPlayActionState extends ActionState {
      * @param e
      * @override
      */
-    onWindowTaped(e: MouseEvent): void {
-        if (e.clientX < this.viewWidth / 2) {
-            this.onAttacked(Actor.PLAYER);
-        } else {
-            this.onAttacked(Actor.OPPONENT);
+    onWindowTaped(e: MouseEvent | TouchEvent): void {
+
+        let position;
+        let playerAttachAreaRange = this.viewWidth / 2;
+        if (e instanceof MouseEvent) {
+            position = e.clientX;
+        }
+
+        if (e instanceof TouchEvent) {
+            position = e.changedTouches.item(0).clientX;
+        }
+
+        if (position) {
+            this.onAttacked(position < playerAttachAreaRange ?
+                Actor.PLAYER :
+                Actor.OPPONENT
+            );
         }
     }
 }
