@@ -43,7 +43,10 @@ export default {
 ...No! Someone is coming close to take it!
 
 It’s not going to work that way, zura!
-Tap display or click "a" key immediately when you see "!".`,
+Tap display or click "A" key immediately when you see "!".
+
+In multi play mode,
+1Player taps left half of display or clicks "A" key and 2Player taps right half or clicks "L" key! `,
 
             [Ids.ONE_PLAYER]: '1P',
             [Ids.TWO_PLAYERS]: '2P',
@@ -85,7 +88,10 @@ Tap display or click "a" key immediately when you see "!".`,
 ...大変！まるのお芋を狙ってる子達が次々とやってくるずら！
 
 そうはいかないずら！
-"!"マークが現れたら、すかさずタップ、または"a"キーを押そう！`,
+"!"マークが現れたら、すかさず画面をタップ、または"A"キーを押そう！
+
+2人で遊ぶときは、
+1Pが画面左半分または"A"キー、2Pが画面右半分または"L"キーだ！`,
 
             [Ids.BEGINNER]: '易',
             [Ids.NOVICE]: '中',

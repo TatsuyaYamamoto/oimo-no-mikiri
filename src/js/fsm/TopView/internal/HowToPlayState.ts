@@ -45,7 +45,7 @@ class HowToPlayState extends AbstractTopState {
         trackPageView(VirtualPageViews.HOW_TO_USE);
 
         this._usageTextArea = new UsageTextArea();
-        this._usageTextArea.position.set(this.viewWidth * 0.5, this.viewHeight * 0.2);
+        this._usageTextArea.position.set(this.viewWidth * 0.5, this.viewHeight * 0.22);
 
         this._oimo = new Oimo();
         this._oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
