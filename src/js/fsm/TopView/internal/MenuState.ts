@@ -11,7 +11,7 @@ import Mode, {Level} from "../../../models/Mode";
 
 import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
 import {goTo} from "../../../helper/network";
-import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import {Action, Category, trackEvent, trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {URL} from '../../../Constants';
 import {Ids as SoundIds} from '../../../resources/sound';
@@ -72,7 +72,12 @@ class MenuState extends AbstractTopState {
      * @private
      */
     private _onSelectHome = () => {
-        goTo(URL.TWITTER_HOME_T28)
+        goTo(URL.TWITTER_HOME_T28);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "home");
     };
 
     /**
@@ -82,6 +87,11 @@ class MenuState extends AbstractTopState {
     private _onToggleSound = () => {
         play(SoundIds.SOUND_TOGGLE_SOUND);
         toggleMute();
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "toggle_sound");
     };
 
     /**
@@ -97,6 +107,11 @@ class MenuState extends AbstractTopState {
         );
 
         play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "single_play_mode");
     };
 
     private _onTwoPlayerSelected = () => {
@@ -104,6 +119,11 @@ class MenuState extends AbstractTopState {
 
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "multi_play_mode");
     };
 
     /**
@@ -135,6 +155,11 @@ class MenuState extends AbstractTopState {
 
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            level);
     };
 }
 
