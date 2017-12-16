@@ -16,11 +16,15 @@ export interface EnterParams extends Deliverable {
 
 class MultiPlayActionState extends ActionState {
     private _battleStatusBoard: BattleStatusBoard;
+    private _playerAttachAreaRange: number;
 
     protected get battleStatusBoard(): BattleStatusBoard {
         return this._battleStatusBoard;
     }
 
+    protected get playerAttachAreaRange(): number {
+        return this._playerAttachAreaRange;
+    }
 
     /**
      * @override
@@ -37,6 +41,8 @@ class MultiPlayActionState extends ActionState {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+
+        this._playerAttachAreaRange = this.viewWidth / 2;
 
         this._battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
         this._battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
@@ -91,23 +97,15 @@ class MultiPlayActionState extends ActionState {
      * @override
      */
     onWindowTaped(e: MouseEvent | TouchEvent): void {
+        const position = e instanceof MouseEvent ?
+            e.clientX :
+            e.changedTouches.item(0).clientX;
 
-        let position;
-        let playerAttachAreaRange = this.viewWidth / 2;
-        if (e instanceof MouseEvent) {
-            position = e.clientX;
-        }
+        const attacker = position < this.playerAttachAreaRange ?
+            Actor.PLAYER :
+            Actor.OPPONENT;
 
-        if (e instanceof TouchEvent) {
-            position = e.changedTouches.item(0).clientX;
-        }
-
-        if (position) {
-            this.onAttacked(position < playerAttachAreaRange ?
-                Actor.PLAYER :
-                Actor.OPPONENT
-            );
-        }
+        this.onAttacked(attacker);
     }
 }
 
