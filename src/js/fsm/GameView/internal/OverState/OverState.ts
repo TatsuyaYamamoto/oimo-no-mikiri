@@ -84,7 +84,7 @@ abstract class OverState extends AbstractGameState {
         const calligraphyPaper = new CalligraphyPaper(paperWidth, paperHeight);
 
         const topTime = new TopTime(bestTime);
-        topTime.position.set(paperWidth * 0.45, -1 * paperHeight * 0.15);
+        topTime.position.set(paperWidth * 0.45, -1 * paperHeight * 0.1);
 
         const playerName = new PlayerName(this.player.name);
         playerName.position.set(-1 * paperWidth * 0.4, paperHeight * 0.2);

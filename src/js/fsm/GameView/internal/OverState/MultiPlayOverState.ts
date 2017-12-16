@@ -31,8 +31,8 @@ class MultiPlayOverState extends OverState {
         this.applicationLayer.addChild(
             this.restartButton,
             this.backToTopButton,
-            this.gameOverLogo,
             this.resultPaper,
+            this.gameOverLogo,
         );
     }
 }

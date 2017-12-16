@@ -47,9 +47,9 @@ class SinglePlayOverState extends OverState {
         this.applicationLayer.addChild(
             this.restartButton,
             this.backToTopButton,
-            this.gameOverLogo,
-            this.tweetButton,
             this.resultPaper,
+            this.tweetButton,
+            this.gameOverLogo,
         );
 
         const {
