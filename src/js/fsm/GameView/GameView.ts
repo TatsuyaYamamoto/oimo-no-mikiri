@@ -26,6 +26,8 @@ import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 
 import Hanamaru from "../../texture/sprite/character/Hanamaru";
+import Ruby from "../../texture/sprite/character/Ruby";
+
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Shitake from "../../texture/sprite/character/Shitake";
 import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
@@ -65,6 +67,14 @@ class GameViewState extends ViewContainer {
     private _game: Game;
 
     private _player: Player;
+    /**
+     * 2Player's character for multi play mode.
+     */
+    private _opponent: Opponent;
+
+    /**
+     * Opponents for single play mode.
+     */
     private _opponents: { [roundNumber: number]: Opponent };
 
     public get player(): Player {
@@ -72,7 +82,11 @@ class GameViewState extends ViewContainer {
     }
 
     public get opponent(): Opponent {
-        return this._opponents[this._game.currentRound];
+        if (this.game.isOnePlayerMode) {
+            return this._opponents[this._game.currentRound];
+        } else {
+            return this._opponent;
+        }
     }
 
     public get game(): Game {
@@ -85,7 +99,6 @@ class GameViewState extends ViewContainer {
      */
     update(elapsedTime: number): void {
         super.update(elapsedTime);
-
         this._gameStateMachine.update(elapsedTime);
     }
 
@@ -102,6 +115,7 @@ class GameViewState extends ViewContainer {
 
         this._player = new Hanamaru();
 
+        this._opponent = new Ruby();
         this._opponents = {};
         this._opponents[1] = new Wataame();
         this._opponents[2] = new LittleDaemon();
@@ -253,7 +267,7 @@ class GameViewState extends ViewContainer {
                 winner,
                 bestTime,
                 mode,
-                straightWins:  this.game.straightWins,
+                straightWins: this.game.straightWins,
             });
         } else {
             this._to<MultiPlayOverStateEnterParams>(InnerStates.OVER, {

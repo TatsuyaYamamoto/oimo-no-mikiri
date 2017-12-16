@@ -29,6 +29,8 @@ export const Ids = {
 
     CHARACTER_HANAMARU: 'CHARACTER_HANAMARU',
     CHARACTER_HANAMARU_CLOSEUP: 'CHARACTER_HANAMARU_CLOSEUP',
+    CHARACTER_RUBY: 'CHARACTER_RUBY',
+    CHARACTER_RUBY_CLOSEUP: 'CHARACTER_RUBY_CLOSEUP',
 
     CHARACTER_UCHICCHI: 'CHARACTER_UCHICCHI',
     CHARACTER_UCHICCHI_CLOSEUP: 'CHARACTER_UCHICCHI_CLOSEUP',
@@ -74,6 +76,8 @@ const manifest: ImageManifest = {
 
         [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.json',
         [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',
+        [Ids.CHARACTER_RUBY]: 'character_ruby.json',
+        [Ids.CHARACTER_RUBY_CLOSEUP]: 'character_ruby_closeup.png',
 
         [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.json',
         [Ids.CHARACTER_UCHICCHI_CLOSEUP]: 'character_uchicchi_closeup.png',

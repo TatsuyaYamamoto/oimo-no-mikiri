@@ -17,6 +17,8 @@ export const Ids = {
     LABEL_BATTLE_LEFT: 'LABEL_BATTLE_LEFT',
 
     CHARA_NAME_HANAMARU: 'CHARA_NAME_HANAMARU',
+    CHARA_NAME_RUBY: 'CHARA_NAME_RUBY',
+
     CHARA_NAME_SHITAKE: 'CHARA_NAME_SHITAKE',
     CHARA_NAME_LITTLE_DAEMON: 'CHARA_NAME_LITTLE_DAEMON',
     CHARA_NAME_UCHICCHI: 'CHARA_NAME_UCHICCHI',
@@ -64,6 +66,8 @@ In multi play mode,
             [Ids.LABEL_BATTLE_LEFT]: 'Left',
 
             [Ids.CHARA_NAME_HANAMARU]: 'Hanamaru',
+            [Ids.CHARA_NAME_RUBY]: 'Ruby',
+
             [Ids.CHARA_NAME_SHITAKE]: 'Shitake',
             [Ids.CHARA_NAME_LITTLE_DAEMON]: 'Little deamond',
             [Ids.CHARA_NAME_UCHICCHI]: 'Uchicchi',
@@ -106,6 +110,8 @@ In multi play mode,
             [Ids.LABEL_BATTLE_LEFT]: '残',
 
             [Ids.CHARA_NAME_HANAMARU]: 'はなまる',
+            [Ids.CHARA_NAME_RUBY]: 'るびぃ',
+
             [Ids.CHARA_NAME_SHITAKE]: 'しいたけ',
             [Ids.CHARA_NAME_LITTLE_DAEMON]: 'リトルデーモン',
             [Ids.CHARA_NAME_UCHICCHI]: 'うちっちー',
