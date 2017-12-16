@@ -61,6 +61,7 @@ abstract class OverState extends AbstractGameState {
         const {
             winner,
             bestTime,
+            mode
         } = params;
 
         this._gameOverLogo = new GameOverLogo();
@@ -109,7 +110,10 @@ abstract class OverState extends AbstractGameState {
             winnerName,
             playerSprite,
             opponentSprite,
-        )
+        );
+
+        // track result
+        this._trackAchievementToGa(bestTime, mode, winner);
     }
 
     /**
@@ -151,6 +155,13 @@ abstract class OverState extends AbstractGameState {
             "back_to_menu");
     };
 
+    private _trackAchievementToGa = (bestTime: number, mode: Mode, winner: Actor) => {
+        trackEvent(
+            Category.ACHIEVEMENT,
+            `Fixed_${mode}`,
+            winner,
+            bestTime);
+    };
 
     protected _from = (texture: Texture): Sprite => {
         const s = new Sprite(texture);

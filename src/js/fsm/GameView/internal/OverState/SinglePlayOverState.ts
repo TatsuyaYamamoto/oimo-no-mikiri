@@ -60,17 +60,6 @@ class SinglePlayOverState extends OverState {
 
         // logging result.
         postPlayLog(bestTime, mode, straightWins);
-
-        // track result
-        this._trackAchievementToGa(bestTime, straightWins, mode);
-    }
-
-    private _trackAchievementToGa = (bestTime, straightWins, mode) => {
-        trackEvent(
-            Category.ACHIEVEMENT,
-            `${straightWins}-straight-wins`,
-            mode,
-            bestTime);
     }
 
     private _onClickTweetButton = (bestTime: number, wins: number) => {
