@@ -5,6 +5,7 @@ import {t} from '../../framework/i18n';
 import {getRandomInteger} from "../../framework/utils";
 
 import Mode, {Level} from "../models/Mode";
+import Actor from "../models/Actor";
 
 import {Ids as StringIds} from '../resources/string';
 import {APP_SERVER_BASE_URL, URL} from '../Constants';
@@ -38,6 +39,20 @@ export function tweetGameResult(bestTime: number, wins: number): void {
     }
 
     goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+}
+
+export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
+    if (winner == Actor.PLAYER) {
+        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN, {winnerWins, loserWins});
+        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+        return;
+    }
+
+    if (winner === Actor.OPPONENT) {
+        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_RUBY_WIN, {winnerWins, loserWins});
+        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+        return;
+    }
 }
 
 /**

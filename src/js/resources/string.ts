@@ -35,6 +35,8 @@ export const Ids = {
     GAME_RESULT_TWEET2: 'GAME_RESULT_TWEET2',
     GAME_RESULT_TWEET_COMPLETE: 'GAME_RESULT_TWEET_COMPLETE',
     GAME_RESULT_TWEET_ZERO_POINT: 'GAME_RESULT_TWEET_ZERO_POINT',
+    MULTI_GAME_RESULT_TWEET_HANAMARU_WIN: 'MUTLI_GAME_RESULT_TWEET_HANAMARU_WIN',
+    MULTI_GAME_RESULT_TWEET_RUBY_WIN: 'MULTI_GAME_RESULT_TWEET_RUBY_WIN',
 };
 
 export default {
@@ -84,6 +86,8 @@ In multi play mode,
             [Ids.GAME_RESULT_TWEET2]: `???「はなまるちゃんのおいも、おいしいね。    うゆ。」 ベストタイム {{bestTime}}、{{wins}}人抜き！`,
             [Ids.GAME_RESULT_TWEET_COMPLETE]: `はなまる「素敵な人生(おいも)ずら〜」ベストタイム {{bestTime}}、{{wins}}人抜き！`,
             [Ids.GAME_RESULT_TWEET_ZERO_POINT]: `はなまる「もういいずら、ぴよこ万十食べるずら」{{wins}}人抜き、、、、`,
+            [Ids.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN]: `はなまる「{{winnerWins}}対{{loserWins}}で、まるの勝ちずら！」`,
+            [Ids.MULTI_GAME_RESULT_TWEET_RUBY_WIN]: `るびぃ「{{winnerWins}}対{{loserWins}}で、ルビィの勝ち！」`,
         }
     },
     ja: {
