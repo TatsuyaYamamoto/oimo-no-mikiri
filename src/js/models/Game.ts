@@ -1,30 +1,25 @@
 import Battle from "./Battle";
 import Actor from './Actor';
+import Mode, {Level} from "./Mode";
 
 import {GAME_PARAMETERS} from "../Constants";
 
 class Game {
-    private _mode: 'beginner' | 'novice' | 'expert' | 'two-players';
-    private _roundSize: number;
+    private _mode: Mode;
 
     private _currentRound: number;
     private _battles: Map<number, Battle>;
 
-    constructor(mode, roundSize: number) {
+    constructor(mode) {
         this._mode = mode;
-        this._roundSize = roundSize;
-    }
-
-    public static asOnePlayer(mode: 'beginner' | 'novice' | 'expert'): Game {
-        return new Game(mode, 5);
     }
 
     public get isOnePlayerMode(): boolean {
-        return this._mode !== 'two-players';
+        return this._mode.numberOfPlayer === 1;
     }
 
     public get isTwoPlayerMode(): boolean {
-        return this._mode === 'two-players';
+        return this._mode.numberOfPlayer === 2;
     }
 
     public get mode() {
@@ -32,7 +27,7 @@ class Game {
     }
 
     public get roundSize(): number {
-        return this._roundSize;
+        return this._mode.roundSize;
     }
 
     public get currentRound(): number {
@@ -54,22 +49,28 @@ class Game {
             reaction_rate_tuning
         } = GAME_PARAMETERS;
 
-        return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
+        return reaction_rate[this.mode.level][this.currentRound] * reaction_rate_tuning * 1000;
+    }
+
+    public getWins(actor: Actor): number {
+        let wins = 0;
+
+        this._battles.forEach((b) => {
+            if (b.winner === actor) {
+                wins++;
+            }
+        });
+
+        return wins;
     }
 
     public get winner(): Actor {
-        let wins = 0;
-        let lose = 0;
+        let playerWins = this.getWins(Actor.PLAYER);
+        let opponentWins = this.getWins(Actor.OPPONENT);
 
-        this._battles.forEach((b) => {
-            b.winner === Actor.PLAYER ? wins++ : lose++;
-        });
-
-        if (this.isOnePlayerMode) {
-            return wins >= 5 ? Actor.PLAYER : Actor.OPPONENT;
-        } else {
-            return wins > lose ? Actor.PLAYER : Actor.OPPONENT;
-        }
+        return playerWins > opponentWins ?
+            Actor.PLAYER :
+            Actor.OPPONENT;
     }
 
     public get bestTime(): number {
@@ -107,7 +108,7 @@ class Game {
 
     public start(): void {
         this._battles = new Map();
-        new Array(this._roundSize).forEach((ignore, round) => {
+        new Array(this.roundSize).forEach((ignore, round) => {
             this._battles.set(round, new Battle());
         });
 
@@ -140,13 +141,10 @@ class Game {
             }
         }
 
-        // Is last round battle fixed?
-        const lastBattle = this._battles.get(this._roundSize);
-        if (lastBattle && lastBattle.isFixed()) {
-            return true;
-        }
-
-        return false;
+        // Player or opponent won required time?
+        const requiredWins = Math.ceil(this.roundSize / 2);
+        return this.getWins(Actor.PLAYER) >= requiredWins
+            || this.getWins(Actor.OPPONENT) >= requiredWins;
     }
 }
 

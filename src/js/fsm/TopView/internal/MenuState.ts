@@ -7,9 +7,11 @@ import AbstractTopState from "./TopViewState";
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
+import Mode, {Level} from "../../../models/Mode";
+
 import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
 import {goTo} from "../../../helper/network";
-import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import {Action, Category, trackEvent, trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {URL} from '../../../Constants';
 import {Ids as SoundIds} from '../../../resources/sound';
@@ -40,7 +42,8 @@ class MenuState extends AbstractTopState {
         this._menuBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._menuBoard.setOnSelectHomeListener(this._onSelectHome);
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
-        this._menuBoard.setOnSelectGameStartListener(this._onSelectGameStart);
+        this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
+        this._menuBoard.setOnTwoPlayerGameStartClickListener(this._onTwoPlayerSelected);
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
@@ -69,7 +72,12 @@ class MenuState extends AbstractTopState {
      * @private
      */
     private _onSelectHome = () => {
-        goTo(URL.TWITTER_HOME_T28)
+        goTo(URL.TWITTER_HOME_T28);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "home");
     };
 
     /**
@@ -79,13 +87,18 @@ class MenuState extends AbstractTopState {
     private _onToggleSound = () => {
         play(SoundIds.SOUND_TOGGLE_SOUND);
         toggleMute();
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "toggle_sound");
     };
 
     /**
      *
      * @private
      */
-    private _onSelectGameStart = () => {
+    private _onOnePlayerSelected = () => {
         this.applicationLayer.removeChild(
             this._menuBoard,
         );
@@ -94,6 +107,23 @@ class MenuState extends AbstractTopState {
         );
 
         play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "single_play_mode");
+    };
+
+    private _onTwoPlayerSelected = () => {
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.asTwoPlayer()});
+
+        stop(SoundIds.SOUND_ZENKAI);
+        play(SoundIds.SOUND_OK);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "multi_play_mode");
     };
 
     /**
@@ -120,14 +150,17 @@ class MenuState extends AbstractTopState {
      *
      * @private
      */
-    private _onSelectLevel = (e, level: "beginner" | "novice" | "expert") => {
-        console.log("selected level: ", level);
-        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: level});
+    private _onSelectLevel = (e, level: Level) => {
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.asOnePlayer(level)});
 
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
-    }
 
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            level);
+    };
 }
 
 export default MenuState;

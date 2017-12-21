@@ -10,7 +10,8 @@ export const Ids = {
     BACKGROUND_SKY: 'BACKGROUND_SKY',
     BACKGROUND_BEACH: 'BACKGROUND_BEACH',
 
-    BUTTON_MENU_GAME_START: 'BUTTON_MENU_GAME_START',
+    BUTTON_MENU_SINGLE_PLAY_GAME_START: 'BUTTON_MENU_SINGLE_PLAY_GAME_START',
+    BUTTON_MENU_MULTI_PLAY_GAME_START: 'BUTTON_MENU_MULTI_PLAY_GAME_START',
     BUTTON_MENU_HOW_TO_PLAY: 'BUTTON_MENU_HOW_TO_PLAY',
     BUTTON_MENU_CREDIT: 'BUTTON_MENU_CREDIT',
     BUTTON_MENU_BACK_TO_MENU: 'BUTTON_MENU_BACK_TO_MENU',
@@ -28,6 +29,8 @@ export const Ids = {
 
     CHARACTER_HANAMARU: 'CHARACTER_HANAMARU',
     CHARACTER_HANAMARU_CLOSEUP: 'CHARACTER_HANAMARU_CLOSEUP',
+    CHARACTER_RUBY: 'CHARACTER_RUBY',
+    CHARACTER_RUBY_CLOSEUP: 'CHARACTER_RUBY_CLOSEUP',
 
     CHARACTER_UCHICCHI: 'CHARACTER_UCHICCHI',
     CHARACTER_UCHICCHI_CLOSEUP: 'CHARACTER_UCHICCHI_CLOSEUP',
@@ -54,7 +57,8 @@ const manifest: ImageManifest = {
         [Ids.BACKGROUND_SKY]: 'background_sky.png',
         [Ids.BACKGROUND_BEACH]: 'background_beach.json',
 
-        [Ids.BUTTON_MENU_GAME_START]: 'button_menu_game_start.png',
+        [Ids.BUTTON_MENU_SINGLE_PLAY_GAME_START]: 'button_menu_single_play_game_start.png',
+        [Ids.BUTTON_MENU_MULTI_PLAY_GAME_START]: 'button_menu_multi_play_game_start.png',
         [Ids.BUTTON_MENU_HOW_TO_PLAY]: 'button_menu_how_to_play.png',
         [Ids.BUTTON_MENU_CREDIT]: 'button_menu_credit.png',
         [Ids.BUTTON_MENU_BACK_TO_MENU]: 'button_menu_back_to_menu.png',
@@ -72,6 +76,8 @@ const manifest: ImageManifest = {
 
         [Ids.CHARACTER_HANAMARU]: 'character_hanamaru.json',
         [Ids.CHARACTER_HANAMARU_CLOSEUP]: 'character_hanamaru_closeup.png',
+        [Ids.CHARACTER_RUBY]: 'character_ruby.json',
+        [Ids.CHARACTER_RUBY_CLOSEUP]: 'character_ruby_closeup.png',
 
         [Ids.CHARACTER_UCHICCHI]: 'character_uchicchi.json',
         [Ids.CHARACTER_UCHICCHI_CLOSEUP]: 'character_uchicchi_closeup.png',

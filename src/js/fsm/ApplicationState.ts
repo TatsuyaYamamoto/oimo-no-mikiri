@@ -2,14 +2,15 @@ import Application from "../../framework/Application";
 import StateMachine from "../../framework/StateMachine";
 import {getCurrentViewSize, getScale} from "../../framework/utils";
 import {addEvents, removeEvents} from '../../framework/EventUtils';
+import ViewContainer from "../../framework/ViewContainer";
 
 import InitialViewState from "./InitialView";
 import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
 import TopViewState from "./TopView";
 
+import Mode from "../models/Mode";
+
 import {toggleMute} from '../helper/MusicPlayer';
-import {NPC_LEVELS} from "../Constants";
-import ViewContainer from "../../framework/ViewContainer";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -114,13 +115,9 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleRequestedGameStartEvent = (e: CustomEvent) => {
-        const mode: "beginner" | "novice" | "expert" = e.detail.mode;
-        let level: NPC_LEVELS = NPC_LEVELS[mode.toUpperCase()];
+        const {mode} = e.detail;
 
-        this._to<GameViewEnterParams>(InnerStates.GAME, {
-            level,
-            roundLength: 5,
-        });
+        this._to<GameViewEnterParams>(InnerStates.GAME, {mode});
     };
 
     /**

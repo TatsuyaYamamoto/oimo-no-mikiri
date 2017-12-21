@@ -4,6 +4,9 @@
 import {t} from '../../framework/i18n';
 import {getRandomInteger} from "../../framework/utils";
 
+import Mode, {Level} from "../models/Mode";
+import Actor from "../models/Actor";
+
 import {Ids as StringIds} from '../resources/string';
 import {APP_SERVER_BASE_URL, URL} from '../Constants';
 
@@ -38,6 +41,20 @@ export function tweetGameResult(bestTime: number, wins: number): void {
     goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
 }
 
+export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
+    if (winner == Actor.PLAYER) {
+        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN, {winnerWins, loserWins});
+        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+        return;
+    }
+
+    if (winner === Actor.OPPONENT) {
+        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_RUBY_WIN, {winnerWins, loserWins});
+        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+        return;
+    }
+}
+
 /**
  * Post play log to Sokontokoro app server
  * Before connecting, format bestTime, mode and straightWins to supporting Integer.
@@ -49,11 +66,11 @@ export function tweetGameResult(bestTime: number, wins: number): void {
  * @return {Promise<Response>}
  * @see https://github.com/TatsuyaYamamoto/lovelive-ranking/blob/master-javaee/src/main/java/net/sokontokoro_factory/lovelive/persistence/entity/ScoreEntity.java
  */
-export function postPlayLog(bestTime: number, mode: 'beginner' | 'novice' | 'expert' | 'two-players', straightWins: number): Promise<Response> {
-    const numberLevel = mode === 'beginner' ? 1
-        : mode === "novice" ? 2
-            : mode === "expert" ? 3
-                : 4;
+export function postPlayLog(bestTime: number, mode: Mode, straightWins: number): Promise<Response> {
+    const numberLevel = mode.numberOfPlayer === 2 ? 4 :
+        mode.level === Level.BEGINNER ? 1 :
+            mode.level === Level.NOVICE ? 2 : 3;
+
     const point = `${bestTime}${numberLevel}${straightWins}`;
 
     return fetch(`${APP_SERVER_BASE_URL}scores/oimo/playlog/`, {

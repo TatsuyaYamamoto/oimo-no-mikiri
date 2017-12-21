@@ -1,3 +1,5 @@
+import {Level} from './models/Mode'
+
 /**
  * Parameters for game tuning.
  */
@@ -15,21 +17,21 @@ export const GAME_PARAMETERS = {
      * @see http://dic.nicovideo.jp/a/%E5%88%B9%E9%82%A3%E3%81%AE%E8%A6%8B%E6%96%AC%E3%82%8A
      */
     reaction_rate: {
-        beginner: {
+        [Level.BEGINNER]: {
             1: 81 / 60,
             2: 49 / 60,
             3: 20 / 60,
             4: 15 / 60,
             5: 10 / 60
         },
-        novice: {
+        [Level.NOVICE]: {
             1: 62 / 60,
             2: 40 / 60,
             3: 16 / 60,
             4: 12 / 60,
             5: 9 / 60
         },
-        expert: {
+        [Level.EXPERT]: {
             1: 17 / 60,
             2: 13 / 60,
             3: 11 / 60,
@@ -43,12 +45,6 @@ export const GAME_PARAMETERS = {
      */
     acceptable_attack_time_distance: 17
 };
-
-export enum NPC_LEVELS {
-    BEGINNER = 'beginner',
-    NOVICE = 'novice',
-    EXPERT = 'expert',
-}
 
 /**
  * aspect ratio of the application container.
@@ -117,6 +113,7 @@ export const URL = {
     TWITTER_TWEET_PAGE: "https://twitter.com/intent/tweet",
     ONJIN_TOP: 'https://on-jin.com/',
     LOVELIVE_TOP: 'http://www.lovelive-anime.jp/',
+    KIRBY_HOME: 'https://www.nintendo.co.jp/n02/shvc/p_akfj/',
 };
 
 export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production' ?
