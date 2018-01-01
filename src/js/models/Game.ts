@@ -136,9 +136,7 @@ class Game {
                 }
             });
 
-            if (isLost) {
-                return true;
-            }
+            return isLost;
         }
 
         // Player or opponent won required time?
