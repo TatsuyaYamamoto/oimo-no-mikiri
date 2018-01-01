@@ -42,7 +42,7 @@ class MultiPlayActionState extends ActionState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._playerAttachAreaRange = this.viewWidth / 2;
+        this._playerAttachAreaRange = window.innerWidth / 2;
 
         this._battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
         this._battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
