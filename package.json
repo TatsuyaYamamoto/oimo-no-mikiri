@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "animejs": "^2.0.2",
+    "firebase": "^4.8.0",
     "i18next": "^9.0.0",
     "i18next-browser-languagedetector": "^2.0.0",
     "mousetrap": "^1.6.1",

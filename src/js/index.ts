@@ -2,11 +2,13 @@
  * @fileOverview Entry point of the application.
  */
 import config from '../framework/config';
-import {initI18n} from "../framework/i18n";
+import { initI18n } from "../framework/i18n";
 
 import ApplicationState from "./fsm/ApplicationState";
 import resources from './resources/string';
-import {init as initTracker, trackError} from './helper/tracker';
+import { init as initTracker, trackError } from './helper/tracker';
+import { init as initFirebase } from "./helper/firebase";
+
 import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE,
@@ -24,6 +26,7 @@ require('../fonts/g_brushtappitsu_freeH.css');
 
 // initialize tracker
 initTracker(GOOGLE_ANALYTICS_ACCOUNT_ID);
+initFirebase();
 
 /**
  * Rendering target on html.
