@@ -1,12 +1,15 @@
 import * as express from "express";
 import * as morgan from "morgan";
+import * as bodyParser from "body-parser";
+
 import { auth, database } from "firebase-admin";
 
-import { UNAUTHORIZED, ACCEPTED } from "http-status-codes"
+import { UNAUTHORIZED, NOT_FOUND, CREATED, OK } from "http-status-codes"
 
 const app = express();
 
 app.use(morgan("dev"));
+app.use(bodyParser.json());
 
 app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     // get token with header or cookies.
@@ -26,8 +29,8 @@ app.use(async (req: express.Request, res: express.Response, next: express.NextFu
     }
 });
 
-app.post("/createRoom", (req: express.Request, res: express.Response) => {
-    res.sendStatus(ACCEPTED);
+app.post("/createRoom", async (req: express.Request, res: express.Response) => {
+
 
     // TODO: check current user status. ex: the user is already any room owner.
     const {uid} = res.locals.token;
@@ -37,13 +40,29 @@ app.post("/createRoom", (req: express.Request, res: express.Response) => {
     updates[`/rooms/${newRoomId}/members/${uid}`] = true;
     updates[`/users/${uid}/roomId`] = newRoomId;
 
-    return database().ref().update(updates);
+
+    await database().ref().update(updates);
+    res.sendStatus(CREATED);
 });
 
-app.post("/joinRoom", (req: express.Request, res: express.Response) => {
-    // const {uid} = res.locals.token;
+app.post("/joinRoom", async (req: express.Request, res: express.Response) => {
+    // TODO: check current user status. ex: the user is already any room owner.
+    const {roomId} = req.body;
+    const {uid} = res.locals.token;
+    
+    const snapshot = await database().ref(`/rooms/${roomId}`).once("value");
+    if (!snapshot.val()) {
+        res.sendStatus(NOT_FOUND);
+        return;
+    }
 
-    res.sendStatus(ACCEPTED);
+    const updates = {};
+    updates[`/rooms/${roomId}/members/${uid}`] = true;
+    updates[`/users/${uid}/roomId`] = roomId;
+
+    await database().ref().update(updates);
+
+    res.sendStatus(OK);
 });
 
 
