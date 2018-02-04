@@ -1,25 +1,32 @@
 import Battle from "./Battle";
 import Actor from './Actor';
-import Mode, {Level} from "./Mode";
+import Mode from "./Mode";
 
-import {GAME_PARAMETERS} from "../Constants";
+import { GAME_PARAMETERS } from "../Constants";
+
+const DEFAULT_ROUND_SIZE = 5;
 
 class Game {
     private _mode: Mode;
-
+    private _roundSize: number;
     private _currentRound: number;
     private _battles: Map<number, Battle>;
 
-    constructor(mode) {
+    constructor(mode: Mode, roundSize?: number) {
         this._mode = mode;
+        this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
     }
 
     public get isOnePlayerMode(): boolean {
-        return this._mode.numberOfPlayer === 1;
+        return [
+            Mode.SINGLE_BEGINNER,
+            Mode.SINGLE_NOVICE,
+            Mode.SINGLE_EXPERT
+        ].some((singleMode) => this._mode === singleMode);
     }
 
     public get isTwoPlayerMode(): boolean {
-        return this._mode.numberOfPlayer === 2;
+        return this._mode === Mode.MULTI;
     }
 
     public get mode() {
@@ -27,7 +34,7 @@ class Game {
     }
 
     public get roundSize(): number {
-        return this._mode.roundSize;
+        return this._roundSize;
     }
 
     public get currentRound(): number {
@@ -49,7 +56,7 @@ class Game {
             reaction_rate_tuning
         } = GAME_PARAMETERS;
 
-        return reaction_rate[this.mode.level][this.currentRound] * reaction_rate_tuning * 1000;
+        return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
     }
 
     public getWins(actor: Actor): number {
