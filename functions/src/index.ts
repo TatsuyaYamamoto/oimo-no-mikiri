@@ -1,7 +1,7 @@
 import {initializeApp} from "firebase-admin";
-import {https} from "firebase-functions";
+import {https, config} from "firebase-functions";
 
-initializeApp();
+initializeApp(config().firebase);
 
 import serverApp from "./app";
 

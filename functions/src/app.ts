@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as morgan from "morgan";
-import { auth } from "firebase-admin";
+import { auth, database } from "firebase-admin";
 
 import { UNAUTHORIZED, ACCEPTED } from "http-status-codes"
 
@@ -26,13 +26,21 @@ app.use(async (req: express.Request, res: express.Response, next: express.NextFu
     }
 });
 
-app.post("/createGame", (req: express.Request, res: express.Response) => {
-    // const {uid} = res.locals.token;
-
+app.post("/createRoom", (req: express.Request, res: express.Response) => {
     res.sendStatus(ACCEPTED);
+
+    // TODO: check current user status. ex: the user is already any room owner.
+    const {uid} = res.locals.token;
+    const newRoomId = database().ref().child("rooms").push().key;
+
+    const updates = {};
+    updates[`/rooms/${newRoomId}/members/${uid}`] = true;
+    updates[`/users/${uid}/roomId`] = newRoomId;
+
+    return database().ref().update(updates);
 });
 
-app.post("/joinGame", (req: express.Request, res: express.Response) => {
+app.post("/joinRoom", (req: express.Request, res: express.Response) => {
     // const {uid} = res.locals.token;
 
     res.sendStatus(ACCEPTED);
