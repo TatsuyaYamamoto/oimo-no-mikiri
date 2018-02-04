@@ -4,7 +4,9 @@
   "description": "LoveLive fun game! Outclass an oimo.",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --watch",
+    "start": "npm run start:client & npm run start:functions",
+    "start:client": "webpack-dev-server --progress --colors --watch",
+    "start:functions": "npm --prefix functions run start",
     "clean": "rimraf dist",
     "minify:image": "imagemin dist/assets/image/*.png --out-dir=dist/assets/image",
     "build": "npm run clean && webpack",
