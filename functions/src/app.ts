@@ -6,10 +6,12 @@ import { auth, database } from "firebase-admin";
 
 import { UNAUTHORIZED, NOT_FOUND, CREATED, OK } from "http-status-codes"
 
+const cors = require("cors")({origin: true});
 const app = express();
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(cors);
 
 app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     // get token with header or cookies.
@@ -42,14 +44,14 @@ app.post("/createRoom", async (req: express.Request, res: express.Response) => {
 
 
     await database().ref().update(updates);
-    res.sendStatus(CREATED);
+    res.status(CREATED).json({roomId: newRoomId});
 });
 
 app.post("/joinRoom", async (req: express.Request, res: express.Response) => {
     // TODO: check current user status. ex: the user is already any room owner.
     const {roomId} = req.body;
     const {uid} = res.locals.token;
-    
+
     const snapshot = await database().ref(`/rooms/${roomId}`).once("value");
     if (!snapshot.val()) {
         res.sendStatus(NOT_FOUND);
