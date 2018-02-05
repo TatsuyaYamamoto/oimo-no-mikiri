@@ -1,11 +1,12 @@
 import { copyTextToClipboard } from "../../../framework/utils";
 
 import TingleModal from "./TingleModal";
+import { requestLeaveRoom } from "../firebase";
 
 
 class WaitingJoinModal extends TingleModal {
-    constructor(url) {
-        super({
+    constructor(url, props?) {
+        super(Object.assign({
             closeMethods: [],
             footer: true,
             onOpen: function () {
@@ -20,7 +21,7 @@ class WaitingJoinModal extends TingleModal {
                 return true; // close the modal
                 // return false; // nothing happens
             }
-        });
+        }, props));
 
         this.setContent(`
 <div>
@@ -37,6 +38,9 @@ class WaitingJoinModal extends TingleModal {
         });
 
         this.addFooterBtn("キャンセル", 'tingle-btn tingle-btn--primary', () => {
+            requestLeaveRoom();
+
+            // Don't care whether request is succeed or not.
             this.close();
         });
     }

@@ -62,6 +62,19 @@ export async function requestJoinRoom(roomId) {
         );
 }
 
+export async function requestLeaveRoom() {
+    return getToken()
+        .then((token) =>
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/leaveRoom/`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            })
+        );
+}
+
 export function onJoinedRoom(roomId, callback) {
     const membersRef = database().ref(`/rooms/${roomId}/members`);
 

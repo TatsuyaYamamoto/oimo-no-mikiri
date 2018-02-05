@@ -67,5 +67,27 @@ app.post("/joinRoom", async (req: express.Request, res: express.Response) => {
     res.sendStatus(OK);
 });
 
+app.post("/leaveRoom", async (req: express.Request, res: express.Response) => {
+    const {uid} = res.locals.token;
+
+    const userSnapshot = await database().ref(`/users/${uid}`).once("value");
+    const user = userSnapshot.val();
+
+    if (!(user && user.roomId)) {
+        res.status(BAD_REQUEST).send("Provided user or current room isn't exist.");
+        return;
+    }
+
+    const {roomId} = user;
+
+    const updates = {};
+    updates[`/rooms/${roomId}/members/${uid}`] = null;
+    updates[`/users/${uid}/roomId`] = null;
+
+    await database().ref().update(updates);
+
+    res.sendStatus(OK);
+});
+
 
 export default app;

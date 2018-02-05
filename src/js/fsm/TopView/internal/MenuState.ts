@@ -12,7 +12,7 @@ import Mode, { Level } from "../../../models/Mode";
 import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
-import { onJoinedRoom, requestCreateRoom } from "../../../helper/firebase";
+import { onJoinedRoom, requestCreateRoom, requestLeaveRoom } from "../../../helper/firebase";
 import RoomCreationModal from "../../../helper/modal/RoomCreationModal";
 import WaitingJoinModal from "../../../helper/modal/WaitingJoinModal";
 import ReadyModal from "../../../helper/modal/ReadyModal";
@@ -135,7 +135,6 @@ class MenuState extends AbstractTopState {
         play(SoundIds.SOUND_OK);
 
         const creationModal = new RoomCreationModal();
-
         creationModal.open();
 
         const roomId = await requestCreateRoom();
