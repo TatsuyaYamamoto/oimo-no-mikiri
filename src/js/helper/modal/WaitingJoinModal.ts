@@ -44,6 +44,10 @@ class WaitingJoinModal extends TingleModal {
             this.close();
         });
     }
+
+    public onCancel(callback:Function) {
+
+    }
 }
 
 export default WaitingJoinModal;

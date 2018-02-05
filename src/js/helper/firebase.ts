@@ -80,9 +80,8 @@ export function onJoinedRoom(roomId, callback) {
 
     membersRef.on("value", function (snapshot) {
         const member = snapshot.val();
-        const memberCount = Object.keys(member).length;
 
-        if (memberCount >= 2) {
+        if (member && Object.keys(member).length >= 2) {
             membersRef.off("value", this);
             callback();
         }

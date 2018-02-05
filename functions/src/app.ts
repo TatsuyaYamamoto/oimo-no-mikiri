@@ -4,7 +4,7 @@ import * as bodyParser from "body-parser";
 
 import { auth, database } from "firebase-admin";
 
-import { UNAUTHORIZED, NOT_FOUND, CREATED, OK } from "http-status-codes"
+import { UNAUTHORIZED, NOT_FOUND, CREATED, OK, BAD_REQUEST, CONFLICT } from "http-status-codes"
 
 const cors = require("cors")({origin: true});
 const app = express();
@@ -52,14 +52,32 @@ app.post("/joinRoom", async (req: express.Request, res: express.Response) => {
     const {roomId} = req.body;
     const {uid} = res.locals.token;
 
-    const snapshot = await database().ref(`/rooms/${roomId}`).once("value");
-    if (!snapshot.val()) {
+    const roomSnapshot = await database().ref(`/rooms/${roomId}`).once("value");
+    if (!roomSnapshot.val()) {
         res.sendStatus(NOT_FOUND);
         return;
     }
 
+    const membersRef = database().ref(`/rooms/${roomId}/members`);
+    const {committed, snapshot} = await membersRef.transaction((current) => {
+        if (!current) {
+            return current;
+        }
+
+        if (Object.keys(current).length >= 2) {
+            return;
+        }
+
+        current[uid] = true;
+        return current;
+    });
+
+    if (!committed) {
+        res.status(CONFLICT).send(`Provided room, ${roomId} is not acceptable.`);
+        return;
+    }
+
     const updates = {};
-    updates[`/rooms/${roomId}/members/${uid}`] = true;
     updates[`/users/${uid}/roomId`] = roomId;
 
     await database().ref().update(updates);

@@ -1,8 +1,8 @@
 import TingleModal from "./TingleModal";
 
 class ReadyModal extends TingleModal {
-    constructor() {
-        super({
+    constructor(props?) {
+        super(Object.assign({
             closeMethods: [],
             onOpen: function () {
                 console.log('modal open');
@@ -16,7 +16,7 @@ class ReadyModal extends TingleModal {
                 return true; // close the modal
                 // return false; // nothing happens
             }
-        });
+        }, props));
 
         this.setContent(`
 <div>

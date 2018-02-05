@@ -1,8 +1,8 @@
 import TingleModal from "./TingleModal";
 
 class JoinModal extends TingleModal {
-    constructor(roomId) {
-        super({
+    constructor(roomId, props?) {
+        super(Object.assign({
             closeMethods: [],
             onOpen: function () {
                 console.log('modal open');
@@ -16,7 +16,7 @@ class JoinModal extends TingleModal {
                 return true; // close the modal
                 // return false; // nothing happens
             }
-        });
+        }, props));
 
         this.setContent(`
 <div>
