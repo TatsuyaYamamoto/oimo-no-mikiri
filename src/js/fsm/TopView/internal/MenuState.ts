@@ -1,20 +1,24 @@
 import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from "../../../../framework/EventUtils";
+import { dispatchEvent } from "../../../../framework/EventUtils";
 
-import {Events} from "../TopView";
+import { Events } from "../TopView";
 import AbstractTopState from "./TopViewState";
 
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
-import Mode, {Level} from "../../../models/Mode";
+import Mode, { Level } from "../../../models/Mode";
 
-import {play, stop, toggleMute} from "../../../helper/MusicPlayer";
-import {goTo} from "../../../helper/network";
-import {Action, Category, trackEvent, trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
+import { goTo } from "../../../helper/network";
+import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import { onJoinedRoom, requestCreateRoom } from "../../../helper/firebase";
+import RoomCreationModal from "../../../helper/modal/RoomCreationModal";
+import WaitingJoinModal from "../../../helper/modal/WaitingJoinModal";
+import ReadyModal from "../../../helper/modal/ReadyModal";
 
-import {URL} from '../../../Constants';
-import {Ids as SoundIds} from '../../../resources/sound';
+import { URL } from '../../../Constants';
+import { Ids as SoundIds } from '../../../resources/sound';
 
 
 class MenuState extends AbstractTopState {
@@ -44,6 +48,7 @@ class MenuState extends AbstractTopState {
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
         this._menuBoard.setOnTwoPlayerGameStartClickListener(this._onTwoPlayerSelected);
+        this._menuBoard.setOnOnlineGameStartClickListener(this._onOnlineSelected);
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
@@ -124,6 +129,32 @@ class MenuState extends AbstractTopState {
             Category.BUTTON,
             Action.TAP,
             "multi_play_mode");
+    };
+
+    private _onOnlineSelected = async () => {
+        play(SoundIds.SOUND_OK);
+
+        const creationModal = new RoomCreationModal();
+
+        creationModal.open();
+
+        const roomId = await requestCreateRoom();
+        const url = `${location.protocol}//${location.hostname}${location.pathname}?roomId=${roomId}`;
+
+        const waitingModal = new WaitingJoinModal(url);
+
+        onJoinedRoom(roomId, () => {
+            waitingModal.close();
+            const readyModal = new ReadyModal();
+            readyModal.open();
+            setTimeout(() => {
+                readyModal.close();
+            }, 3000)
+        });
+
+        creationModal.close();
+        waitingModal.open();
+
     };
 
     /**

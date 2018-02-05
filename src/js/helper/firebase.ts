@@ -4,6 +4,8 @@ import {
     database
 } from "firebase";
 
+import { parse } from "query-string";
+
 export function init() {
     initializeApp({
         "apiKey": "AIzaSyB16fI2MRL411jYOCjW1eL7hTuwOvlq3w8",
@@ -20,6 +22,10 @@ export function init() {
             return;
         }
 
+        user.getIdToken().then((idToken) => {
+            console.log(`Got Firebase Token! ${idToken.slice(0, 5)}...`);
+        });
+
         if (snap.val() === true) {
             const ownRef = database().ref(`/users/${user.uid}/isConnecting`);
             ownRef.set(true);
@@ -30,8 +36,60 @@ export function init() {
     auth().signInAnonymously();
 }
 
+export async function requestCreateRoom() {
+    return getToken()
+        .then((token) =>
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/createRoom/`, {
+                method: "POST",
+                headers: {"Authorization": `Bearer ${token}`}
+            })
+        )
+        .then(res => res.json())
+        .then(json => json.roomId);
+}
+
+export async function requestJoinRoom(roomId) {
+    return getToken()
+        .then((token) =>
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/joinRoom/`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({roomId})
+            })
+        );
+}
+
+export function onJoinedRoom(roomId, callback) {
+    const membersRef = database().ref(`/rooms/${roomId}/members`);
+
+    membersRef.on("value", function (snapshot) {
+        const member = snapshot.val();
+        const memberCount = Object.keys(member).length;
+
+        if (memberCount >= 2) {
+            membersRef.off("value", this);
+            callback();
+        }
+    });
+}
+
 export function isConnected(): Promise<boolean> {
     return database().ref('.info/connected')
         .once('value')
         .then((snap) => snap.val());
+}
+
+async function getToken() {
+    const token = await auth().currentUser.getIdToken(true);
+    console.log(`Got Firebase Token! ${token.slice(0, 10)}...`);
+
+    return token;
+}
+
+export function getRoomIdFromUrl(){
+    const parsed = parse(window.location.search);
+    return parsed.roomId;
 }

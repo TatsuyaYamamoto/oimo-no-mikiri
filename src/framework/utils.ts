@@ -63,3 +63,15 @@ export function isSupportTouchEvent(): boolean {
 export function getRandomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
+
+export function copyTextToClipboard(textVal){
+    const copyFrom = document.createElement("textarea");
+    copyFrom.textContent = textVal;
+
+    document.body.appendChild(copyFrom);
+
+    copyFrom.select();
+    console.log(document.execCommand("copy"));
+
+    document.body.removeChild(copyFrom);
+}

@@ -1,18 +1,21 @@
 import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from '../../../../framework/EventUtils';
-import {t} from "../../../../framework/i18n";
+import { dispatchEvent } from '../../../../framework/EventUtils';
+import { t } from "../../../../framework/i18n";
 
 import AbstractTopState from "./TopViewState";
-import {Events} from "../TopView";
+import { Events } from "../TopView";
 
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import {play, playOnLoop} from "../../../helper/MusicPlayer";
-import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import { play, playOnLoop } from "../../../helper/MusicPlayer";
+import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import { getRoomIdFromUrl, onJoinedRoom, requestJoinRoom } from "../../../helper/firebase";
+import ReadyModal from "../../../helper/modal/ReadyModal";
+import JoinModal from "../../../helper/modal/JoinModal";
 
-import {Ids as SoundIds} from '../../../resources/sound';
-import {Ids as StringIds} from '../../../resources/string';
+import { Ids as SoundIds } from '../../../resources/sound';
+import { Ids as StringIds } from '../../../resources/string';
 
 const {version} = require('../../../../../package.json');
 
@@ -67,6 +70,25 @@ class TitleState extends AbstractTopState {
         this.addClickWindowEventListener(this._handleTapWindow);
 
         playOnLoop(SoundIds.SOUND_ZENKAI);
+
+        const roomId = getRoomIdFromUrl();
+        if (roomId) {
+            const joinModal = new JoinModal(roomId);
+            joinModal.open();
+
+            onJoinedRoom(roomId, () => {
+                joinModal.close();
+
+                const readyModal = new ReadyModal();
+                readyModal.open();
+
+                setTimeout(() => {
+                    readyModal.close();
+                }, 3000);
+            });
+
+            requestJoinRoom(roomId);
+        }
     }
 
     /**
