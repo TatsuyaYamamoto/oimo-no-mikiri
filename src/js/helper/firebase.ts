@@ -39,7 +39,7 @@ export function init() {
 export async function requestCreateRoom() {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/createRoom/`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/`, {
                 method: "POST",
                 headers: {"Authorization": `Bearer ${token}`}
             })
@@ -51,7 +51,7 @@ export async function requestCreateRoom() {
 export async function requestJoinRoom(roomId) {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/joinRoom/`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/join`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -65,7 +65,7 @@ export async function requestJoinRoom(roomId) {
 export async function requestLeaveRoom() {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/leaveRoom/`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/leave`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
