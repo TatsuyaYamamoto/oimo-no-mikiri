@@ -8,8 +8,6 @@ import InitialViewState from "./InitialView";
 import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
 import TopViewState from "./TopView";
 
-import Mode from "../models/Mode";
-
 import {toggleMute} from '../helper/MusicPlayer';
 
 export enum Events {

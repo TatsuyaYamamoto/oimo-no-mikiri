@@ -6,12 +6,13 @@ import { GAME_PARAMETERS } from "../Constants";
 
 class Game {
     private _mode: Mode;
-
+    private _roundSize: number;
     private _currentRound: number;
     private _battles: Map<number, Battle>;
 
-    constructor(mode) {
+    constructor(mode, roundSize?: number) {
         this._mode = mode;
+        this._roundSize = roundSize || 5;
     }
 
     public get isOnePlayerMode(): boolean {
@@ -27,7 +28,7 @@ class Game {
     }
 
     public get roundSize(): number {
-        return this._mode.roundSize;
+        return this._roundSize;
     }
 
     public get currentRound(): number {
