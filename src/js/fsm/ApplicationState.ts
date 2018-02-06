@@ -1,14 +1,17 @@
 import Application from "../../framework/Application";
 import StateMachine from "../../framework/StateMachine";
-import {getCurrentViewSize, getScale} from "../../framework/utils";
-import {addEvents, removeEvents} from '../../framework/EventUtils';
+import { getCurrentViewSize, getScale } from "../../framework/utils";
+import { addEvents, removeEvents } from '../../framework/EventUtils';
 import ViewContainer from "../../framework/ViewContainer";
 
 import InitialViewState from "./InitialView";
-import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
+import LocalGameView, { EnterParams as GameViewEnterParams } from "./GameView/LocalGameView";
+import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
-import {toggleMute} from '../helper/MusicPlayer';
+import Mode from "../models/Mode";
+
+import { toggleMute } from '../helper/MusicPlayer';
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -20,6 +23,7 @@ enum InnerStates {
     INITIAL = "initial",
     TOP = "top",
     GAME = "game",
+    ONLINE_GAME = "online_game",
 }
 
 class ApplicationState extends Application {
@@ -43,10 +47,12 @@ class ApplicationState extends Application {
         this._updateRendererSize();
         this._updateStageScale();
 
+        // TODO create instance each changing state.
         this._viewStateMachine = new StateMachine({
             [InnerStates.INITIAL]: new InitialViewState(),
             [InnerStates.TOP]: new TopViewState(),
-            [InnerStates.GAME]: new GameViewState(),
+            [InnerStates.GAME]: new LocalGameView(),
+            [InnerStates.ONLINE_GAME]: new OnlineGameView(),
         });
 
         addEvents({
@@ -114,8 +120,11 @@ class ApplicationState extends Application {
      */
     private _handleRequestedGameStartEvent = (e: CustomEvent) => {
         const {mode} = e.detail;
-
-        this._to<GameViewEnterParams>(InnerStates.GAME, {mode});
+        if (mode === Mode.MULTI_ONLINE) {
+            this._to<GameViewEnterParams>(InnerStates.ONLINE_GAME);
+        } else {
+            this._to<GameViewEnterParams>(InnerStates.GAME, {mode});
+        }
     };
 
     /**

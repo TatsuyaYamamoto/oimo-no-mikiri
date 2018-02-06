@@ -82,10 +82,76 @@ export function onJoinedRoom(roomId, callback) {
         const member = snapshot.val();
 
         if (member && Object.keys(member).length >= 2) {
-            membersRef.off("value", this);
             callback();
+            offJoinedRoom(roomId);
         }
     });
+}
+
+export function offJoinedRoom(roomId) {
+    const membersRef = database().ref(`/rooms/${roomId}/members`);
+
+    membersRef.off("value");
+}
+
+export async function requestStartGame() {
+    const token = await getToken();
+
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/game/start`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+    });
+}
+
+export function onStatusUpdated(callback) {
+    const {uid} = auth().currentUser;
+
+    const ownStatusRef = database().ref(`/users/${uid}/status`);
+
+    ownStatusRef.on("value", function (snapshot) {
+        callback(snapshot.val());
+    });
+}
+
+export function offStatusUpdated() {
+    const {uid} = auth().currentUser;
+
+    const ownStatusRef = database().ref(`/users/${uid}/status`);
+
+    ownStatusRef.off("value");
+}
+
+export async function requestAttack(attackTime) {
+    const token = await getToken();
+
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battles/attack`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({attackTime})
+    });
+}
+
+export async function requestFalseStart(attackTime) {
+    const token = await getToken();
+
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battles/falseStart`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({attackTime})
+    });
+}
+
+export function onResultFixed() {
+
 }
 
 export function isConnected(): Promise<boolean> {
@@ -101,7 +167,7 @@ async function getToken() {
     return token;
 }
 
-export function getRoomIdFromUrl(){
+export function getRoomIdFromUrl() {
     const parsed = parse(window.location.search);
     return parsed.roomId;
 }
