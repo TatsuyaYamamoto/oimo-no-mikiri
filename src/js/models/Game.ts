@@ -1,8 +1,8 @@
 import Battle from "./Battle";
 import Actor from './Actor';
-import Mode, {Level} from "./Mode";
+import Mode, { Level } from "./Mode";
 
-import {GAME_PARAMETERS} from "../Constants";
+import { GAME_PARAMETERS } from "../Constants";
 
 class Game {
     private _mode: Mode;
@@ -38,10 +38,10 @@ class Game {
         return this._battles.get(this._currentRound);
     }
 
-    public get npcAttackIntervalMillis(): number {
+    public get npcAttackIntervalMillis(): number | null {
         if (!this.isOnePlayerMode) {
             console.error("The game is not one player mode, then an opponent won't attack automatically.");
-            return;
+            return null;
         }
 
         const {
@@ -65,8 +65,8 @@ class Game {
     }
 
     public get winner(): Actor {
-        let playerWins = this.getWins(Actor.PLAYER);
-        let opponentWins = this.getWins(Actor.OPPONENT);
+        const playerWins = this.getWins(Actor.PLAYER);
+        const opponentWins = this.getWins(Actor.OPPONENT);
 
         return playerWins > opponentWins ?
             Actor.PLAYER :
@@ -91,10 +91,10 @@ class Game {
         return Math.round(time);
     }
 
-    public get straightWins(): number {
+    public get straightWins(): number | null {
         if (!this.isOnePlayerMode) {
             console.error('This variable is not supported outside of one player mode.');
-            return;
+            return null;
         }
 
         let wins = 0;

@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "allowJs": true,
     "lib": [
       "dom",
       "es2015"
-    ]
+    ],
+    "sourceMap": true,
+    "allowJs": true,
+    "noImplicitReturns": true
   }
 }

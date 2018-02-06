@@ -1,5 +1,5 @@
 .idea/
 dist/
-lib/
+functions/index.functions.js
 node_modules/
 .DS_Store
