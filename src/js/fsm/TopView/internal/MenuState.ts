@@ -7,7 +7,7 @@ import AbstractTopState from "./TopViewState";
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
-import Mode, { Level } from "../../../models/Mode";
+import Mode from "../../../models/Mode";
 
 import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
@@ -120,7 +120,7 @@ class MenuState extends AbstractTopState {
     };
 
     private _onTwoPlayerSelected = () => {
-        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.asTwoPlayer()});
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_LOCAL});
 
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
@@ -148,6 +148,7 @@ class MenuState extends AbstractTopState {
             readyModal.open();
             setTimeout(() => {
                 readyModal.close();
+                dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_ONLINE});
             }, 3000)
         });
 
@@ -180,8 +181,8 @@ class MenuState extends AbstractTopState {
      *
      * @private
      */
-    private _onSelectLevel = (e, level: Level) => {
-        dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.asOnePlayer(level)});
+    private _onSelectLevel = (e, mode: Mode.SINGLE_BEGINNER | Mode.SINGLE_NOVICE | Mode.SINGLE_EXPERT) => {
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
 
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
@@ -189,7 +190,7 @@ class MenuState extends AbstractTopState {
         trackEvent(
             Category.BUTTON,
             Action.TAP,
-            level);
+            mode);
     };
 }
 

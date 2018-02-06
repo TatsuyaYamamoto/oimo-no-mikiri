@@ -1,7 +1,7 @@
-import {Container, interaction} from 'pixi.js';
+import { Container, interaction } from 'pixi.js';
 
-import {loadTexture} from "../../../framework/AssetLoader";
-import {isSupportTouchEvent} from "../../../framework/utils";
+import { loadTexture } from "../../../framework/AssetLoader";
+import { isSupportTouchEvent } from "../../../framework/utils";
 
 import Sprite from "../internal/Sprite";
 
@@ -9,7 +9,8 @@ import BeginnerLevelButton from "../sprite/button/BeginnerLevelButton";
 import NoviceLevelButton from "../sprite/button/NoviceLevelButton";
 import ExpertLevelButton from "../sprite/button/ExpertLevelButton";
 
-import {Ids} from "../../resources/image";
+import { Ids } from "../../resources/image";
+import Mode from "../../models/Mode";
 
 /**
  * @class
@@ -54,17 +55,17 @@ class SelectLevelBoard extends Container {
      *
      * @param {(event: PIXI.interaction.InteractionEvent, level: ("beginner" | "novice" | "expert")) => void} fn
      */
-    public setOnSelectLevelListener(fn: (event: interaction.InteractionEvent, level: "beginner" | "novice" | "expert") => void) {
+    public setOnSelectLevelListener(fn: (event: interaction.InteractionEvent, level: Mode.SINGLE_BEGINNER | Mode.SINGLE_NOVICE | Mode.SINGLE_EXPERT) => void) {
         const type = isSupportTouchEvent() ? 'touchstart' : 'click';
 
         this._beginnerButton.interactive = true;
-        this._beginnerButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'beginner'));
+        this._beginnerButton.on(type, (event: interaction.InteractionEvent) => fn(event, Mode.SINGLE_BEGINNER));
 
         this._noviceButton.interactive = true;
-        this._noviceButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'novice'));
+        this._noviceButton.on(type, (event: interaction.InteractionEvent) => fn(event, Mode.SINGLE_NOVICE));
 
         this._expertButton.interactive = true;
-        this._expertButton.on(type, (event: interaction.InteractionEvent) => fn(event, 'expert'));
+        this._expertButton.on(type, (event: interaction.InteractionEvent) => fn(event, Mode.SINGLE_EXPERT));
     }
 }
 

@@ -1,38 +1,22 @@
-export enum Level {
-    BEGINNER = 'beginner',
-    NOVICE = 'novice',
-    EXPERT = 'expert',
+enum Mode {
+    SINGLE_BEGINNER = "single_beginner",
+    SINGLE_NOVICE = "single_novice",
+    SINGLE_EXPERT = "single_expert",
+    MULTI_LOCAL = "multi_local",
+    MULTI_ONLINE = "multi_online",
 }
 
-export type RoundSize = number;
+export function isSingleMode(mode: Mode) {
+    return mode === Mode.SINGLE_BEGINNER ||
+        mode === Mode.SINGLE_NOVICE ||
+        mode === Mode.SINGLE_EXPERT;
+}
 
-export type NumberOfPlayer = number;
-
-class Mode {
-    private _numberOfPlayer: NumberOfPlayer;
-    private _level: Level;
-
-    private constructor(numberOfPlayer: NumberOfPlayer,
-                        level?: Level) {
-        this._numberOfPlayer = numberOfPlayer;
-        this._level = level;
-    }
-
-    static asOnePlayer(level: Level): Mode {
-        return new Mode(1, level);
-    }
-
-    static asTwoPlayer(): Mode {
-        return new Mode(2);
-    }
-    
-    get level(): Level {
-        return this._level;
-    }
-
-    get numberOfPlayer(): number {
-        return this._numberOfPlayer;
-    }
+export function isMultiMode(mode: Mode) {
+    return mode === Mode.MULTI_LOCAL ||
+        mode === Mode.MULTI_ONLINE;
 }
 
 export default Mode;
+
+
