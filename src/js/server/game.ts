@@ -12,16 +12,23 @@ router.post("/start", async (req: Request, res: Response) => {
     const currentRoomId = await getCurrentRoomId(uid);
     const opponentId = await getOpponentId(currentRoomId, uid);
 
-    const opponentStatus = (await database().ref(`/users/${opponentId}/status`).once("value")).val();
-    const updates = {};
-    if (opponentStatus === UserStatus.WAITING_GAME_READY) {
-        updates[`/users/${uid}/status`] = UserStatus.GAME_READY;
-        updates[`/users/${opponentId}/status`] = UserStatus.GAME_READY;
-    } else {
-        updates[`/users/${uid}/status`] = UserStatus.WAITING_GAME_READY;
-    }
+    const isOpponentWaiting = (current) => current[opponentId].status === UserStatus.WAITING_GAME_READY;
+    await database().ref(`/users`).transaction((current) => {
+        if (current && current[uid] && current[opponentId]) {
+            // Is the opponent already waiting?
+            if (current[opponentId].status === UserStatus.WAITING_GAME_READY) {
+                // Game is ready.
+                current[`${uid}/status`] = UserStatus.GAME_READY;
+                current[`${opponentId}/status`] = UserStatus.GAME_READY;
+            } else {
+                // Player wait that opponent requests starting.
+                current[`${uid}/status`] = UserStatus.WAITING_GAME_READY;
+            }
+        }
 
-    await database().ref().update(updates);
+        return current;
+    });
+
     res.sendStatus(OK);
 });
 
