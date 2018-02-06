@@ -16,24 +16,13 @@ export function init() {
         "projectId": "oimo-no-mikiri-development"
     });
 
-    database().ref('.info/connected').on('value', function (snap) {
-        const user = auth().currentUser;
-        if (!user) {
-            return;
-        }
-
-        user.getIdToken().then((idToken) => {
-            console.log(`Got Firebase Token! ${idToken.slice(0, 5)}...`);
-        });
-
-        if (snap.val() === true) {
-            const ownRef = database().ref(`/users/${user.uid}/isConnecting`);
-            ownRef.set(true);
-            ownRef.onDisconnect().set(false);
-        }
+    return auth().signInAnonymously().then(user => {
+        const ownRef = database().ref(`/users/${user.uid}`);
+        const connectUpdates = {};
+        connectUpdates["isConnecting"] = true;
+        ownRef.update(connectUpdates);
+        ownRef.onDisconnect().set({isConnecting: false});
     });
-
-    auth().signInAnonymously();
 }
 
 export async function requestCreateRoom() {

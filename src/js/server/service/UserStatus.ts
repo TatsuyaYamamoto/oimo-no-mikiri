@@ -4,7 +4,9 @@ enum UserStatus {
     ATTACK_SUCCESS = "attack_success",
     FALSE_START = "false_start",
     DRAW = "draw",
-    GAME_RESULT_FIXED = "game_result_fixed"
+    GAME_RESULT_FIXED = "game_result_fixed",
+
+    OPPONENT_DISCONNECTED = "opponent_disconnected"
 }
 
 export default UserStatus;
