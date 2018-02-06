@@ -138,7 +138,7 @@ class MenuState extends AbstractTopState {
         creationModal.open();
 
         const roomId = await requestCreateRoom();
-        const url = `${location.protocol}//${location.hostname}${location.pathname}?roomId=${roomId}`;
+        const url = `${location.protocol}//${location.host}${location.pathname}?roomId=${roomId}`;
 
         const waitingModal = new WaitingJoinModal(url);
 

@@ -16,6 +16,7 @@ import JoinModal from "../../../helper/modal/JoinModal";
 
 import { Ids as SoundIds } from '../../../resources/sound';
 import { Ids as StringIds } from '../../../resources/string';
+import Mode from "../../../models/Mode";
 
 const {version} = require('../../../../../package.json');
 
@@ -83,6 +84,9 @@ class TitleState extends AbstractTopState {
                 readyModal.open();
 
                 setTimeout(() => {
+                    dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_ONLINE});
+                    const url = `${location.protocol}//${location.host}${location.pathname}`;
+                    history.replaceState(null, null, url);
                     readyModal.close();
                 }, 3000);
             });
