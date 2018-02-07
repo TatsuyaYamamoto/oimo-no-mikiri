@@ -10,7 +10,11 @@ import Text from "../../../texture/internal/Text";
 
 import { play, playOnLoop } from "../../../helper/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
-import { getRoomIdFromUrl, onJoinedRoom, requestJoinRoom } from "../../../helper/firebase";
+import {
+    getRoomIdFromUrl,
+    onMemberFulfilled,
+    requestJoinRoom
+} from "../../../helper/firebase";
 import ReadyModal from "../../../helper/modal/ReadyModal";
 import JoinModal from "../../../helper/modal/JoinModal";
 
@@ -77,7 +81,7 @@ class TitleState extends AbstractTopState {
             const joinModal = new JoinModal(roomId);
             joinModal.open();
 
-            onJoinedRoom(roomId, () => {
+            onMemberFulfilled(roomId, () => {
                 joinModal.close();
 
                 const readyModal = new ReadyModal();
@@ -85,9 +89,13 @@ class TitleState extends AbstractTopState {
 
                 setTimeout(() => {
                     dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_ONLINE});
+
                     const url = `${location.protocol}//${location.host}${location.pathname}`;
                     history.replaceState(null, null, url);
                     readyModal.close();
+
+                    //TODO: check this logic is required
+                    this.removeClickWindowEventListener(this._handleTapWindow);
                 }, 3000);
             });
 

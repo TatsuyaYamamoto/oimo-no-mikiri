@@ -12,7 +12,7 @@ import Mode from "../../../models/Mode";
 import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
-import { onJoinedRoom, requestCreateRoom, requestLeaveRoom } from "../../../helper/firebase";
+import { onMemberFulfilled, requestCreateRoom, requestLeaveRoom } from "../../../helper/firebase";
 import RoomCreationModal from "../../../helper/modal/RoomCreationModal";
 import WaitingJoinModal from "../../../helper/modal/WaitingJoinModal";
 import ReadyModal from "../../../helper/modal/ReadyModal";
@@ -142,13 +142,14 @@ class MenuState extends AbstractTopState {
 
         const waitingModal = new WaitingJoinModal(url);
 
-        onJoinedRoom(roomId, () => {
+        onMemberFulfilled(roomId, () => {
             waitingModal.close();
             const readyModal = new ReadyModal();
             readyModal.open();
             setTimeout(() => {
-                readyModal.close();
                 dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_ONLINE});
+
+                readyModal.close();
             }, 3000)
         });
 

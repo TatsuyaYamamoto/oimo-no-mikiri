@@ -4,7 +4,10 @@ import { BAD_REQUEST, CONFLICT, CREATED, NOT_FOUND, OK } from "http-status-codes
 
 const router = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+/**
+ * Create new room.
+ */
+router.post("/create", async (req: Request, res: Response) => {
     // TODO: check current user status. ex: the user is already any room owner.
     const {uid} = res.locals.token;
     const newRoomId = database().ref().child("rooms").push().key;
@@ -18,6 +21,9 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(CREATED).json({roomId: newRoomId});
 });
 
+/**
+ * Join room.
+ */
 router.post("/join", async (req: Request, res: Response) => {
     // TODO: check current user status. ex: the user is already any room owner.
     const {roomId} = req.body;
@@ -56,6 +62,10 @@ router.post("/join", async (req: Request, res: Response) => {
     res.sendStatus(OK);
 });
 
+/**
+ * Leave room.
+ *
+ */
 router.post("/leave",  async (req: Request, res: Response) => {
     const {uid} = res.locals.token;
 

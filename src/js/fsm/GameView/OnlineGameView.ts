@@ -1,17 +1,23 @@
+import { database, auth } from "firebase";
+
 import Deliverable from "../../../framework/Deliverable";
 import StateMachine from "../../../framework/StateMachine";
 
-import GameView, { InnerStates } from "./GameView";
+import GameView, { Events, InnerStates } from "./GameView";
 
 import MultiPlayOverState from "./internal/OverState/MultiPlayOverState";
-import ResultState from "./internal/ResultState";
+import ResultState, { EnterParams as ResultEnterParams } from "./internal/ResultState";
 import ReadyState from "./internal/ReadyState";
-import OnlineActionState from "./internal/ActionState/OnlineActionState";
+import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
-import { offStatusUpdated, onStatusUpdated, requestStartGame } from "../../helper/firebase";
+import {
+    offStatusUpdated, onStatusUpdated, requestBattleResult, requestCurrentBattle,
+    requestStartGame
+} from "../../helper/firebase";
 
 import UserStatus from "../../server/service/UserStatus";
+import { addEvents, removeEvents } from "../../../framework/EventUtils";
 
 
 class OnlineGameView extends GameView {
@@ -34,9 +40,18 @@ class OnlineGameView extends GameView {
 
         onStatusUpdated(this.onStatusUpdated);
 
-        this._to(InnerStates.READY);
 
-        requestStartGame()
+        requestStartGame();
+
+        // on battle started
+        database().ref(`/users/${auth().currentUser.uid}/battleId`).on("value", (snapshot) => {
+            const battleId = snapshot.val();
+            if (battleId) {
+                this.onBattleStarted(battleId);
+            }
+        });
+
+        this._to(InnerStates.READY);
     }
 
     /**
@@ -45,89 +60,88 @@ class OnlineGameView extends GameView {
     onExit(): void {
         super.onExit();
 
+        removeEvents([
+            Events.IS_READY,
+        ]);
+
         offStatusUpdated();
     }
 
     private onStatusUpdated = (status: UserStatus) => {
         switch (status) {
-            case UserStatus.GAME_READY:
-                this.onReady();
+
+            case UserStatus.BATTLE_READY:
                 break;
 
-            case UserStatus.ATTACK_SUCCESS:
-                this.onAttackSucceed();
-                break;
-
-            case UserStatus.FALSE_START:
-                this.onFalseStarted();
-                break;
-
-            case UserStatus.DRAW:
-                this.onDrew();
-                break;
-
-            case UserStatus.GAME_RESULT_FIXED:
-                this.onFixedResult();
+            case UserStatus.GAME_RESULT_FIX:
+                this.onGameResultFixed();
                 break;
         }
     };
 
-    /**
-     *
-     * @private
-     */
-    private onReady = () => {
-        // this._to<ActionStateEnterParams>(InnerStates.ACTION, {
-        //     signalTime: 0,
-        //     battleLeft: this.game.roundSize - this.game.currentRound + 1,
-        //     wins: {
-        //         onePlayer: this.game.getWins(Actor.PLAYER),
-        //         twoPlayer: this.game.getWins(Actor.OPPONENT),
-        //     },
-        //     isFalseStarted: {
-        //         player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
-        //         opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
-        //     },
-        // });
+    protected onBattleStarted = (battleId: string) => {
+        console.log("On battle started. ID:", battleId);
+        let playerId = auth().currentUser.uid;
+        let opponentId;
+
+        Promise
+            .all([
+                database().ref(`/battles/${battleId}`).once("value"),
+                async () => {
+                    const roomId = (await database().ref(`/users/${playerId}/roomId`).once("value")).val();
+                    const members = (await database().ref(`/users/${roomId}/members`).once("value")).val();
+
+                    opponentId = Object.keys(members).find((userId) => userId !== playerId);
+                },
+                new Promise(resolve => {
+                    // TODO: replace logic of detected ready animation end.
+                    addEvents({
+                        [Events.IS_READY]: () => resolve(),
+                    });
+                })
+            ])
+            .then(([snapshot]) => {
+                const battle = snapshot.val();
+                console.log("on fulfilled to start battle.", battle);
+
+                const {
+                    signalTime,
+                    remainingRoundSize,
+                    wins,
+                    falseStarted
+                } = battle;
+
+
+                this._to<ActionEnterParams>(InnerStates.ACTION, {
+                    signalTime: signalTime,
+                    // TODO: Load round size
+                    battleLeft: remainingRoundSize,
+                    wins: {
+                        player: wins && wins[playerId] || 0,
+                        opponent: wins && wins[opponentId] || 0,
+                    },
+                    isFalseStarted: {
+                        player: falseStarted && falseStarted[playerId] || false,
+                        opponent: falseStarted && falseStarted[opponentId] || false,
+                    },
+                });
+            });
+    };
+
+    private onBattleResultFixed = async () => {
+        const result = await requestBattleResult();
+
+        this._to<ResultEnterParams>(InnerStates.RESULT, {
+            winner: null,
+            falseStarter: null,
+        });
     };
 
     /**
      *
      * @private
      */
-    private onAttackSucceed = () => {
-        // const {actor, attackTime} = e.detail;
-        // this.game.currentBattle.win(actor, attackTime);
-        // this._to<ResultStateEnterParams>(InnerStates.RESULT, {winner: actor});
-    };
-
-    /**
-     *
-     * @private
-     */
-    private onFalseStarted = () => {
-        // const {actor} = e.detail;
-        // this.game.currentBattle.falseStart(actor);
-        // this._to<ResultStateEnterParams>(InnerStates.RESULT, {
-        //     winner: this.game.currentBattle.winner,
-        //     falseStarter: actor
-        // });
-    };
-
-    /**
-     *
-     * @private
-     */
-    private onDrew = () => {
-        // this.game.currentBattle.draw();
-        // this._to<ResultStateEnterParams>(InnerStates.RESULT);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private onFixedResult = () => {
+    private onGameResultFixed = () => {
         // console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`)
         //
         // const bestTime = this.game.bestTime;

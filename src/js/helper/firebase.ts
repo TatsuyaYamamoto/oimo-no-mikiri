@@ -28,7 +28,7 @@ export function init() {
 export async function requestCreateRoom() {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/room/create`, {
                 method: "POST",
                 headers: {"Authorization": `Bearer ${token}`}
             })
@@ -40,7 +40,7 @@ export async function requestCreateRoom() {
 export async function requestJoinRoom(roomId) {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/join`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/room/join`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -54,7 +54,7 @@ export async function requestJoinRoom(roomId) {
 export async function requestLeaveRoom() {
     return getToken()
         .then((token) =>
-            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/rooms/leave`, {
+            fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/room/leave`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -64,7 +64,7 @@ export async function requestLeaveRoom() {
         );
 }
 
-export function onJoinedRoom(roomId, callback) {
+export function onMemberFulfilled(roomId, callback) {
     const membersRef = database().ref(`/rooms/${roomId}/members`);
 
     membersRef.on("value", function (snapshot) {
@@ -72,15 +72,9 @@ export function onJoinedRoom(roomId, callback) {
 
         if (member && Object.keys(member).length >= 2) {
             callback();
-            offJoinedRoom(roomId);
+            membersRef.off("value");
         }
     });
-}
-
-export function offJoinedRoom(roomId) {
-    const membersRef = database().ref(`/rooms/${roomId}/members`);
-
-    membersRef.off("value");
 }
 
 export async function requestStartGame() {
@@ -93,6 +87,18 @@ export async function requestStartGame() {
             "Content-Type": "application/json"
         },
     });
+}
+
+export async function requestCurrentBattle() {
+    const token = await getToken();
+
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battle`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+    }).then((res) => res.json())
 }
 
 export function onStatusUpdated(callback) {
@@ -113,10 +119,10 @@ export function offStatusUpdated() {
     ownStatusRef.off("value");
 }
 
-export async function requestAttack(attackTime) {
+export async function requestAttack(attackTime:number) {
     const token = await getToken();
 
-    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battles/attack`, {
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battle/attack`, {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -126,21 +132,16 @@ export async function requestAttack(attackTime) {
     });
 }
 
-export async function requestFalseStart(attackTime) {
+export async function requestBattleResult() {
     const token = await getToken();
 
-    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battles/falseStart`, {
-        method: "POST",
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battle/result`, {
+        method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({attackTime})
-    });
-}
-
-export function onResultFixed() {
-
+    }).then((res) => res.json())
 }
 
 export function isConnected(): Promise<boolean> {

@@ -5,14 +5,16 @@ import Deliverable from "../../../../../framework/Deliverable";
 import ActionState from "./ActionState";
 
 import Actor from "../../../../models/Actor";
+
 import BattleStatusBoard from "../../../../texture/containers/label/BattleStatusBoard";
-import { requestAttack, requestFalseStart } from "../../../../helper/firebase";
+
+import { requestAttack } from "../../../../helper/firebase";
 
 
 export interface EnterParams extends Deliverable {
     battleLeft: number,
     signalTime: number;
-    wins: { onePlayer: number, twoPlayer: number }
+    wins: { player: number, opponent: number }
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
@@ -45,8 +47,8 @@ class OnlineActionState extends ActionState {
         this._battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
         this._battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
         this._battleStatusBoard.battleLeft = params.battleLeft;
-        this._battleStatusBoard.onePlayerWins = params.wins.onePlayer;
-        this._battleStatusBoard.twoPlayerWins = params.wins.twoPlayer;
+        this._battleStatusBoard.onePlayerWins = params.wins.player;
+        this._battleStatusBoard.twoPlayerWins = params.wins.opponent;
 
         this.backGroundLayer.addChild(
             this.background,
@@ -103,16 +105,10 @@ class OnlineActionState extends ActionState {
         }
 
         const attackTime = this.elapsedTimeMillis - this.signalTime;
+        this._attackTimeMap.set(actor, attackTime);
 
-        if (this.isSignaled) {
-            console.log(`Valid attack. actor: ${actor}, time: ${attackTime}ms.`);
-
-            requestAttack(attackTime);
-        } else {
-            console.log(`It's fault tap. actor: ${actor}, time: ${attackTime}ms.`);
-
-            requestFalseStart(attackTime);
-        }
+        // Don't judge whether the attack time is false start or not in client side.
+        requestAttack(attackTime);
     };
 }
 

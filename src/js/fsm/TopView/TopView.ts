@@ -1,12 +1,12 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
+import { dispatchEvent, addEvents, removeEvents } from "../../../framework/EventUtils";
+
+import { Events as AppEvents } from '../ApplicationState';
 
 import TitleState from "./internal/TitleState";
 import MenuState from "./internal/MenuState";
-
-import {Events as AppEvents} from '../ApplicationState';
 import HowToPlayState from "./internal/HowToPlayState";
 import CreditState from "./internal/CreditState";
 
@@ -112,8 +112,10 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleFixedPlayModeEvent = (e: CustomEvent) => {
-        console.log("Fixed play mode: ", e.detail.mode);
-        dispatchEvent(AppEvents.REQUESTED_GAME_START, {mode: e.detail.mode});
+        const {mode} = e.detail;
+        console.log("Fixed play mode: ", mode);
+
+        dispatchEvent(AppEvents.REQUESTED_GAME_START, {mode});
     };
 
     private _to = (stateTag: string) => {

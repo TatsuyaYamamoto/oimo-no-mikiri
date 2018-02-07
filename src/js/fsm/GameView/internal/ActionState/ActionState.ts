@@ -1,6 +1,5 @@
 import {dispatchEvent} from "../../../../../framework/EventUtils";
 import Deliverable from "../../../../../framework/Deliverable";
-import {getRandomInteger} from "../../../../../framework/utils";
 
 import AbstractGameState from "../GameViewState";
 import {Events} from "../../GameView";
@@ -11,10 +10,12 @@ import FalseStartCheck from "../../../../texture/sprite/text/FalseStartCheck";
 import Actor from '../../../../models/Actor';
 
 import {play} from "../../../../helper/MusicPlayer";
+import { createSignalTime } from "../../../../helper/util";
 
 import {Ids as SoundIds} from '../../../../resources/sound';
 
 import {GAME_PARAMETERS} from '../../../../Constants';
+
 
 export interface EnterParams extends Deliverable {
     isFalseStarted?: { player?: boolean, opponent?: boolean }
@@ -24,7 +25,7 @@ abstract class ActionState extends AbstractGameState {
     private _signalTime: number;
     private _isSignaled: boolean;
     private _isJudging: boolean;
-    private _attackTimeMap: Map<Actor, number>;
+    protected _attackTimeMap: Map<Actor, number>;
 
     private _signalSprite: Signal;
     private _playerFalseStartCheck: FalseStartCheck;
@@ -70,7 +71,7 @@ abstract class ActionState extends AbstractGameState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._signalTime = this.createSignalTime();
+        this._signalTime = createSignalTime();
         this._isSignaled = false;
         this._isJudging = false;
         this._attackTimeMap = new Map();
@@ -154,15 +155,6 @@ abstract class ActionState extends AbstractGameState {
      */
     protected shouldSign = (): boolean => {
         return !this.isSignaled && this.signalTime < this.elapsedTimeMillis;
-    };
-
-    /**
-     * Create time that the battle signs, attack is available.
-     *
-     * @return {number}
-     */
-    protected createSignalTime = (): number => {
-        return getRandomInteger(3000, 5000);
     };
 
     /**
