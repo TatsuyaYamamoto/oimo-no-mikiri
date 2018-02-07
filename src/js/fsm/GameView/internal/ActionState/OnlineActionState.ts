@@ -107,6 +107,8 @@ class OnlineActionState extends ActionState {
         const attackTime = this.elapsedTimeMillis - this.signalTime;
         this._attackTimeMap.set(actor, attackTime);
 
+        console.log(`On attacked. attackTime: ${attackTime}`);
+
         // Don't judge whether the attack time is false start or not in client side.
         requestAttack(attackTime);
     };

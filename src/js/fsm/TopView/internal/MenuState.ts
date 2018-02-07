@@ -148,7 +148,7 @@ class MenuState extends AbstractTopState {
             readyModal.open();
             setTimeout(() => {
                 dispatchEvent(Events.FIXED_PLAY_MODE, {mode: Mode.MULTI_ONLINE});
-
+                stop(SoundIds.SOUND_ZENKAI);
                 readyModal.close();
             }, 3000)
         });

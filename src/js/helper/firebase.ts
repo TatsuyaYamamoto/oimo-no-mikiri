@@ -89,6 +89,18 @@ export async function requestStartGame() {
     });
 }
 
+export async function requestStartBattle() {
+    const token = await getToken();
+
+    return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battle/start`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+    });
+}
+
 export async function requestCurrentBattle() {
     const token = await getToken();
 
@@ -119,7 +131,7 @@ export function offStatusUpdated() {
     ownStatusRef.off("value");
 }
 
-export async function requestAttack(attackTime:number) {
+export async function requestAttack(attackTime: number) {
     const token = await getToken();
 
     return fetch(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/battle/attack`, {

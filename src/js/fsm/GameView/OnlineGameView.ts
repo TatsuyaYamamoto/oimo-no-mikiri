@@ -12,12 +12,13 @@ import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
 import {
-    offStatusUpdated, onStatusUpdated, requestBattleResult, requestCurrentBattle,
+    offStatusUpdated, onStatusUpdated, requestBattleResult, requestStartBattle,
     requestStartGame
 } from "../../helper/firebase";
 
 import UserStatus from "../../server/service/UserStatus";
 import { addEvents, removeEvents } from "../../../framework/EventUtils";
+import Actor from "../../models/Actor";
 
 
 class OnlineGameView extends GameView {
@@ -51,7 +52,10 @@ class OnlineGameView extends GameView {
             }
         });
 
-        this._to(InnerStates.READY);
+        addEvents({
+            [Events.REQUEST_READY]: () => {
+            },
+        });
     }
 
     /**
@@ -70,7 +74,8 @@ class OnlineGameView extends GameView {
     private onStatusUpdated = (status: UserStatus) => {
         switch (status) {
 
-            case UserStatus.BATTLE_READY:
+            case UserStatus.BATTLE_RESULT_FIX:
+                this.onBattleResultFixed();
                 break;
 
             case UserStatus.GAME_RESULT_FIX:
@@ -81,6 +86,12 @@ class OnlineGameView extends GameView {
 
     protected onBattleStarted = (battleId: string) => {
         console.log("On battle started. ID:", battleId);
+
+        this.player.playWait();
+        this.opponent.playWait();
+
+        this._to(InnerStates.READY);
+
         let playerId = auth().currentUser.uid;
         let opponentId;
 
@@ -89,7 +100,7 @@ class OnlineGameView extends GameView {
                 database().ref(`/battles/${battleId}`).once("value"),
                 async () => {
                     const roomId = (await database().ref(`/users/${playerId}/roomId`).once("value")).val();
-                    const members = (await database().ref(`/users/${roomId}/members`).once("value")).val();
+                    const members = (await database().ref(`/rooms/${roomId}/members`).once("value")).val();
 
                     opponentId = Object.keys(members).find((userId) => userId !== playerId);
                 },
@@ -108,7 +119,7 @@ class OnlineGameView extends GameView {
                     signalTime,
                     remainingRoundSize,
                     wins,
-                    falseStarted
+                    falseStartedInPreviousBattle
                 } = battle;
 
 
@@ -121,19 +132,28 @@ class OnlineGameView extends GameView {
                         opponent: wins && wins[opponentId] || 0,
                     },
                     isFalseStarted: {
-                        player: falseStarted && falseStarted[playerId] || false,
-                        opponent: falseStarted && falseStarted[opponentId] || false,
+                        player: falseStartedInPreviousBattle && falseStartedInPreviousBattle[playerId] || false,
+                        opponent: falseStartedInPreviousBattle && falseStartedInPreviousBattle[opponentId] || false,
                     },
                 });
             });
     };
 
     private onBattleResultFixed = async () => {
-        const result = await requestBattleResult();
+        const {
+            winnerId,
+            falseStarterId
+        } = await requestBattleResult();
+
+        const winner = !winnerId ? null :
+            winnerId === auth().currentUser.uid ? Actor.PLAYER : Actor.OPPONENT;
+
+        const falseStarter = !falseStarterId ? null :
+            falseStarterId === auth().currentUser.uid ? Actor.PLAYER : Actor.OPPONENT;
 
         this._to<ResultEnterParams>(InnerStates.RESULT, {
-            winner: null,
-            falseStarter: null,
+            winner,
+            falseStarter,
         });
     };
 

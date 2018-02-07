@@ -8,7 +8,7 @@ import { Events } from "../TopView";
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import { play, playOnLoop } from "../../../helper/MusicPlayer";
+import { play, playOnLoop, stop } from "../../../helper/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
 import {
     getRoomIdFromUrl,
@@ -93,7 +93,7 @@ class TitleState extends AbstractTopState {
                     const url = `${location.protocol}//${location.host}${location.pathname}`;
                     history.replaceState(null, null, url);
                     readyModal.close();
-
+                    stop(SoundIds.SOUND_ZENKAI);
                     //TODO: check this logic is required
                     this.removeClickWindowEventListener(this._handleTapWindow);
                 }, 3000);

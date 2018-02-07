@@ -3,7 +3,7 @@ import { database } from "firebase-admin";
 import { OK, NOT_FOUND, BAD_REQUEST, ACCEPTED } from "http-status-codes";
 
 import { getCurrentRoomId, getOpponentId } from "../service/room";
-import { judge } from "../service/battle";
+import { judge, startBattle } from "../service/battle";
 
 
 const router = Router();
@@ -13,28 +13,48 @@ const router = Router();
  */
 router.get("/", async (req: Request, res: Response) => {
     const {uid} = res.locals.token;
-    const currentRoomId = await getCurrentRoomId(uid);
 
-    const currentBattle = (await database().ref(`/rooms/${currentRoomId}/currentBattle`).once("value")).val();
+    const battleId = (await database().ref(`/users/${uid}/battleId`).once("value")).val();
+    const battle = (await database().ref(`/battles/${battleId}`).once("value")).val();
 
-    if (currentBattle) {
-        res.json(currentBattle);
+    if (battle) {
+        res.json(battle);
     } else {
         res.sendStatus(NOT_FOUND);
     }
 });
+
+router.post("/start", async (req: Request, res: Response) => {
+    const {uid} = res.locals.token;
+    const roomId = await getCurrentRoomId(uid);
+
+    startBattle(roomId);
+});
+
 
 /**
  * Get battle result.
  */
 router.get("/result", async (req: Request, res: Response) => {
     const {uid} = res.locals.token;
-    const currentRoomId = await getCurrentRoomId(uid);
 
-    const currentBattle = (await database().ref(`/rooms/${currentRoomId}/currentBattle`).once("value")).val();
+    const roomId = await getCurrentRoomId(uid);
 
-    if (currentBattle) {
-        res.json(currentBattle);
+    const battleId = (await database().ref(`/rooms/${roomId}/battleId`).once("value")).val();
+    const battle = (await database().ref(`/battles/${battleId}`).once("value")).val();
+
+    console.log(`Get battle result ID: ${battleId}`, battle);
+
+    const {
+        winnerId,
+        falseStarterId,
+    } = battle;
+
+    if (battle) {
+        res.json({
+            winnerId,
+            falseStarterId
+        });
     } else {
         res.sendStatus(BAD_REQUEST);
     }
@@ -50,7 +70,6 @@ router.post("/attack", async (req: Request, res: Response) => {
     const {
         attackTime,
     } = req.body;
-
 
 
     res.sendStatus(ACCEPTED);
