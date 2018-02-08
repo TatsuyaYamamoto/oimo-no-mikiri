@@ -49,7 +49,7 @@ class LocalGameView extends GameView {
         if (this.game.isOnePlayerMode) {
             return this.opponents[this.game.currentRound];
         } else {
-            return this.opponent;
+            return this._opponent;
         }
     }
 

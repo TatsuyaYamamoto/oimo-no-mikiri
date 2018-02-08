@@ -19,6 +19,7 @@ export async function startBattle(roomId: string): Promise<void> {
         const previousBattle = (await database().ref(`/battles/${previousBattleId}`).once("value")).val();
         previousBattle.falseStarterId && Object.keys(previousBattle.falseStarted).forEach((userId) => {
             falseStartedInPreviousBattle[userId] = true;
+            
         });
     }
 
