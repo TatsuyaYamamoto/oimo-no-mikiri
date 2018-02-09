@@ -7,21 +7,36 @@ export async function startBattle(roomId: string): Promise<void> {
     console.log(`Start battle to room ID: ${roomId}`);
 
     const updates = {};
-    const signalTime = createSignalTime();
-    const room = (await database().ref(`/rooms/${roomId}/`).once("value")).val();
 
+    const room = (await database().ref(`/rooms/${roomId}/`).once("value")).val();
     const previousBattleId = room.battleId;
-    const remainingRoundSize = room.roundSize - room.currentRound + 1;
-    const wins = {};
+
+    // Next room statuses
+    let currentRound = room.currentRound;
+    const wins = room.wins;
+
+    // Next battle statuses
+    const signalTime = createSignalTime();
     const falseStartedInPreviousBattle = {};
 
     if (previousBattleId) {
         const previousBattle = (await database().ref(`/battles/${previousBattleId}`).once("value")).val();
-        previousBattle.falseStarterId && Object.keys(previousBattle.falseStarted).forEach((userId) => {
-            falseStartedInPreviousBattle[userId] = true;
-            
-        });
+
+        if (previousBattle.isFixed) {
+            // Go next round;
+            currentRound = currentRound + 1;
+
+            // Increment win count
+            wins[previousBattle.winnerId] = wins[previousBattle.winnerId] + 1;
+        } else {
+            // take over false-start status to next battle.
+            previousBattle.falseStarterId && Object.keys(previousBattle.falseStarted).forEach((userId) => {
+                falseStartedInPreviousBattle[userId] = true;
+            });
+        }
     }
+
+    const remainingRoundSize = room.roundSize - room.currentRound + 1;
 
     const nextBattleId = database().ref().child("battles").push().key;
     updates[`/battles/${nextBattleId}`] = {
@@ -31,6 +46,8 @@ export async function startBattle(roomId: string): Promise<void> {
         remainingRoundSize
     };
     updates[`/rooms/${roomId}/battleId`] = nextBattleId;
+    updates[`/rooms/${roomId}/currentRound`] = currentRound;
+    updates[`/rooms/${roomId}/wins`] = wins;
     Object.keys(room.members).forEach((userId) => {
         updates[`/users/${userId}/battleId`] = nextBattleId;
         updates[`/users/${userId}/status`] = UserStatus.BATTLE_READY;
@@ -59,11 +76,12 @@ export async function judge(attackerId: string,
         .ref(`/battles/${battleId}`)
         .transaction((current) => {
             if (current && !current.isFixed) {
+                current.isFixed = true;
                 current.attackerId = attackerId;
                 current.attackTime = attackTime;
 
                 if (attackTime < 0) {
-                    current.falseStarterId = attackerId;
+                    current.falseStarted = true;
 
                     if (current["falseStartedInPreviousBattle"] && current["falseStartedInPreviousBattle"][attackerId]) {
                         current.winnerId = opponentId;
@@ -86,5 +104,5 @@ export async function judge(attackerId: string,
             database().ref().update(updates),
             wait(5000),
         ])
-    .then(() => startBattle(roomId));
+        .then(() => startBattle(roomId));
 }

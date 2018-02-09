@@ -44,6 +44,8 @@ router.post("/start", async (req: Request, res: Response) => {
         updates[`/users/${opponentId}/status`] = UserStatus.BATTLE_READY;
         updates[`/rooms/${roomId}/roundSize`] = 5;
         updates[`/rooms/${roomId}/currentRound`] = 1;
+        updates[`/rooms/${roomId}/wins/${uid}`] = 0;
+        updates[`/rooms/${roomId}/wins/${opponentId}`] = 0;
 
         return Promise
             .all([

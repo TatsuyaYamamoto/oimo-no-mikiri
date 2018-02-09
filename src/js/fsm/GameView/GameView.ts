@@ -40,7 +40,7 @@ abstract class GameViewState extends ViewContainer {
     /**
      * 2Player's character for multi play mode.
      */
-    private _opponent: Opponent;
+    protected _opponent: Opponent;
 
     /**
      * Opponents for single play mode.
