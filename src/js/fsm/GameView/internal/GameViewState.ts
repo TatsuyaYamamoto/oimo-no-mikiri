@@ -1,7 +1,7 @@
 import {Graphics} from 'pixi.js';
 import ViewContainer from "../../../../framework/ViewContainer";
 
-import GameView from '../../GameView';
+import GameView from '../GameView';
 
 import Player from "../../../texture/sprite/character/Player";
 import Opponent from "../../../texture/sprite/character/Opponent";

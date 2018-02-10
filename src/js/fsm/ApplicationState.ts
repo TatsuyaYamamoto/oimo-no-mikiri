@@ -1,16 +1,16 @@
 import Application from "../../framework/Application";
 import StateMachine from "../../framework/StateMachine";
-import {getCurrentViewSize, getScale} from "../../framework/utils";
-import {addEvents, removeEvents} from '../../framework/EventUtils';
+import { getCurrentViewSize, getScale } from "../../framework/utils";
+import { addEvents, removeEvents } from '../../framework/EventUtils';
 import ViewContainer from "../../framework/ViewContainer";
 
 import InitialViewState from "./InitialView";
-import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
+import { EnterParams as GameViewEnterParams } from "./GameView/GameView";
+import LocalGameView from "./GameView/LocalGameView";
+import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
-import Mode from "../models/Mode";
-
-import {toggleMute} from '../helper/MusicPlayer';
+import { toggleMute } from '../helper/MusicPlayer';
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -22,6 +22,7 @@ enum InnerStates {
     INITIAL = "initial",
     TOP = "top",
     GAME = "game",
+    ONLINE_GAME = "online_game",
 }
 
 class ApplicationState extends Application {
@@ -45,10 +46,12 @@ class ApplicationState extends Application {
         this._updateRendererSize();
         this._updateStageScale();
 
+        // TODO create instance each changing state.
         this._viewStateMachine = new StateMachine({
             [InnerStates.INITIAL]: new InitialViewState(),
             [InnerStates.TOP]: new TopViewState(),
-            [InnerStates.GAME]: new GameViewState(),
+            [InnerStates.GAME]: new LocalGameView(),
+            [InnerStates.ONLINE_GAME]: new OnlineGameView(),
         });
 
         addEvents({

@@ -4,9 +4,18 @@ import Mode from "./Mode";
 
 interface Game {
     mode: Mode;
+
     roundSize: number;
+
     currentRound: number;
+
     currentBattle: Battle;
+
+    winner: Actor;
+
+    bestTime: number;
+
+    straightWins: number;
 
     constructor(mode: Mode, roundSize?: number);
 
@@ -15,12 +24,6 @@ interface Game {
     isMultiMode(): boolean;
 
     getWins(actor: Actor): number;
-
-    getWinner(): Actor;
-
-    getBestTime(): number;
-
-    getStraightWins(): number;
 
     start(): void;
 

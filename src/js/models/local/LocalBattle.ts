@@ -1,6 +1,7 @@
 import Actor from '../Actor';
+import Battle from '../Battle';
 
-export default class Battle {
+class LocalBattle implements Battle {
     private _winner: Actor;
     private _winnerAttackTime: number;
     private _falseStartMap: Map<Actor, boolean>;
@@ -20,6 +21,11 @@ export default class Battle {
         if (!this.isFixed()) console.error("The battle is not fixed.");
 
         return this._winnerAttackTime;
+    }
+
+    public get signalTime(): number {
+        // TODO implements
+        return 0;
     }
 
     public isFalseStarted(actor: Actor): boolean {
@@ -58,3 +64,5 @@ export default class Battle {
         // do nothing.
     }
 }
+
+export default LocalBattle;
