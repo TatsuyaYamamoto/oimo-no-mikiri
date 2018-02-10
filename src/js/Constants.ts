@@ -1,4 +1,4 @@
-import {Level} from './models/Mode'
+import { Level } from './models/Mode'
 
 /**
  * Parameters for game tuning.
@@ -119,3 +119,12 @@ export const URL = {
 export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production' ?
     "UA-64858827-7" :   // For oimo production tracking.
     "UA-64858827-8";    // For test tracking.
+
+export const FIREBASE_OPTIONS = process.env.NODE_ENV === 'production' ? {} : {
+    "apiKey": "AIzaSyB16fI2MRL411jYOCjW1eL7hTuwOvlq3w8",
+    "databaseURL": "https://oimo-no-mikiri-development.firebaseio.com",
+    "storageBucket": "oimo-no-mikiri-development.appspot.com",
+    "authDomain": "oimo-no-mikiri-development.firebaseapp.com",
+    "messagingSenderId": "888607734391",
+    "projectId": "oimo-no-mikiri-development"
+};
