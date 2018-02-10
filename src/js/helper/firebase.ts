@@ -26,7 +26,7 @@ export function init() {
 }
 
 export async function requestCreateGame() {
-    return post(`http://localhost:5000/oimo-no-mikiri-development/us-central1/createGame`)
+    return post(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/createGame`)
         .then(res => res.json())
         .then(json => json.gameId);
 }

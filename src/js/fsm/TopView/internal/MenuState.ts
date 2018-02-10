@@ -133,7 +133,7 @@ class MenuState extends AbstractTopState {
         play(SoundIds.SOUND_OK);
     };
 
-    private _onModeSelected = async(e, mode: Mode) => {
+    private _onModeSelected = (e, mode: Mode) => {
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
 
@@ -148,12 +148,15 @@ class MenuState extends AbstractTopState {
 
                 creationModal.open();
 
-                const gameId = await requestCreateGame();
-                const url = `${location.protocol}//${location.hostname}${location.pathname}?gameId=${gameId}`;
+                requestCreateGame()
+                    .then((gameId) => {
+                        const url = `${location.protocol}//${location.hostname}${location.pathname}?gameId=${gameId}`;
 
-                const waitingModal = new WaitingJoinModal(url);
-                waitingModal.open();
+                        const waitingModal = new WaitingJoinModal(url);
 
+                        creationModal.close();
+                        waitingModal.open();
+                    });
                 break;
             default:
                 dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
