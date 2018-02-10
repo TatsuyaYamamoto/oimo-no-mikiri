@@ -150,7 +150,7 @@ class MenuState extends AbstractTopState {
 
                 requestCreateGame()
                     .then((gameId) => {
-                        const url = `${location.protocol}//${location.hostname}${location.pathname}?gameId=${gameId}`;
+                        const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
 
                         const waitingModal = new WaitingJoinModal(url);
 

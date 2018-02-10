@@ -1,18 +1,23 @@
+import { parse } from "query-string";
+
 import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from '../../../../framework/EventUtils';
-import {t} from "../../../../framework/i18n";
+import { dispatchEvent } from '../../../../framework/EventUtils';
+import { t } from "../../../../framework/i18n";
 
 import AbstractTopState from "./TopViewState";
-import {Events} from "../TopView";
+import { Events } from "../TopView";
 
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import {play, playOnLoop} from "../../../helper/MusicPlayer";
-import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import { play, playOnLoop } from "../../../helper/MusicPlayer";
+import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import JoinModal from "../../../helper/modal/JoinModal";
 
-import {Ids as SoundIds} from '../../../resources/sound';
-import {Ids as StringIds} from '../../../resources/string';
+import { Ids as SoundIds } from '../../../resources/sound';
+import { Ids as StringIds } from '../../../resources/string';
+import { requestJoinGame } from "../../../helper/firebase";
+import OnlineGame from "../../../models/online/OnlineGame";
 
 const {version} = require('../../../../../package.json');
 
@@ -67,6 +72,17 @@ class TitleState extends AbstractTopState {
         this.addClickWindowEventListener(this._handleTapWindow);
 
         playOnLoop(SoundIds.SOUND_ZENKAI);
+
+        const {gameId} = parse(window.location.search);
+
+        if (gameId) {
+            const joinModal = new JoinModal(gameId);
+            joinModal.open();
+
+            const game = new OnlineGame(gameId);
+
+            requestJoinGame(gameId);
+        }
     }
 
     /**

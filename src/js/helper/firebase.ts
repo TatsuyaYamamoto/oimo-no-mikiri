@@ -31,15 +31,25 @@ export async function requestCreateGame() {
         .then(json => json.gameId);
 }
 
+export async function requestJoinGame(gameId: string) {
+    return post(`http://localhost:5000/oimo-no-mikiri-development/us-central1/app/joinGame`, {
+        gameId
+    });
+}
+
 async function post(input: string, json?: any) {
-    return getToken()
-        .then((token) =>
-            fetch(input, {
-                method: "POST",
-                headers: {"Authorization": `Bearer ${token}`},
-                body: JSON.stringify(json)
-            })
-        )
+    const fetchInit = {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify(json)
+    };
+    if (json) {
+        fetchInit.headers["Content-Type"] = "application/json";
+    }
+
+    return fetch(input, fetchInit);
 }
 
 async function getToken(forceRefresh?: boolean) {
