@@ -1,4 +1,4 @@
-import Actor from './Actor';
+import Actor from '../Actor';
 
 export default class Battle {
     private _winner: Actor;

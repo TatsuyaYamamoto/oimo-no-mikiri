@@ -71,6 +71,13 @@ export const BASIC_IMAGE_WIDTH = 800;
 export const BASIC_IMAGE_HEIGHT = BASIC_IMAGE_WIDTH / ASPECT_RATIO;
 
 /**
+ * Default round size of game.
+ *
+ * @type {number}
+ */
+export const DEFAULT_ROUND_SIZE = 5;
+
+/**
  * Skip ready state animation before game action if true.
  *
  * @type {boolean}

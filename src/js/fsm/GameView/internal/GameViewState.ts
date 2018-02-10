@@ -8,9 +8,6 @@ import Opponent from "../../../texture/sprite/character/Opponent";
 import Oimo from "../../../texture/sprite/character/Oimo";
 import BackGround from "../../../texture/containers/BackGround";
 
-import Battle from "../../../models/Battle";
-import Game from "../../../models/Game";
-
 class WhiteLayer extends Graphics {
     constructor(width: number, height: number) {
         super();

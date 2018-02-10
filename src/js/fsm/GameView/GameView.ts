@@ -36,7 +36,7 @@ import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
 import {trackPageView, VirtualPageViews} from "../../helper/tracker";
 
-import Game from '../../models/Game';
+import Game from '../../models/local/LocalGame';
 import Actor from "../../models/Actor";
 import Mode from "../../models/Mode";
 
