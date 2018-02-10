@@ -82,7 +82,7 @@ class GameViewState extends ViewContainer {
     }
 
     public get opponent(): Opponent {
-        if (this.game.isOnePlayerMode) {
+        if (this.game.isSingleMode()) {
             return this._opponents[this._game.currentRound];
         } else {
             return this._opponent;
@@ -125,11 +125,11 @@ class GameViewState extends ViewContainer {
 
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
-            [InnerStates.ACTION]: this.game.isOnePlayerMode ?
+            [InnerStates.ACTION]: this.game.isSingleMode() ?
                 new SinglePlayActionState(this) :
                 new MultiPlayActionState(this),
             [InnerStates.RESULT]: new ResultState(this),
-            [InnerStates.OVER]: this.game.isOnePlayerMode ?
+            [InnerStates.OVER]: this.game.isSingleMode() ?
                 new SinglePlayOverState(this) :
                 new MultiPlayOverState(this)
         });
@@ -195,9 +195,9 @@ class GameViewState extends ViewContainer {
      * @private
      */
     private _onReady = () => {
-        if (this.game.isOnePlayerMode) {
+        if (this.game.isSingleMode()) {
             this._to<SinglePlayActionStateEnterParams>(InnerStates.ACTION, {
-                autoOpponentAttackInterval: this.game.isOnePlayerMode ? this.game.npcAttackIntervalMillis : null,
+                autoOpponentAttackInterval: this.game.getNpcAttackIntervalMillis(),
                 isFalseStarted: {
                     player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
                     opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
@@ -262,7 +262,7 @@ class GameViewState extends ViewContainer {
         const winner = this.game.winner;
         const mode = this.game.mode;
 
-        if (this.game.isOnePlayerMode) {
+        if (this.game.isSingleMode()) {
             this._to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {
                 winner,
                 bestTime,

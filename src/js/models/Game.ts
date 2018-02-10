@@ -17,7 +17,7 @@ class Game {
         this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
     }
 
-    public get isOnePlayerMode(): boolean {
+    public isSingleMode(): boolean {
         return [
             Mode.SINGLE_BEGINNER,
             Mode.SINGLE_NOVICE,
@@ -25,7 +25,7 @@ class Game {
         ].some((singleMode) => this._mode === singleMode);
     }
 
-    public get isTwoPlayerMode(): boolean {
+    public isMultiMode(): boolean {
         return this._mode === Mode.MULTI;
     }
 
@@ -45,8 +45,8 @@ class Game {
         return this._battles.get(this._currentRound);
     }
 
-    public get npcAttackIntervalMillis(): number {
-        if (!this.isOnePlayerMode) {
+    public getNpcAttackIntervalMillis(): number {
+        if (!this.isSingleMode()) {
             console.error("The game is not one player mode, then an opponent won't attack automatically.");
             return;
         }
@@ -84,7 +84,7 @@ class Game {
         let time = 99999;
 
         this._battles.forEach((b) => {
-            if (this.isOnePlayerMode) {
+            if (this.isSingleMode()) {
                 if (b.winnerAttackTime < time && b.winner === Actor.PLAYER) {
                     time = b.winnerAttackTime;
                 }
@@ -99,7 +99,7 @@ class Game {
     }
 
     public get straightWins(): number {
-        if (!this.isOnePlayerMode) {
+        if (!this.isSingleMode()) {
             console.error('This variable is not supported outside of one player mode.');
             return;
         }
@@ -134,7 +134,7 @@ class Game {
 
     public isFixed(): boolean {
         // Is already lost on 1player-mode?
-        if (this.isOnePlayerMode) {
+        if (this.isSingleMode()) {
             let isLost = false;
 
             this._battles.forEach((b) => {
