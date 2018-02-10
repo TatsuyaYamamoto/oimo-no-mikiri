@@ -62,6 +62,7 @@
     "pixi-sound": "^1.4.2",
     "pixi.js": "^4.5.4",
     "sweetalert": "^2.0.3",
+    "tingle.js": "^0.13.0",
     "whatwg-fetch": "^2.0.3"
   }
 }

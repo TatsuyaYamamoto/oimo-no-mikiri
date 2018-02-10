@@ -12,9 +12,12 @@ import Mode from "../../../models/Mode";
 import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import RoomCreationModal from "../../../helper/modal/RoomCreationModal";
+import WaitingJoinModal from "../../../helper/modal/WaitingJoinModal";
 
 import { URL } from '../../../Constants';
 import { Ids as SoundIds } from '../../../resources/sound';
+import { requestCreateGame } from "../../../helper/firebase";
 
 
 class MenuState extends AbstractTopState {
@@ -44,6 +47,7 @@ class MenuState extends AbstractTopState {
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
         this._menuBoard.setOnTwoPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
+        this._menuBoard.setOnOnlineGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
@@ -129,9 +133,7 @@ class MenuState extends AbstractTopState {
         play(SoundIds.SOUND_OK);
     };
 
-    private _onModeSelected = (e, mode: Mode) => {
-        dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
-
+    private _onModeSelected = async(e, mode: Mode) => {
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
 
@@ -139,6 +141,23 @@ class MenuState extends AbstractTopState {
             Category.BUTTON,
             Action.TAP,
             mode);
+
+        switch (mode) {
+            case Mode.MULTI_ONLINE:
+                const creationModal = new RoomCreationModal();
+
+                creationModal.open();
+
+                const gameId = await requestCreateGame();
+                const url = `${location.protocol}//${location.hostname}${location.pathname}?gameId=${gameId}`;
+
+                const waitingModal = new WaitingJoinModal(url);
+                waitingModal.open();
+
+                break;
+            default:
+                dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
+        }
     }
 }
 
