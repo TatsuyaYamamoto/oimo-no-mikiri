@@ -63,3 +63,24 @@ export function isSupportTouchEvent(): boolean {
 export function getRandomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
+
+/**
+ * Copy text to clipboard.
+ *
+ * @param text
+ * @return {boolean}
+ */
+export function copyTextToClipboard(text): boolean {
+    const copyFrom = document.createElement("textarea");
+    copyFrom.textContent = text;
+
+    document.body.appendChild(copyFrom);
+
+    copyFrom.select();
+    const isSucceed = document.execCommand("copy");
+    !isSucceed && console.error(`Failed to copy to clipboard. taget: ${text}`);
+
+    document.body.removeChild(copyFrom);
+
+    return isSucceed;
+}

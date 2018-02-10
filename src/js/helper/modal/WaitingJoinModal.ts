@@ -1,4 +1,5 @@
 import TingleModal from "./TingleModal";
+import { copyTextToClipboard } from "../../../framework/utils";
 
 class WaitingJoinModal extends TingleModal {
     constructor(url, props?) {
@@ -14,6 +15,7 @@ class WaitingJoinModal extends TingleModal {
 </div>`);
 
         this.addFooterBtn("クリッポボード", 'tingle-btn tingle-btn--primary', () => {
+            copyTextToClipboard(url);
         });
 
         this.addFooterBtn("ツイッター", 'tingle-btn tingle-btn--primary', () => {
