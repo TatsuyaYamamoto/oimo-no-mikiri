@@ -1,14 +1,26 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
-import {dispatchEvent, addEvents, removeEvents} from "../../../framework/EventUtils";
+import { dispatchEvent, addEvents, removeEvents } from "../../../framework/EventUtils";
 
+import { Events as AppEvents } from '../ApplicationState';
+import HowToPlayState from "./internal/HowToPlayState";
+import CreditState from "./internal/CreditState";
 import TitleState from "./internal/TitleState";
 import MenuState from "./internal/MenuState";
 
-import {Events as AppEvents} from '../ApplicationState';
-import HowToPlayState from "./internal/HowToPlayState";
-import CreditState from "./internal/CreditState";
+import OnlineGame, { GameEvents } from "../../models/online/OnlineGame";
+import Mode from "../../models/Mode";
+
+import JoinModal from "../../helper/modal/JoinModal";
+import { stop } from "../../helper/MusicPlayer";
+import ReadyModal from "../../helper/modal/ReadyModal";
+import WaitingJoinModal from "../../helper/modal/WaitingJoinModal";
+import RoomCreationModal from "../../helper/modal/RoomCreationModal";
+import { requestCreateGame, requestJoinGame } from "../../helper/firebase";
+
+import { Ids as SoundIds } from "../../resources/sound";
+import LocalGame from "../../models/local/LocalGame";
 
 export enum Events {
     TAP_TITLE = 'GameView@TAP_TITLE',
@@ -112,8 +124,84 @@ class TopViewState extends ViewContainer {
      * @private
      */
     private _handleFixedPlayModeEvent = (e: CustomEvent) => {
-        console.log("Fixed play mode: ", e.detail.mode);
-        dispatchEvent(AppEvents.REQUESTED_GAME_START, {mode: e.detail.mode});
+        const {mode, gameId} = e.detail;
+        console.log("Fixed play mode: ", mode);
+
+
+        switch (mode) {
+            case Mode.MULTI_ONLINE:
+                gameId ?
+                    this.joinGame(gameId) :
+                    this.createGame();
+                break;
+            default:
+                dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                    game: new LocalGame(mode)
+                });
+        }
+
+    };
+
+    /**
+     *
+     */
+    private createGame = () => {
+        const creationModal = new RoomCreationModal();
+
+        creationModal.open();
+
+        requestCreateGame()
+            .then((gameId) => {
+                const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
+
+                const waitingModal = new WaitingJoinModal(url);
+                const readyModal = new ReadyModal();
+
+                const game = new OnlineGame(gameId);
+                game.on(GameEvents.FULFILLED_MEMBERS, () => {
+
+                    dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                        game
+                    });
+                    readyModal.close();
+
+                    this.clearQueryString();
+                    stop(SoundIds.SOUND_ZENKAI);
+                });
+
+                creationModal.close();
+                waitingModal.open();
+            });
+    };
+
+    /**
+     *
+     * @param {string} gameId
+     */
+    private joinGame = (gameId: string) => {
+        const joinModal = new JoinModal(gameId);
+        joinModal.open();
+        const readyModal = new ReadyModal();
+        readyModal.open();
+
+        const game = new OnlineGame(gameId);
+        game.on(GameEvents.FULFILLED_MEMBERS, () => {
+
+            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                game
+            });
+            readyModal.close();
+
+            this.clearQueryString();
+            stop(SoundIds.SOUND_ZENKAI);
+        });
+
+        requestJoinGame(gameId);
+    };
+
+    private clearQueryString = () =>{
+        const url = `${location.protocol}//${location.host}${location.pathname}`;
+        history.replaceState(null, null, url);
     };
 
     private _to = (stateTag: string) => {

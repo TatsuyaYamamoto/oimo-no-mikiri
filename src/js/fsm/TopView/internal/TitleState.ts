@@ -10,14 +10,17 @@ import { Events } from "../TopView";
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import { play, playOnLoop } from "../../../helper/MusicPlayer";
+import { play, playOnLoop, stop } from "../../../helper/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import { requestJoinGame } from "../../../helper/firebase";
+
+import OnlineGame from "../../../models/online/OnlineGame";
+import Mode from "../../../models/Mode";
 import JoinModal from "../../../helper/modal/JoinModal";
+import ReadyModal from "../../../helper/modal/ReadyModal";
 
 import { Ids as SoundIds } from '../../../resources/sound';
 import { Ids as StringIds } from '../../../resources/string';
-import { requestJoinGame } from "../../../helper/firebase";
-import OnlineGame from "../../../models/online/OnlineGame";
 
 const {version} = require('../../../../../package.json');
 
@@ -69,19 +72,16 @@ class TitleState extends AbstractTopState {
             this._appVersion
         );
 
-        this.addClickWindowEventListener(this._handleTapWindow);
 
         playOnLoop(SoundIds.SOUND_ZENKAI);
 
         const {gameId} = parse(window.location.search);
 
-        if (gameId) {
-            const joinModal = new JoinModal(gameId);
-            joinModal.open();
-
-            const game = new OnlineGame(gameId);
-
-            requestJoinGame(gameId);
+        if (!gameId) {
+            this.addClickWindowEventListener(this._handleTapWindow);
+        }else{
+            const mode = Mode.MULTI_ONLINE;
+            dispatchEvent(Events.FIXED_PLAY_MODE, {mode, gameId});
         }
     }
 

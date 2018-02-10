@@ -115,9 +115,9 @@ class ApplicationState extends Application {
      * @private
      */
     private _handleRequestedGameStartEvent = (e: CustomEvent) => {
-        const {mode} = e.detail;
+        const {game} = e.detail;
 
-        this._to<GameViewEnterParams>(InnerStates.GAME, {mode});
+        this._to<GameViewEnterParams>(InnerStates.GAME, {game});
     };
 
     /**

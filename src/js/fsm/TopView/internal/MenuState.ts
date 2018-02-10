@@ -137,30 +137,9 @@ class MenuState extends AbstractTopState {
         stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
 
-        trackEvent(
-            Category.BUTTON,
-            Action.TAP,
-            mode);
+        dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
 
-        switch (mode) {
-            case Mode.MULTI_ONLINE:
-                const creationModal = new RoomCreationModal();
-
-                creationModal.open();
-
-                requestCreateGame()
-                    .then((gameId) => {
-                        const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
-
-                        const waitingModal = new WaitingJoinModal(url);
-
-                        creationModal.close();
-                        waitingModal.open();
-                    });
-                break;
-            default:
-                dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
-        }
+        trackEvent(Category.BUTTON, Action.TAP, mode);
     }
 }
 

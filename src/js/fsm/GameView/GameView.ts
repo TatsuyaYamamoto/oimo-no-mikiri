@@ -51,7 +51,7 @@ export enum Events {
 }
 
 export interface EnterParams extends Deliverable {
-    mode: Mode;
+    game: Game;
 }
 
 enum InnerStates {
@@ -111,7 +111,7 @@ class GameViewState extends ViewContainer {
         // Tracking
         trackPageView(VirtualPageViews.GAME);
 
-        this._game = new Game(params.mode);
+        this._game = params.game;
 
         this._player = new Hanamaru();
 
