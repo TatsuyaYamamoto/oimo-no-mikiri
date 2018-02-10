@@ -43,7 +43,7 @@ class MenuState extends AbstractTopState {
         this._menuBoard.setOnSelectHomeListener(this._onSelectHome);
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
-        this._menuBoard.setOnTwoPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI));
+        this._menuBoard.setOnTwoPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 

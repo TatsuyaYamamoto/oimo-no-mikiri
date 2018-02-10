@@ -67,7 +67,8 @@ export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
  * @see https://github.com/TatsuyaYamamoto/lovelive-ranking/blob/master-javaee/src/main/java/net/sokontokoro_factory/lovelive/persistence/entity/ScoreEntity.java
  */
 export function postPlayLog(bestTime: number, mode: Mode, straightWins: number): Promise<Response> {
-    const numberLevel = mode === Mode.MULTI ? 4 :
+    // TODO: implements Mode.MULTI_ONLINE case
+    const numberLevel = mode === Mode.MULTI_LOCAL ? 4 :
         mode === Mode.SINGLE_BEGINNER ? 1 :
             mode === Mode.SINGLE_NOVICE ? 2 : 3;
 

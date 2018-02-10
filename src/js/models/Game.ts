@@ -26,7 +26,10 @@ class Game {
     }
 
     public isMultiMode(): boolean {
-        return this._mode === Mode.MULTI;
+        return [
+            Mode.MULTI_LOCAL,
+            Mode.MULTI_ONLINE,
+        ].some((multiMode) => this._mode === multiMode);
     }
 
     public get mode() {
