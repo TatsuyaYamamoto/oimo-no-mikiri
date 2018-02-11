@@ -1,10 +1,12 @@
+import Game from "../Game";
 import Battle from "./LocalBattle";
 import Actor from '../Actor';
 import Mode from "../Mode";
 
 import { GAME_PARAMETERS, DEFAULT_ROUND_SIZE } from "../../Constants";
 
-class LocalGame {
+
+class LocalGame implements Game{
     private _mode: Mode;
     private _roundSize: number;
     private _currentRound: number;
@@ -46,7 +48,7 @@ class LocalGame {
         return this._battles.get(this._currentRound);
     }
 
-    public getNpcAttackIntervalMillis(): number {
+    public get npcAttackIntervalMillis(): number {
         if (!this.isSingleMode()) {
             console.error("The game is not one player mode, then an opponent won't attack automatically.");
             return;

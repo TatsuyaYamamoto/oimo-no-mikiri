@@ -113,16 +113,19 @@ class LocalGameView extends GameView {
      * @private
      */
     private _onReady = () => {
+        const signalTime = this.game.currentBattle.signalTime;
+        const isFalseStarted = {
+            player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
+            opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
+        };
+
         if (this.game.isSingleMode()) {
-            const autoOpponentAttackInterval = this.game.currentBattle.signalTime;
-            const isFalseStarted = {
-                player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
-                opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
-            };
+            const autoOpponentAttackInterval = this.game.npcAttackIntervalMillis;
 
             this.to<SinglePlayActionStateEnterParams>(InnerStates.ACTION, {
-                autoOpponentAttackInterval,
+                signalTime,
                 isFalseStarted,
+                autoOpponentAttackInterval,
             });
         } else {
             const battleLeft = this.game.roundSize - this.game.currentRound + 1;
@@ -130,15 +133,12 @@ class LocalGameView extends GameView {
                 onePlayer: this.game.getWins(Actor.PLAYER),
                 twoPlayer: this.game.getWins(Actor.OPPONENT),
             };
-            const isFalseStarted = {
-                player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
-                opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
-            };
 
             this.to<MultiPlayActionStateEnterParams>(InnerStates.ACTION, {
+                signalTime,
+                isFalseStarted,
                 battleLeft,
                 wins,
-                isFalseStarted,
             });
         }
     };

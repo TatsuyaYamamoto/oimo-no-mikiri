@@ -1,14 +1,12 @@
 import * as Mousetrap from 'mousetrap';
 
-import Deliverable from "../../../../../framework/Deliverable";
-
-import ActionState from "./ActionState";
+import ActionState, { EnterParams as ActionEnterParams } from "./ActionState";
 
 import Actor from "../../../../models/Actor";
 import BattleStatusBoard from "../../../../texture/containers/label/BattleStatusBoard";
 
 
-export interface EnterParams extends Deliverable {
+export interface EnterParams extends ActionEnterParams {
     battleLeft: number,
     wins: { onePlayer: number, twoPlayer: number }
     isFalseStarted?: { player?: boolean, opponent?: boolean }

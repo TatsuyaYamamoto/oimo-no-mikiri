@@ -1,12 +1,15 @@
 import Actor from '../Actor';
 import Battle from '../Battle';
+import { getRandomInteger } from "../../../framework/utils";
 
 class LocalBattle implements Battle {
+    private _signalTime: number;
     private _winner: Actor;
     private _winnerAttackTime: number;
     private _falseStartMap: Map<Actor, boolean>;
 
     constructor() {
+        this._signalTime = this.createSignalTime();
         this._winner = null;
         this._falseStartMap = new Map();
         this._falseStartMap.set(Actor.PLAYER, false);
@@ -24,8 +27,7 @@ class LocalBattle implements Battle {
     }
 
     public get signalTime(): number {
-        // TODO implements
-        return 0;
+        return this._signalTime;
     }
 
     public isFalseStarted(actor: Actor): boolean {
@@ -58,10 +60,17 @@ class LocalBattle implements Battle {
         }
 
         this._falseStartMap.set(actor, true);
+
+        // recreate for next battle.
+        this._signalTime = this.createSignalTime();
     }
 
     public draw(): void {
         // do nothing.
+    }
+
+    private createSignalTime(): number {
+        return getRandomInteger(3000, 5000);
     }
 }
 

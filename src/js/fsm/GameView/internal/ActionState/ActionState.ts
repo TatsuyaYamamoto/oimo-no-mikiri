@@ -1,22 +1,23 @@
-import {dispatchEvent} from "../../../../../framework/EventUtils";
+import { dispatchEvent } from "../../../../../framework/EventUtils";
 import Deliverable from "../../../../../framework/Deliverable";
-import {getRandomInteger} from "../../../../../framework/utils";
+import { getRandomInteger } from "../../../../../framework/utils";
 
 import AbstractGameState from "../GameViewState";
-import {Events} from "../../GameView";
+import { Events } from "../../GameView";
 
 import Signal from "../../../../texture/sprite/Signal";
 import FalseStartCheck from "../../../../texture/sprite/text/FalseStartCheck";
 
 import Actor from '../../../../models/Actor';
 
-import {play} from "../../../../helper/MusicPlayer";
+import { play } from "../../../../helper/MusicPlayer";
 
-import {Ids as SoundIds} from '../../../../resources/sound';
+import { Ids as SoundIds } from '../../../../resources/sound';
 
-import {GAME_PARAMETERS} from '../../../../Constants';
+import { GAME_PARAMETERS } from '../../../../Constants';
 
 export interface EnterParams extends Deliverable {
+    signalTime: number,
     isFalseStarted?: { player?: boolean, opponent?: boolean }
 }
 
@@ -69,8 +70,12 @@ abstract class ActionState extends AbstractGameState {
      */
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+        const {
+            signalTime,
+            isFalseStarted
+        } = params;
 
-        this._signalTime = this.createSignalTime();
+        this._signalTime = signalTime;
         this._isSignaled = false;
         this._isJudging = false;
         this._attackTimeMap = new Map();
@@ -85,11 +90,11 @@ abstract class ActionState extends AbstractGameState {
 
         this._playerFalseStartCheck = new FalseStartCheck();
         this._playerFalseStartCheck.position.set(this.viewWidth * 0.1, this.viewHeight * 0.3);
-        this._playerFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.player;
+        this._playerFalseStartCheck.visible = isFalseStarted && isFalseStarted.player;
 
         this._opponentFalseStartCheck = new FalseStartCheck();
         this._opponentFalseStartCheck.position.set(this.viewWidth * 0.9, this.viewHeight * 0.3);
-        this._opponentFalseStartCheck.visible = params.isFalseStarted && params.isFalseStarted.opponent;
+        this._opponentFalseStartCheck.visible = isFalseStarted && isFalseStarted.opponent;
 
         this.bindKeyboardEvents();
         this.addClickWindowEventListener(this.onWindowTaped);
@@ -154,15 +159,6 @@ abstract class ActionState extends AbstractGameState {
      */
     protected shouldSign = (): boolean => {
         return !this.isSignaled && this.signalTime < this.elapsedTimeMillis;
-    };
-
-    /**
-     * Create time that the battle signs, attack is available.
-     *
-     * @return {number}
-     */
-    protected createSignalTime = (): number => {
-        return getRandomInteger(3000, 5000);
     };
 
     /**

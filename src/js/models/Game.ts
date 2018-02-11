@@ -17,7 +17,7 @@ interface Game {
 
     straightWins: number;
 
-    constructor(mode: Mode, roundSize?: number);
+    npcAttackIntervalMillis: number;
 
     isSingleMode(): boolean;
 
