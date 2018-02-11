@@ -186,10 +186,9 @@ class LocalGameView extends GameView {
             winner,
             mode,
             straightWins,
-            getWins
         } = this.game;
 
-        console.log(`Fixed the game! player win: ${getWins(Actor.PLAYER)}, opponent wins: ${getWins(Actor.OPPONENT)}.`)
+        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`)
 
         if (this.game.isSingleMode()) {
             this.to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {
@@ -203,8 +202,8 @@ class LocalGameView extends GameView {
                 winner,
                 bestTime,
                 mode,
-                onePlayerWins: getWins(Actor.PLAYER),
-                twoPlayerWins: getWins(Actor.OPPONENT),
+                onePlayerWins: this.game.getWins(Actor.PLAYER),
+                twoPlayerWins: this.game.getWins(Actor.OPPONENT),
             });
         }
     };
