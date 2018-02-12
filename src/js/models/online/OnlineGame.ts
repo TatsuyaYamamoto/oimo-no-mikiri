@@ -3,6 +3,11 @@ import { database } from "firebase";
 import Mode from "../Mode";
 import OnlineBattle from "./OnlineBattle";
 import EventEmitter from "./EventEmitter";
+import {
+    isMultiMode,
+    isOnlineMode,
+    isSingleMode
+} from "../Game";
 
 export enum GameEvents {
     CREATED = "game_created",
@@ -10,17 +15,13 @@ export enum GameEvents {
     FULFILLED_MEMBERS = "fulfilled_members",
 }
 
-class OnlineGame extends EventEmitter {
+class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
     private _mode: Mode;
     private _roundSize: number = 5;
     private _currentRound: number;
     private _battles: Map<number, OnlineBattle>;
     private _id: string;
     private _memberIds: string[];
-
-    public get id(): string {
-        return this._id;
-    }
 
     constructor(id: string) {
         super();
@@ -52,6 +53,14 @@ class OnlineGame extends EventEmitter {
 
         });
         database().ref(`/games/${this._id}/members`).on("child_removed", this.onMemberLeft);
+    }
+
+    public get id(): string {
+        return this._id;
+    }
+
+    public get mode(): Mode {
+        return this._mode;
     }
 
     public join(uid): Promise<void> {
@@ -129,6 +138,18 @@ class OnlineGame extends EventEmitter {
     // public join(gameId: string, memberId: string): Promise<Response> {
     //     // return requestJoinGame(gameId, memberId);
     // }
+
+    public isSingleMode(): boolean {
+        return isSingleMode(this.mode);
+    }
+
+    public isMultiMode(): boolean {
+        return isMultiMode(this.mode);
+    }
+
+    public isOnlineMode(): boolean {
+        return isOnlineMode(this.mode);
+    }
 }
 
 export default OnlineGame;

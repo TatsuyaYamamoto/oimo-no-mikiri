@@ -1,4 +1,8 @@
-import Game from "../Game";
+import Game, {
+    isMultiMode,
+    isOnlineMode,
+    isSingleMode
+} from "../Game";
 import Battle from "./LocalBattle";
 import Actor from '../Actor';
 import Mode from "../Mode";
@@ -6,7 +10,7 @@ import Mode from "../Mode";
 import { GAME_PARAMETERS, DEFAULT_ROUND_SIZE } from "../../Constants";
 
 
-class LocalGame implements Game{
+class LocalGame implements Game {
     private _mode: Mode;
     private _roundSize: number;
     private _currentRound: number;
@@ -15,21 +19,6 @@ class LocalGame implements Game{
     constructor(mode: Mode, roundSize?: number) {
         this._mode = mode;
         this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
-    }
-
-    public isSingleMode(): boolean {
-        return [
-            Mode.SINGLE_BEGINNER,
-            Mode.SINGLE_NOVICE,
-            Mode.SINGLE_EXPERT
-        ].some((singleMode) => this._mode === singleMode);
-    }
-
-    public isMultiMode(): boolean {
-        return [
-            Mode.MULTI_LOCAL,
-            Mode.MULTI_ONLINE,
-        ].some((multiMode) => this._mode === multiMode);
     }
 
     public get mode() {
@@ -60,6 +49,18 @@ class LocalGame implements Game{
         } = GAME_PARAMETERS;
 
         return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
+    }
+
+    public isSingleMode(): boolean {
+        return isSingleMode(this.mode);
+    }
+
+    public isMultiMode(): boolean {
+        return isMultiMode(this.mode);
+    }
+
+    public isOnlineMode(): boolean {
+        return isOnlineMode(this.mode);
     }
 
     public getWins(actor: Actor): number {

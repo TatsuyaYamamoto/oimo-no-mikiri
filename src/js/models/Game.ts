@@ -23,6 +23,8 @@ interface Game {
 
     isMultiMode(): boolean;
 
+    isOnlineMode(): boolean;
+
     getWins(actor: Actor): number;
 
     start(): void;
@@ -30,6 +32,27 @@ interface Game {
     next(): void;
 
     isFixed(): boolean;
+}
+
+export function isSingleMode(mode: Mode) {
+    return [
+        Mode.SINGLE_BEGINNER,
+        Mode.SINGLE_NOVICE,
+        Mode.SINGLE_EXPERT
+    ].some((singleMode) => mode === singleMode);
+}
+
+export function isMultiMode(mode: Mode) {
+    return [
+        Mode.MULTI_LOCAL,
+        Mode.MULTI_ONLINE,
+    ].some((multiMode) => mode === multiMode);
+}
+
+export function isOnlineMode(mode: Mode) {
+    return [
+        Mode.MULTI_ONLINE,
+    ].some((multiMode) => mode === multiMode);
 }
 
 export default Game;
