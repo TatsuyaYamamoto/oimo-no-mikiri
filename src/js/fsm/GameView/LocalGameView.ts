@@ -24,6 +24,7 @@ import {
 } from "./internal/ActionState/SinglePlayActionState";
 
 import Actor from "../../models/Actor";
+import { isSingleMode } from "../../models/Game";
 
 class LocalGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -43,11 +44,11 @@ class LocalGameView extends GameView {
 
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
-            [InnerStates.ACTION]: this.game.isSingleMode() ?
+            [InnerStates.ACTION]: isSingleMode(this.game.mode) ?
                 new SinglePlayActionState(this) :
                 new MultiPlayActionState(this),
             [InnerStates.RESULT]: new ResultState(this),
-            [InnerStates.OVER]: this.game.isSingleMode() ?
+            [InnerStates.OVER]: isSingleMode(this.game.mode) ?
                 new SinglePlayOverState(this) :
                 new MultiPlayOverState(this)
         });
@@ -55,9 +56,7 @@ class LocalGameView extends GameView {
         addEvents({
             [Events.REQUEST_READY]: this._onRequestedReady,
             [Events.IS_READY]: this._onReady,
-            [Events.ATTACK_SUCCESS]: this._onAttackSucceed,
-            [Events.FALSE_START]: this._onFalseStarted,
-            [Events.DRAW]: this._onDrew,
+            [Events.ATTACK]: this.onAttacked,
             [Events.FIXED_RESULT]: this._onFixedResult,
             [Events.RESTART_GAME]: this._onRequestedRestart,
         });
@@ -76,9 +75,7 @@ class LocalGameView extends GameView {
         removeEvents([
             Events.REQUEST_READY,
             Events.IS_READY,
-            Events.ATTACK_SUCCESS,
-            Events.FALSE_START,
-            Events.DRAW,
+            Events.ATTACK,
             Events.FIXED_RESULT,
             Events.RESTART_GAME,
         ])
@@ -119,7 +116,7 @@ class LocalGameView extends GameView {
             opponent: this.game.currentBattle.isFalseStarted(Actor.OPPONENT),
         };
 
-        if (this.game.isSingleMode()) {
+        if (isSingleMode(this.game.mode)) {
             const autoOpponentAttackInterval = this.game.npcAttackIntervalMillis;
 
             this.to<SinglePlayActionStateEnterParams>(InnerStates.ACTION, {
@@ -143,37 +140,30 @@ class LocalGameView extends GameView {
         }
     };
 
-    /**
-     *
-     * @private
-     */
-    private _onAttackSucceed = (e: CustomEvent) => {
-        const {actor, attackTime} = e.detail;
-        this.game.currentBattle.win(actor, attackTime);
-        this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner: actor});
-    };
+    protected onAttacked = (e: CustomEvent) => {
+        const {attacker, attackTime} = e.detail;
 
-    /**
-     *
-     * @private
-     */
-    private _onFalseStarted = (e: CustomEvent) => {
-        const {actor} = e.detail;
-        this.game.currentBattle.falseStart(actor);
-        this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-            winner: this.game.currentBattle.winner,
-            falseStarter: actor
-        });
+        this.game.currentBattle.attack(attacker, attackTime)
+            .then(([resultType, winner]) => {
+                switch (resultType) {
+                    case "success":
+                        this.to<ResultStateEnterParams>(InnerStates.RESULT, {
+                            winner
+                        });
+                        break;
 
-    };
+                    case "falseStart":
+                        this.to<ResultStateEnterParams>(InnerStates.RESULT, {
+                            winner,
+                            falseStarter: attacker
+                        });
+                        break;
 
-    /**
-     *
-     * @private
-     */
-    private _onDrew = (e: CustomEvent) => {
-        this.game.currentBattle.draw();
-        this.to<ResultStateEnterParams>(InnerStates.RESULT);
+                    case "draw":
+                        this.to<ResultStateEnterParams>(InnerStates.RESULT);
+                        break;
+                }
+            })
     };
 
     /**
@@ -188,9 +178,9 @@ class LocalGameView extends GameView {
             straightWins,
         } = this.game;
 
-        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`)
+        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
 
-        if (this.game.isSingleMode()) {
+        if (isSingleMode(this.game.mode)) {
             this.to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {
                 winner,
                 bestTime,

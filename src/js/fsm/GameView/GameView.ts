@@ -16,14 +16,12 @@ import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
 
-import Game from '../../models/Game';
+import Game, { isSingleMode } from '../../models/Game';
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
     IS_READY = 'GameView@IS_READY',
-    ATTACK_SUCCESS = 'GameView@ATTACK_SUCCESS',
-    FALSE_START = 'GameView@FALSE_START',
-    DRAW = 'GameView@DRAW',
+    ATTACK = 'GameView@ATTACK',
     FIXED_RESULT = 'GameView@FIXED_RESULT',
     RESTART_GAME = 'GameView@RESTART_GAME',
 }
@@ -58,7 +56,7 @@ abstract class GameView extends ViewContainer {
     }
 
     public get opponent(): Opponent {
-        if (this.game.isSingleMode()) {
+        if (isSingleMode(this.game.mode)) {
             return this._opponents[this._game.currentRound];
         } else {
             return this._opponent;
@@ -93,7 +91,7 @@ abstract class GameView extends ViewContainer {
 
         this._player = new Hanamaru();
 
-        if (this.game.isSingleMode()) {
+        if (isSingleMode(this.game.mode)) {
             this._opponents = {};
             this._opponents[1] = new Wataame();
             this._opponents[2] = new LittleDaemon();

@@ -24,7 +24,6 @@ export interface EnterParams extends Deliverable {
 abstract class ActionState extends AbstractGameState {
     private _signalTime: number;
     private _isSignaled: boolean;
-    private _isJudging: boolean;
     private _attackTimeMap: Map<Actor, number>;
 
     private _signalSprite: Signal;
@@ -77,7 +76,6 @@ abstract class ActionState extends AbstractGameState {
 
         this._signalTime = signalTime;
         this._isSignaled = false;
-        this._isJudging = false;
         this._attackTimeMap = new Map();
 
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
@@ -141,15 +139,10 @@ abstract class ActionState extends AbstractGameState {
         const attackTime = this.elapsedTimeMillis - this.signalTime;
         this._attackTimeMap.set(actor, attackTime);
 
-        if (!this.isSignaled) {
-            console.log(`It's fault tap. actor: ${actor}, time: ${attackTime}ms.`);
-
-            play(SoundIds.SOUND_FALSE_START);
-            dispatchEvent(Events.FALSE_START, {actor});
-            return;
-        }
-
-        this._judge(actor, attackTime);
+        dispatchEvent(Events.ATTACK, {
+            attacker: actor,
+            attackTime
+        });
     };
 
     /**
@@ -170,27 +163,6 @@ abstract class ActionState extends AbstractGameState {
     protected isAttacked = (actor: Actor): boolean => {
         return !!this._attackTimeMap.get(actor);
     };
-
-    private _judge = (actor: Actor, attackTime: number): void => {
-        console.log(`Judge attack. actor: ${actor}, time: ${attackTime}ms`);
-
-        if (this._isJudging) {
-            this._isJudging = false;
-            console.log("=> draw.");
-            play(SoundIds.SOUND_DRAW);
-            dispatchEvent(Events.DRAW);
-            return;
-        }
-
-        this._isJudging = true;
-        setTimeout(() => {
-            if (this._isJudging) {
-                console.log(`=> Succeed attack! actor: ${actor}, time: ${attackTime}ms`);
-                play(SoundIds.SOUND_ATTACK);
-                dispatchEvent(Events.ATTACK_SUCCESS, {actor, attackTime});
-            }
-        }, GAME_PARAMETERS.acceptable_attack_time_distance)
-    }
 }
 
 export default ActionState;
