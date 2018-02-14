@@ -37,6 +37,10 @@ class LocalGame implements Game {
         return this._battles.get(this._currentRound);
     }
 
+    public get battleLeft(): number {
+        return this.roundSize - this.currentRound + 1;
+    }
+
     /**
      * Get NPC attack time in according to the current mode and round.
      *

@@ -125,7 +125,7 @@ class LocalGameView extends GameView {
                 autoOpponentAttackInterval,
             });
         } else {
-            const battleLeft = this.game.roundSize - this.game.currentRound + 1;
+            const battleLeft = this.game.battleLeft;
             const wins = {
                 onePlayer: this.game.getWins(Actor.PLAYER),
                 twoPlayer: this.game.getWins(Actor.OPPONENT),

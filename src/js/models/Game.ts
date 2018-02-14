@@ -11,6 +11,8 @@ interface Game {
 
     currentBattle: Battle;
 
+    battleLeft: number;
+
     winner: Actor;
 
     bestTime: number;
