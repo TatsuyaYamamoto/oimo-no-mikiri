@@ -11,11 +11,7 @@ interface Battle {
 
     isFixed(): boolean;
 
-    win(actor: Actor, time: number): void;
-
-    falseStart(actor: Actor): void;
-
-    draw(): void;
+    attack(actor: Actor, attackTime: number): Promise<[string, Actor]>;
 }
 
 export default Battle;

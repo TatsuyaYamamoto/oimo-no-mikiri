@@ -1,4 +1,4 @@
-import Battle from "./local/LocalBattle";
+import Battle from "./Battle";
 import Actor from './Actor';
 import Mode from "./Mode";
 
@@ -18,12 +18,6 @@ interface Game {
     straightWins: number;
 
     npcAttackIntervalMillis: number;
-
-    isSingleMode(): boolean;
-
-    isMultiMode(): boolean;
-
-    isOnlineMode(): boolean;
 
     getWins(actor: Actor): number;
 

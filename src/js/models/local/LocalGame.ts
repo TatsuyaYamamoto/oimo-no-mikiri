@@ -37,8 +37,13 @@ class LocalGame implements Game {
         return this._battles.get(this._currentRound);
     }
 
+    /**
+     * Get NPC attack time in according to the current mode and round.
+     *
+     * @return {number}
+     */
     public get npcAttackIntervalMillis(): number {
-        if (!this.isSingleMode()) {
+        if (!isSingleMode(this.mode)) {
             console.error("The game is not one player mode, then an opponent won't attack automatically.");
             return;
         }
@@ -48,19 +53,12 @@ class LocalGame implements Game {
             reaction_rate_tuning
         } = GAME_PARAMETERS;
 
-        return reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000;
-    }
+        const {
+            mode,
+            currentRound
+        } = this;
 
-    public isSingleMode(): boolean {
-        return isSingleMode(this.mode);
-    }
-
-    public isMultiMode(): boolean {
-        return isMultiMode(this.mode);
-    }
-
-    public isOnlineMode(): boolean {
-        return isOnlineMode(this.mode);
+        return reaction_rate[mode][currentRound] * reaction_rate_tuning * 1000;
     }
 
     public getWins(actor: Actor): number {
@@ -88,7 +86,7 @@ class LocalGame implements Game {
         let time = 99999;
 
         this._battles.forEach((b) => {
-            if (this.isSingleMode()) {
+            if (isSingleMode(this.mode)) {
                 if (b.winnerAttackTime < time && b.winner === Actor.PLAYER) {
                     time = b.winnerAttackTime;
                 }
@@ -103,7 +101,7 @@ class LocalGame implements Game {
     }
 
     public get straightWins(): number {
-        if (!this.isSingleMode()) {
+        if (!isSingleMode(this.mode)) {
             console.error('This variable is not supported outside of one player mode.');
             return;
         }
@@ -138,7 +136,7 @@ class LocalGame implements Game {
 
     public isFixed(): boolean {
         // Is already lost on 1player-mode?
-        if (this.isSingleMode()) {
+        if (isSingleMode(this.mode)) {
             let isLost = false;
 
             this._battles.forEach((b) => {
