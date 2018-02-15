@@ -158,7 +158,7 @@ class TopViewState extends ViewContainer {
                 const readyModal = new ReadyModal();
 
                 const game = new OnlineGame(gameId);
-                game.on(GameEvents.FULFILLED_MEMBERS, () => {
+                game.once(GameEvents.FULFILLED_MEMBERS, () => {
                     waitingModal.close();
                     readyModal.open();
                     this.clearQueryString();
@@ -188,7 +188,7 @@ class TopViewState extends ViewContainer {
         joinModal.open();
 
         const game = new OnlineGame(gameId);
-        game.on(GameEvents.FULFILLED_MEMBERS, () => {
+        game.once(GameEvents.FULFILLED_MEMBERS, () => {
             joinModal.close();
             readyModal.open();
             this.clearQueryString();
