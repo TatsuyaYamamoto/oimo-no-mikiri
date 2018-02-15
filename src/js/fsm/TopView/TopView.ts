@@ -159,14 +159,17 @@ class TopViewState extends ViewContainer {
 
                 const game = new OnlineGame(gameId);
                 game.on(GameEvents.FULFILLED_MEMBERS, () => {
-
-                    dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                        game
-                    });
-                    readyModal.close();
-
+                    waitingModal.close();
+                    readyModal.open();
                     this.clearQueryString();
                     stop(SoundIds.SOUND_ZENKAI);
+
+                    setTimeout(() => {
+                        readyModal.close();
+                        dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                            game
+                        });
+                    }, 1000)
                 });
 
                 creationModal.close();
@@ -180,26 +183,29 @@ class TopViewState extends ViewContainer {
      */
     private joinGame = (gameId: string) => {
         const joinModal = new JoinModal(gameId);
-        joinModal.open();
         const readyModal = new ReadyModal();
-        readyModal.open();
+
+        joinModal.open();
 
         const game = new OnlineGame(gameId);
         game.on(GameEvents.FULFILLED_MEMBERS, () => {
-
-            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                game
-            });
-            readyModal.close();
-
+            joinModal.close();
+            readyModal.open();
             this.clearQueryString();
             stop(SoundIds.SOUND_ZENKAI);
+
+            setTimeout(() => {
+                readyModal.close();
+                dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                    game
+                });
+            }, 1000)
         });
 
         requestJoinGame(gameId);
     };
 
-    private clearQueryString = () =>{
+    private clearQueryString = () => {
         const url = `${location.protocol}//${location.host}${location.pathname}`;
         history.replaceState(null, null, url);
     };
