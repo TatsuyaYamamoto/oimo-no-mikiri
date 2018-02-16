@@ -8,10 +8,12 @@ abstract class TingleModal extends Tingle {
 
     public open() {
         super.open();
+        console.log(`${this.constructor.name} is open`);
     }
 
     public close() {
         super.close();
+        console.log(`${this.constructor.name} is close`);
     }
 
     public setContent(content: string) {
