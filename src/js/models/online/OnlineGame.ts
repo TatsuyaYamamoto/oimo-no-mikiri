@@ -1,4 +1,4 @@
-import { database } from "firebase";
+import { database, auth } from "firebase";
 
 import Mode from "../Mode";
 import OnlineBattle from "./OnlineBattle";
@@ -50,9 +50,16 @@ class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
                 this.dispatch(GameEvents.FULFILLED_MEMBERS);
                 console.log(`Game members are fulfilled.`);
             }
+    public static async create() {
+        const gameId = database().ref().child("games").push().key;
+        const {uid} = auth().currentUser;
+        const updates = {};
+        updates[`/games/${gameId}/members/${uid}`] = true;
+        await database().ref().update(updates);
 
         });
         database().ref(`/games/${this._id}/members`).on("child_removed", this.onMemberLeft);
+        return new OnlineGame(gameId);
     }
 
     public get id(): string {
@@ -63,12 +70,13 @@ class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
         return this._mode;
     }
 
-    public join(uid): Promise<void> {
 
+    public async join() {
+        const {uid} = auth().currentUser;
         const updates = {};
-        updates[`/games/${this._id}/members`] = {
-            [uid]: true,
-        };
+        updates[`/games/${this._id}/members/${uid}`] = true;
+        await database().ref().update(updates);
+    }
 
         return database().ref().update(updates);
     }

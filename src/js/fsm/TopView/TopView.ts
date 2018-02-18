@@ -145,36 +145,32 @@ class TopViewState extends ViewContainer {
     /**
      *
      */
-    private createGame = () => {
+    private createGame = async () => {
         const creationModal = new RoomCreationModal();
-
         creationModal.open();
 
-        requestCreateGame()
-            .then((gameId) => {
-                const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
+        const game = await OnlineGame.create();
+        const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
 
-                const waitingModal = new WaitingJoinModal(url);
-                const readyModal = new ReadyModal();
+        const waitingModal = new WaitingJoinModal(url);
+        const readyModal = new ReadyModal();
 
-                const game = new OnlineGame(gameId);
-                game.once(GameEvents.FULFILLED_MEMBERS, () => {
-                    waitingModal.close();
-                    readyModal.open();
-                    this.clearQueryString();
-                    stop(SoundIds.SOUND_ZENKAI);
+        game.once(GameEvents.FULFILLED_MEMBERS, () => {
+            waitingModal.close();
+            readyModal.open();
+            this.clearQueryString();
+            stop(SoundIds.SOUND_ZENKAI);
 
-                    setTimeout(() => {
-                        readyModal.close();
-                        dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                            game
-                        });
-                    }, 1000)
+            setTimeout(() => {
+                readyModal.close();
+                dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                    game
                 });
+            }, 1000)
+        });
 
-                creationModal.close();
-                waitingModal.open();
-            });
+        creationModal.close();
+        waitingModal.open();
     };
 
     /**
@@ -202,7 +198,7 @@ class TopViewState extends ViewContainer {
             }, 1000)
         });
 
-        requestJoinGame(gameId);
+        game.join();
     };
 
     private clearQueryString = () => {
