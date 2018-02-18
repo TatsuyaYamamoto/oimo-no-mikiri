@@ -1,55 +1,37 @@
 import { database, auth } from "firebase";
 
 import Mode from "../Mode";
+import Game from "../Game";
+import Battle from "../Battle";
+import Actor from "../Actor";
 import OnlineBattle from "./OnlineBattle";
-import EventEmitter from "./EventEmitter";
-import {
-    isMultiMode,
-    isOnlineMode,
-    isSingleMode
-} from "../Game";
 
 export enum GameEvents {
     CREATED = "game_created",
     MEMBER_JOINED = "member_joined",
     FULFILLED_MEMBERS = "fulfilled_members",
+    ROUND_PROCEED = "round_proceed",
 }
 
-class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
-    private _mode: Mode;
-    private _roundSize: number = 5;
-    private _currentRound: number;
-    private _battles: Map<number, OnlineBattle>;
+class OnlineGame extends Game {
     private _id: string;
     private _memberIds: string[];
+    private _gameRef: database.Reference;
 
     constructor(id: string) {
-        super();
-
-        this._mode = Mode.MULTI_ONLINE;
+        super(Mode.MULTI_ONLINE);
         this._id = id;
         this._memberIds = [];
+        this._battles = new Map();
 
-        database().ref(`/games/${this._id}`).on("value", (snapshot) => {
-            if (snapshot.exists()) {
-                this.dispatch(GameEvents.CREATED, {
-                    roomId: snapshot.key
-                });
-            }
-        });
+        this._gameRef = database().ref(`/games/${this._id}`);
+        this._gameRef.child("members").on("child_added", this.onMemberJoined);
+        this._gameRef.child("currentRound").on("value", this.onRoundProceed);
+    }
 
-        database().ref(`/games/${this._id}/members`).on("value", (snaphot) => {
-            snaphot.forEach((member) => {
-                this._memberIds.push(member.key);
-                return false; // not cancel enumeration.
-            });
-
-            console.log(`Game members are updated.`, this._memberIds);
-
-            if (snaphot.numChildren() === 2) {
-                this.dispatch(GameEvents.FULFILLED_MEMBERS);
-                console.log(`Game members are fulfilled.`);
-            }
+    /************************************************************************************
+     * Static methods
+     */
     public static async create() {
         const gameId = database().ref().child("games").push().key;
         const {uid} = auth().currentUser;
@@ -57,19 +39,36 @@ class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
         updates[`/games/${gameId}/members/${uid}`] = true;
         await database().ref().update(updates);
 
-        });
-        database().ref(`/games/${this._id}/members`).on("child_removed", this.onMemberLeft);
         return new OnlineGame(gameId);
     }
 
+    /************************************************************************************
+     * Accessor
+     */
+
+    /**
+     *
+     * @return {string}
+     */
     public get id(): string {
         return this._id;
     }
 
-    public get mode(): Mode {
-        return this._mode;
+    /**
+     *
+     * @return {string[]}
+     */
+    public get memberIds(): string[] {
+        return this._memberIds;
     }
 
+    public get npcAttackIntervalMillis(): number {
+        throw new Error("Not implemented");
+    }
+
+    /************************************************************************************
+     * Status change methods
+     */
 
     public async join() {
         const {uid} = auth().currentUser;
@@ -78,26 +77,86 @@ class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
         await database().ref().update(updates);
     }
 
-        return database().ref().update(updates);
+
+    start(): void {
+        const now = database.ServerValue.TIMESTAMP;
+
+        this.transaction((current) => {
+            if (current && current.currentRound !== 1) {
+                current.currentRound = 1;
+                current.createdAt = now;
+                current.battles = {
+                    1: {
+                        createdAt: now
+                    }
+                }
+            }
+            return current;
+        })
     }
+
+    next(): void {
+        if (this.currentRound >= this.roundSize) {
+            console.error('Round of the game is already fulfilled.');
+            return;
+        }
+
+        const now = database.ServerValue.TIMESTAMP;
+        const nextRound = this.currentRound + 1;
+
+        this.transaction((current) => {
+            if (current && current.currentRound !== nextRound) {
+                current.currentRound = nextRound;
+                current.updatedAt = now;
+                current.battles[nextRound] = {
+                    createdAt: now
+                }
+            }
+            return current;
+        });
+    }
+
+    isFixed(): boolean {
+        const requiredWins = Math.ceil(this.roundSize / 2);
+        return this.getWins(Actor.PLAYER) >= requiredWins
+            || this.getWins(Actor.OPPONENT) >= requiredWins;
+    }
+
+
+    /************************************************************************************
+     * Callback methods
+     */
 
     /**
      *
      * @param {firebase.database.DataSnapshot} snapshot
      */
     protected onMemberJoined = (snapshot: database.DataSnapshot) => {
-        if (this._memberIds.length >= 2) {
-            console.error(`Fired join member event, but the game already has ${this._memberIds.length} members.`);
+        if (!snapshot.exists()) {
             return;
         }
 
-        const uid = snapshot.key;
-        this._memberIds.push(uid);
-        console.log(`Member, ${uid}, is entered.`);
+        const addedMemberId = snapshot.key;
+
+        const isExisting = this._memberIds.find((id) => id === addedMemberId);
+        if (isExisting) {
+            console.log("Existing member was added. then ignore this event.");
+            return;
+        }
+
+        if (this._memberIds.length >= 2) {
+            // Ignore non-updated members length case.
+            // TODO: Consider non-updated length but updated member ids case.
+            console.error("Fire updated member event, but non-updated length. ignore.", this._memberIds, snapshot.key);
+            return;
+        }
+
+        console.log(`New member joined. Id: ${addedMemberId}`);
+        this._memberIds.push(addedMemberId);
 
         if (this._memberIds.length == 2) {
-            this.dispatch(GameEvents.FULFILLED_MEMBERS);
             console.log(`Game members are fulfilled.`);
+            this.dispatch(GameEvents.FULFILLED_MEMBERS);
         }
     };
 
@@ -105,58 +164,36 @@ class OnlineGame extends EventEmitter /*implements Game TODO: implements */ {
      *
      * @param {firebase.database.DataSnapshot} snapshot
      */
-    protected onMemberLeft = (snapshot: database.DataSnapshot) => {
-        const uid = snapshot.key;
-        const leaverIndex = this._memberIds.findIndex((id) => id === uid);
-        this._memberIds.splice(leaverIndex, 1);
+    protected onRoundProceed = (snapshot: database.DataSnapshot) => {
+        const nextRound = snapshot.val();
 
-        console.log(`Member, ${uid}, is left.`);
+        if (!nextRound || nextRound <= this._currentRound) {
+            return;
+        }
+
+        const prevRound = this._currentRound;
+
+        this._currentRound = nextRound;
+        this._battles.set(nextRound, new OnlineBattle({
+            gameId: this._id,
+            round: nextRound,
+            playerId: auth().currentUser.uid,
+            opponentId: this._memberIds.find((id) => id !== auth().currentUser.uid)
+        }));
+
+        console.log(`Proceed to next round. Round${prevRound} -> Round${nextRound}`);
+        this.dispatch(GameEvents.ROUND_PROCEED, {nextRound});
     };
 
     /**
      *
+     * @param {(current: any) => any} transactionUpdate
+     * @return {Promise<void>}
      */
-    protected onGameStarted = () => {
-        // this._battles = new Map();
-        // new Array(this.roundSize).forEach((ignore, round) => {
-        //     this._battles.set(round, new Battle());
-        // });
-        //
-        // this._currentRound = 1;
-        // this._battles.set(this._currentRound, new Battle());
-    };
-
-    public static create(ownerId): Promise<OnlineGame> {
-
-        const newGameId = database().ref().child("games").push().key;
-        // TODO: get human readable id.
-        const roomId = Date.now().toString(10);
-
-        const updates = {};
-        updates[`/games/${newGameId}`] = {
-            members: {[ownerId]: true},
-            roomId: Date.now(),
-        };
-
-        return database().ref()
-            .update(updates)
-            .then(() => new OnlineGame(newGameId));
-    }
-
-    // public join(gameId: string, memberId: string): Promise<Response> {
-    //     // return requestJoinGame(gameId, memberId);
-    // }
-
-    public isSingleMode(): boolean {
-        return isSingleMode(this.mode);
-    }
-
-    public isMultiMode(): boolean {
-        return isMultiMode(this.mode);
-    }
-
-    public isOnlineMode(): boolean {
-        return isOnlineMode(this.mode);
+    private async transaction(transactionUpdate: (current: any) => any) {
+        console.log("Start transaction.");
+        const {committed, snapshot} = await this._gameRef.transaction(transactionUpdate);
+        console.log(`End transaction. committed: ${committed}`, snapshot.val());
     }
 }
 

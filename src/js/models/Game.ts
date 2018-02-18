@@ -1,33 +1,103 @@
 import Battle from "./Battle";
 import Actor from './Actor';
 import Mode from "./Mode";
+import EventEmitter from "./online/EventEmitter";
+import { DEFAULT_ROUND_SIZE } from "../Constants";
 
-interface Game {
-    mode: Mode;
+abstract class Game extends EventEmitter {
+    protected _mode: Mode;
+    protected _roundSize: number;
+    protected _currentRound: number;
+    protected _battles: Map<number, Battle>;
 
-    roundSize: number;
+    constructor(mode: Mode, roundSize?: number) {
+        super();
+        this._mode = mode;
+        this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
+    }
 
-    currentRound: number;
+    public get bestTime(): number {
+        let time = 99999;
 
-    currentBattle: Battle;
+        this._battles.forEach((b) => {
+            if (isSingleMode(this.mode)) {
+                if (b.winnerAttackTime < time && b.winner === Actor.PLAYER) {
+                    time = b.winnerAttackTime;
+                }
+            } else {
+                if (b.winnerAttackTime < time) {
+                    time = b.winnerAttackTime;
+                }
+            }
 
-    battleLeft: number;
+        });
+        return Math.round(time);
+    }
 
-    winner: Actor;
+    public get straightWins(): number {
+        if (!isSingleMode(this.mode)) {
+            console.error('This variable is not supported outside of one player mode.');
+            return;
+        }
 
-    bestTime: number;
+        let wins = 0;
+        this._battles.forEach((b) => {
+            if (b.winner === Actor.PLAYER) {
+                wins++;
+            }
+        });
+        return wins;
+    }
 
-    straightWins: number;
 
-    npcAttackIntervalMillis: number;
+    public get winner(): Actor {
+        let playerWins = this.getWins(Actor.PLAYER);
+        let opponentWins = this.getWins(Actor.OPPONENT);
 
-    getWins(actor: Actor): number;
+        return playerWins > opponentWins ?
+            Actor.PLAYER :
+            Actor.OPPONENT;
+    }
 
-    start(): void;
+    public get mode() {
+        return this._mode;
+    }
 
-    next(): void;
+    public get roundSize(): number {
+        return this._roundSize;
+    }
 
-    isFixed(): boolean;
+    public get currentRound(): number {
+        return this._currentRound;
+    }
+
+    public get currentBattle(): Battle {
+        return this._battles.get(this._currentRound);
+    }
+
+    public get battleLeft(): number {
+        return this.roundSize - this.currentRound + 1;
+    }
+
+    public getWins(actor: Actor): number {
+        let wins = 0;
+
+        this._battles.forEach((b) => {
+            if (b.winner === actor) {
+                wins++;
+            }
+        });
+
+        return wins;
+    }
+
+    abstract get npcAttackIntervalMillis(): number;
+
+    abstract start(): void;
+
+    abstract next(): void;
+
+    abstract isFixed(): boolean;
 }
 
 export function isSingleMode(mode: Mode) {

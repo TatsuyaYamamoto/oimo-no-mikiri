@@ -1,17 +1,44 @@
 import Actor from './Actor';
+import EventEmitter from "./online/EventEmitter";
 
-interface Battle {
-    winner: Actor | null;
+export enum BattleEvents {
+    FIXED = "fixed",
+    SUCCEED_ATTACK = "succeed_attack",
+    FALSE_STARTED = "false_started",
+    DRAW = "draw",
+}
 
-    winnerAttackTime: number;
+abstract class Battle extends EventEmitter {
+    protected _winner: Actor;
+    protected _winnerAttackTime: number;
+    protected _signalTime: number;
+    protected _falseStartMap: Map<Actor, boolean>;
 
-    signalTime: number;
+    constructor() {
+        super();
 
-    isFalseStarted(actor: Actor): boolean;
+        this._falseStartMap = new Map();
+    }
 
-    isFixed(): boolean;
+    get winner(): Actor {
+        return this._winner;
+    };
 
-    attack(actor: Actor, attackTime: number): Promise<[string, Actor]>;
+    get winnerAttackTime(): number {
+        return this._winnerAttackTime;
+    };
+
+    get signalTime(): number {
+        return this._signalTime;
+    };
+
+    public isFalseStarted(actor: Actor): boolean {
+        return this._falseStartMap.get(actor);
+    }
+
+    abstract isFixed(): boolean;
+
+    abstract attack(actor: string, attackTime: number): void;
 }
 
 export default Battle;
