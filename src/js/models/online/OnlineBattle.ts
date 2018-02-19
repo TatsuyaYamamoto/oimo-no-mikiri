@@ -80,7 +80,6 @@ class OnlineBattle extends Battle {
     };
 
     protected onSignalTimeUpdated = (snapshot: database.DataSnapshot) => {
-        console.error("signl", snapshot.val());
         this._signalTime = snapshot.val();
     };
 

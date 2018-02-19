@@ -79,6 +79,9 @@ class OnlineGame extends Game {
 
 
     start(): void {
+        this._battles.clear();
+        this._battles = new Map();
+
         const now = database.ServerValue.TIMESTAMP;
 
         this.transaction((current) => {
@@ -167,7 +170,7 @@ class OnlineGame extends Game {
     protected onRoundProceed = (snapshot: database.DataSnapshot) => {
         const nextRound = snapshot.val();
 
-        if (!nextRound || nextRound <= this._currentRound) {
+        if (!nextRound || nextRound == this._currentRound) {
             return;
         }
 

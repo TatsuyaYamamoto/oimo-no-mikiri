@@ -1,15 +1,12 @@
-import { auth } from "firebase";
-
 import StateMachine from "../../../framework/StateMachine";
 import ViewContainer from "../../../framework/ViewContainer";
 import { addEvents, dispatchEvent } from "../../../framework/EventUtils";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
-
 import ReadyState from "./internal/ReadyState";
 import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
-import OnlineActionState from "./internal/ActionState/OnlineActionState";
-import OnlineOverState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
+import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
+import OnlineOverState, { EnterParams as OnlineEnterParams } from "./internal/OverState/OnlineOverState";
 
 import { GameEvents } from "../../models/online/OnlineGame";
 import Actor from "../../models/Actor";
@@ -40,6 +37,8 @@ class OnlineGameView extends GameView {
             [Events.REQUEST_READY]: this._onRequestedReady,
             [Events.IS_READY]: this._onReady,
             [Events.ATTACK]: this.onAttacked,
+            [Events.FIXED_RESULT]: this.onResultFixed,
+            [Events.RESTART_GAME]: this.onRestartRequested,
         });
 
         this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
@@ -127,6 +126,31 @@ class OnlineGameView extends GameView {
         this.game.currentBattle.attack(attacker, attackTime);
     };
 
+    private onResultFixed = () => {
+        const {
+            bestTime,
+            winner,
+            mode,
+            straightWins,
+        } = this.game;
+
+        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
+
+        this.to<OnlineEnterParams>(InnerStates.OVER, {
+            winner,
+            bestTime,
+            mode,
+            onePlayerWins: this.game.getWins(Actor.PLAYER),
+            twoPlayerWins: this.game.getWins(Actor.OPPONENT),
+        });
+
+        this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
+    };
+
+    private onRestartRequested = () => {
+        this.game.start();
+        dispatchEvent(Events.REQUEST_READY);
+    };
 }
 
 export default OnlineGameView;
