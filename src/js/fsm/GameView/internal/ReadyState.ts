@@ -49,6 +49,9 @@ class ReadyState extends AbstractGameState {
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
+        this.player.playWait();
+        this.opponent.playWait();
+
         this._playerCharacterCloseup = this.player.closeUpTexture;
         this._playerCharacterCloseup.position.set(this.viewWidth * 1, this.viewHeight * 0);
         this._playerCharacterCloseup.visible = false;

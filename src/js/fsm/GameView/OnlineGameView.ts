@@ -56,10 +56,6 @@ class OnlineGameView extends GameView {
             return;
         }
 
-        this.player.playWait();
-        this.opponent.playWait();
-
-
         // is retry battle by false-start?
         if (this.game.currentBattle.isFixed()) {
             await this.game.next();
@@ -96,31 +92,23 @@ class OnlineGameView extends GameView {
     protected onAttacked = (e: CustomEvent) => {
         const {attacker, attackTime} = e.detail;
 
-        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                winner
-            });
-
+        const offEvents = () =>{
             this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
             this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
             this.game.currentBattle.off(BattleEvents.DRAW);
+        };
+
+        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
+            offEvents();
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
         });
         this.game.currentBattle.on(BattleEvents.FALSE_STARTED, (winner) => {
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                winner,
-                falseStarter: attacker
-            });
-
-            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
-            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
-            this.game.currentBattle.off(BattleEvents.DRAW);
+            offEvents();
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
         });
         this.game.currentBattle.on(BattleEvents.DRAW, () => {
+            offEvents();
             this.to<ResultStateEnterParams>(InnerStates.RESULT);
-
-            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
-            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
-            this.game.currentBattle.off(BattleEvents.DRAW);
         });
 
         this.game.currentBattle.attack(attacker, attackTime);
@@ -149,7 +137,6 @@ class OnlineGameView extends GameView {
 
     private onRestartRequested = () => {
         this.game.start();
-        dispatchEvent(Events.REQUEST_READY);
     };
 }
 

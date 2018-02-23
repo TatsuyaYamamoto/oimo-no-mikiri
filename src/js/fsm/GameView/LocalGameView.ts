@@ -4,16 +4,16 @@ import ViewContainer from "../../../framework/ViewContainer";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 
+import ReadyState from "./internal/ReadyState";
+import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
 import {
     default as MultiPlayOverState,
     EnterParams as MultiPlayOverStateEnterParams
 } from "./internal/OverState/MultiPlayOverState";
-import ReadyState from "./internal/ReadyState";
 import {
     default as MultiPlayActionState,
     EnterParams as MultiPlayActionStateEnterParams
 } from "./internal/ActionState/MultiPlayActionState";
-import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
 import {
     default as SinglePlayOverState,
     EnterParams as SinglePlayOverStateEnterParams
@@ -25,6 +25,8 @@ import {
 
 import Actor from "../../models/Actor";
 import { isSingleMode } from "../../models/Game";
+import { BattleEvents } from "../../models/Battle";
+import { GameEvents } from "../../models/online/OnlineGame";
 
 class LocalGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -61,9 +63,11 @@ class LocalGameView extends GameView {
             [Events.RESTART_GAME]: this._onRequestedRestart,
         });
 
-        this.game.start();
+        this.game.on(GameEvents.ROUND_PROCEED, () => {
+            dispatchEvent(Events.REQUEST_READY);
+        });
 
-        dispatchEvent(Events.REQUEST_READY);
+        this.game.start();
     }
 
     /**
@@ -97,9 +101,6 @@ class LocalGameView extends GameView {
         }
 
         console.log(`On requested ready. Round${this.game.currentRound}`);
-
-        this.player.playWait();
-        this.opponent.playWait();
 
         this.to(InnerStates.READY);
 
@@ -143,27 +144,34 @@ class LocalGameView extends GameView {
     protected onAttacked = (e: CustomEvent) => {
         const {attacker, attackTime} = e.detail;
 
-        this.game.currentBattle.attack(attacker, attackTime)
-            .then(([resultType, winner]) => {
-                switch (resultType) {
-                    case "success":
-                        this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                            winner
-                        });
-                        break;
+        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
+                winner
+            });
 
-                    case "falseStart":
-                        this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                            winner,
-                            falseStarter: attacker
-                        });
-                        break;
+            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
+            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
+            this.game.currentBattle.off(BattleEvents.DRAW);
+        });
+        this.game.currentBattle.on(BattleEvents.FALSE_STARTED, (winner) => {
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
+                winner,
+                falseStarter: attacker
+            });
 
-                    case "draw":
-                        this.to<ResultStateEnterParams>(InnerStates.RESULT);
-                        break;
-                }
-            })
+            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
+            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
+            this.game.currentBattle.off(BattleEvents.DRAW);
+        });
+        this.game.currentBattle.on(BattleEvents.DRAW, () => {
+            this.to<ResultStateEnterParams>(InnerStates.RESULT);
+
+            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
+            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
+            this.game.currentBattle.off(BattleEvents.DRAW);
+        });
+
+        this.game.currentBattle.attack(attacker, attackTime);
     };
 
     /**
