@@ -26,6 +26,7 @@ class OnlineGame extends Game {
 
         this._gameRef = database().ref(`/games/${this._id}`);
         this._gameRef.child("members").on("child_added", this.onMemberJoined);
+        this._gameRef.child("currentRound").on("value", this.onCurrentRoundUpdated);
     }
 
     /************************************************************************************
@@ -78,7 +79,6 @@ class OnlineGame extends Game {
 
 
     public async start(): Promise<void> {
-        this._battles.clear();
         this._battles = new Map();
 
         return this.processRound(1);
@@ -139,6 +139,37 @@ class OnlineGame extends Game {
         }
     };
 
+    protected onCurrentRoundUpdated = async (snapshot: database.DataSnapshot) => {
+        if (!snapshot.exists()) {
+            return;
+        }
+
+        const prevRound = this._currentRound;
+        const nextRound = snapshot.val();
+        const nextBattle = new OnlineBattle({
+            gameId: this._id,
+            round: nextRound,
+            playerId: auth().currentUser.uid,
+            opponentId: this._memberIds.find((id) => id !== auth().currentUser.uid)
+        });
+
+        if (nextRound === 1) {
+            this._battles.clear();
+        }
+        
+        this._battles.set(nextRound, nextBattle);
+        this._currentRound = nextRound;
+
+        await nextBattle.start();
+
+        console.log(`Proceed to next round. Round${prevRound} -> Round${nextRound}`);
+        this.dispatch(GameEvents.ROUND_PROCEED, {nextRound});
+    };
+
+    /************************************************************************************
+     * Private methods
+     */
+
     /**
      *
      * @param {number} nextRound
@@ -153,17 +184,7 @@ class OnlineGame extends Game {
             opponentId: this._memberIds.find((id) => id !== auth().currentUser.uid)
         });
 
-        await Promise.all([
-            nextBattle.start(),
-            this.processCurrentRoundInTransactional(nextRound),
-        ]);
-
-
-        this._currentRound = nextRound;
-        this._battles.set(nextRound, nextBattle);
-
-        console.log(`Proceed to next round. Round${prevRound} -> Round${nextRound}`);
-        this.dispatch(GameEvents.ROUND_PROCEED, {nextRound});
+        await this.processCurrentRoundInTransactional(nextRound);
     };
 
     /**
