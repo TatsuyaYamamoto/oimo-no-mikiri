@@ -26,7 +26,6 @@ class OnlineGame extends Game {
 
         this._gameRef = database().ref(`/games/${this._id}`);
         this._gameRef.child("members").on("child_added", this.onMemberJoined);
-        this._gameRef.child("currentRound").on("value", this.onRoundProceed);
     }
 
     /************************************************************************************
@@ -78,45 +77,22 @@ class OnlineGame extends Game {
     }
 
 
-    start(): void {
+    public async start(): Promise<void> {
         this._battles.clear();
         this._battles = new Map();
 
-        const now = database.ServerValue.TIMESTAMP;
-
-        this.transaction((current) => {
-            if (current && current.currentRound !== 1) {
-                current.currentRound = 1;
-                current.createdAt = now;
-                current.battles = {
-                    1: {
-                        createdAt: now
-                    }
-                }
-            }
-            return current;
-        })
+        return this.processRound(1);
     }
 
-    next(): void {
+    public async next(): Promise<void> {
         if (this.currentRound >= this.roundSize) {
             console.error('Round of the game is already fulfilled.');
             return;
         }
 
-        const now = database.ServerValue.TIMESTAMP;
         const nextRound = this.currentRound + 1;
 
-        this.transaction((current) => {
-            if (current && current.currentRound !== nextRound) {
-                current.currentRound = nextRound;
-                current.updatedAt = now;
-                current.battles[nextRound] = {
-                    createdAt: now
-                }
-            }
-            return current;
-        });
+        return this.processRound(nextRound);
     }
 
     isFixed(): boolean {
@@ -165,24 +141,26 @@ class OnlineGame extends Game {
 
     /**
      *
-     * @param {firebase.database.DataSnapshot} snapshot
+     * @param {number} nextRound
      */
-    protected onRoundProceed = (snapshot: database.DataSnapshot) => {
-        const nextRound = snapshot.val();
-
-        if (!nextRound || nextRound == this._currentRound) {
-            return;
-        }
+    private processRound = async (nextRound: number): Promise<void> => {
 
         const prevRound = this._currentRound;
-
-        this._currentRound = nextRound;
-        this._battles.set(nextRound, new OnlineBattle({
+        const nextBattle = new OnlineBattle({
             gameId: this._id,
             round: nextRound,
             playerId: auth().currentUser.uid,
             opponentId: this._memberIds.find((id) => id !== auth().currentUser.uid)
-        }));
+        });
+
+        await Promise.all([
+            nextBattle.start(),
+            this.processCurrentRoundInTransactional(nextRound),
+        ]);
+
+
+        this._currentRound = nextRound;
+        this._battles.set(nextRound, nextBattle);
 
         console.log(`Proceed to next round. Round${prevRound} -> Round${nextRound}`);
         this.dispatch(GameEvents.ROUND_PROCEED, {nextRound});
@@ -190,13 +168,40 @@ class OnlineGame extends Game {
 
     /**
      *
-     * @param {(current: any) => any} transactionUpdate
-     * @return {Promise<void>}
+     * @param {number} nextRound
+     * @return {Promise<{committed: boolean; snapshot: firebase.database.DataSnapshot}>}
      */
-    private async transaction(transactionUpdate: (current: any) => any) {
-        console.log("Start transaction.");
+    private processCurrentRoundInTransactional = (nextRound: number) => {
+        const now = database.ServerValue.TIMESTAMP;
+
+        return this.transaction((current) => {
+            if (current && current.currentRound !== nextRound) {
+                current.currentRound = nextRound;
+
+                if (nextRound === 1) {
+                    current.createdAt = now;
+                } else {
+                    current.updatedAt = now;
+                }
+            }
+            return current;
+        }, "process_round");
+    };
+
+
+    /**
+     *
+     *
+     * @param {(current: any) => any} transactionUpdate
+     * @param {string} tag
+     * @return {Promise<{committed: boolean; snapshot: firebase.database.DataSnapshot}>}
+     */
+    private async transaction(transactionUpdate: (current: any) => any, tag?: string): Promise<{ committed: boolean, snapshot: database.DataSnapshot }> {
+        console.log(`Start transaction. TAG: ${tag}`);
         const {committed, snapshot} = await this._gameRef.transaction(transactionUpdate);
-        console.log(`End transaction. committed: ${committed}`, snapshot.val());
+        console.log(`End transaction. TAG: ${tag}, committed: ${committed}`, snapshot.val());
+
+        return {committed, snapshot}
     }
 }
 

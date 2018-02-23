@@ -6,7 +6,7 @@ import { getRandomInteger } from "../../../framework/utils";
 
 export interface OnlineBattleParams {
     gameId: string;
-    round: string;
+    round: number;
     playerId: string;
     opponentId: string;
 }
@@ -40,14 +40,6 @@ class OnlineBattle extends Battle {
         this._battleRef.child("signalTime").on("value", this.onSignalTimeUpdated);
         this._battleRef.child("attackTime").on("child_added", this.onAttackTimeAdded);
         this._battleRef.child("falseStart").on("child_added", this.onFalseStartAdded);
-
-        this.transaction((current) => {
-            if (current && !current.signalTime) {
-                current.signalTime = this.createSignalTime();
-            }
-
-            return current;
-        })
     }
 
     /************************************************************************************
@@ -55,6 +47,18 @@ class OnlineBattle extends Battle {
      */
     public isFixed(): boolean {
         return !!this._winner;
+    }
+
+    public start() {
+        return this.transaction((current) => {
+            const time = this.createSignalTime();
+
+            return current || {
+                signalTime: time,
+                createdAt: database.ServerValue.TIMESTAMP,
+
+            };
+        }, "initial_battle");
     }
 
     public attack(attacker: Actor, attackTime: number): void {
@@ -77,10 +81,13 @@ class OnlineBattle extends Battle {
         const winner = snapshot.val();
         this._winner = this.toActor(winner.id);
         this._winnerAttackTime = winner.attackTime;
+
+        console.log(`winner was decided. actor: ${this._winner}, time: ${this._winnerAttackTime}`);
     };
 
     protected onSignalTimeUpdated = (snapshot: database.DataSnapshot) => {
         this._signalTime = snapshot.val();
+        console.log("signal time was updated.", this._signalTime);
     };
 
     protected onAttackTimeAdded = (snapshot: database.DataSnapshot) => {
@@ -106,9 +113,10 @@ class OnlineBattle extends Battle {
 
             if (0 <= playerAttackTime && 0 <= opponentAttackTime) {
                 if (Math.abs(playerAttackTime - opponentAttackTime) < 100) {
-                    this.reset();
-                    this.dispatch(BattleEvents.DRAW, {});
                     console.log("This battle is drew. then it will be reset.");
+                    this.draw();
+
+                    this.dispatch(BattleEvents.DRAW, {});
                 } else {
                     let winner;
                     let winnerAttackTime;
@@ -121,23 +129,24 @@ class OnlineBattle extends Battle {
                         winnerAttackTime = opponentAttackTime;
                     }
 
-                    this.fix(this.toId(winner), winnerAttackTime);
-                    this.dispatch(BattleEvents.SUCCEED_ATTACK, winner);
                     console.log(`This battle is fixed. winner: ${winner}, time: ${winnerAttackTime}`);
+                    this.fix(this.toId(winner), winnerAttackTime);
+
+                    this.dispatch(BattleEvents.SUCCEED_ATTACK, winner);
                 }
             } else {
                 if (playerAttackTime === opponentAttackTime) {
                     console.log("This battle is drew. then it will be reset.");
+                    this.draw();
 
-                    this.reset();
                     this.dispatch(BattleEvents.DRAW, {});
                 } else if (playerAttackTime < opponentAttackTime) {
                     console.log(`False-started by ${Actor.PLAYER}.`);
 
                     if (this._falseStartMap.has(Actor.PLAYER)) {
                         console.log(`This battle is fixed with false-start. winner: ${Actor.OPPONENT}.`);
-
                         this.fix(this.toId(Actor.OPPONENT));
+
                         this.dispatch(BattleEvents.FALSE_STARTED, Actor.OPPONENT);
                     } else {
                         this.falseStart(Actor.PLAYER);
@@ -175,6 +184,10 @@ class OnlineBattle extends Battle {
         this._falseStartMap.set(actor, true);
     };
 
+    protected draw = () => {
+        this.reset();
+    };
+
     protected falseStart(actor: Actor): void {
         const uid = this.toId(actor);
         const updates = {};
@@ -196,35 +209,27 @@ class OnlineBattle extends Battle {
     protected reset(): void {
         this._attackTimeMap.clear();
 
-        console.log("Start transaction.");
-        this._battleRef
-            .transaction((current) => {
-                const time = this.createSignalTime();
-                if (current && current.attackTime) {
-                    current.attackTime = null;
-                    current.signalTime = time;
-                }
+        this.transaction((current) => {
+            const time = this.createSignalTime();
+            if (current && current.attackTime) {
+                current.attackTime = null;
+                current.signalTime = time;
+            }
 
-                return current;
-            })
-            .then(({committed, snapshot}) => {
-                console.log(`End transaction. committed: ${committed}`, snapshot.val());
-            });
-    }
-
-    protected createSignalTime(): number {
-        return getRandomInteger(3000, 5000);
+            return current;
+        }, "reset_battle");
     }
 
     /**
      *
      * @param {(current: any) => any} transactionUpdate
+     * @param {string} tag
      * @return {Promise<void>}
      */
-    private async transaction(transactionUpdate: (current: any) => any) {
-        console.log("Start transaction.");
+    private async transaction(transactionUpdate: (current: any) => any, tag?: string) {
+        console.log(`Start transaction. TAG: ${tag}`);
         const {committed, snapshot} = await this._battleRef.transaction(transactionUpdate);
-        console.log(`End transaction. committed: ${committed}`, snapshot.val());
+        console.log(`End transaction. TAG: ${tag}, committed: ${committed}`, snapshot.val());
     }
 
     private toId(actor: Actor): string {
