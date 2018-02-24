@@ -107,7 +107,17 @@ class OnlineGame extends Game {
     public async start(): Promise<void> {
         this._battles = new Map();
 
-        return this.processRound(1);
+        const now = database.ServerValue.TIMESTAMP;
+
+        await this.transaction((current) => {
+            console.error("start game", current);
+            if (current && current.currentRound !== 1) {
+                current.currentRound = 1;
+                current.updatedAt = now;
+                current.battles = {};
+            }
+            return current;
+        }, "start_game");
     }
 
     public async next(): Promise<void> {
@@ -117,8 +127,15 @@ class OnlineGame extends Game {
         }
 
         const nextRound = this.currentRound + 1;
+        const now = database.ServerValue.TIMESTAMP;
 
-        return this.processRound(nextRound);
+        await this.transaction((current) => {
+            if (current && current.currentRound !== nextRound) {
+                current.currentRound = nextRound;
+                current.updatedAt = now;
+            }
+            return current;
+        }, "process_game_round");
     }
 
     isFixed(): boolean {
@@ -127,6 +144,21 @@ class OnlineGame extends Game {
             || this.getWins(Actor.OPPONENT) >= requiredWins;
     }
 
+    public async release() {
+        this.off();
+
+        this._gameRef.child("members").off();
+        this._gameRef.child("currentRound").off();
+
+        this._battles.forEach((battle: OnlineBattle) => {
+            battle.release();
+        });
+        this._battles.clear();
+
+        await database().ref(`games/${this.id}`).set({
+            createdAt: database.ServerValue.TIMESTAMP,
+        });
+    }
 
     /************************************************************************************
      * Callback methods
@@ -152,6 +184,11 @@ class OnlineGame extends Game {
             return;
         }
 
+        if (this.memberIds.length === 2 && snapshot.numChildren() === 2) {
+            console.log("No member was updated.");
+            return;
+        }
+
         if (this.memberIds.length === 2 && snapshot.numChildren() < 2) {
             console.log("Member was left.");
             this.dispatch(GameEvents.MEMBER_LEFT);
@@ -160,7 +197,7 @@ class OnlineGame extends Game {
 
         this._memberIds = Object.keys(snapshot.val());
 
-        if (this._memberIds.length == 2) {
+        if (this._memberIds.length === 2) {
             console.log(`Game members are fulfilled.`);
             this.dispatch(GameEvents.FULFILLED_MEMBERS);
         }
@@ -196,41 +233,6 @@ class OnlineGame extends Game {
     /************************************************************************************
      * Private methods
      */
-
-    /**
-     *
-     * @param {number} nextRound
-     */
-    private processRound = async (nextRound: number): Promise<void> => {
-
-        const prevRound = this._currentRound;
-        const nextBattle = new OnlineBattle({
-            gameId: this._id,
-            round: nextRound,
-            playerId: auth().currentUser.uid,
-            opponentId: this._memberIds.find((id) => id !== auth().currentUser.uid)
-        });
-
-        await this.processCurrentRoundInTransactional(nextRound);
-    };
-
-    /**
-     *
-     * @param {number} nextRound
-     * @return {Promise<{committed: boolean; snapshot: firebase.database.DataSnapshot}>}
-     */
-    private processCurrentRoundInTransactional = (nextRound: number) => {
-        const now = database.ServerValue.TIMESTAMP;
-
-        return this.transaction((current) => {
-            if (current && current.currentRound !== nextRound) {
-                current.currentRound = nextRound;
-                current.updatedAt = now;
-            }
-            return current;
-        }, "process_round");
-    };
-
 
     /**
      *

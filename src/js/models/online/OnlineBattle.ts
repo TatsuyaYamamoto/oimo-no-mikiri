@@ -69,6 +69,15 @@ class OnlineBattle extends Battle {
         this._battleRef.child("attackTime").update(updates);
     }
 
+    public release() {
+        this.off();
+
+        this._battleRef.child("winner").off();
+        this._battleRef.child("signalTime").off();
+        this._battleRef.child("attackTime").off();
+        this._battleRef.child("falseStart").off();
+    }
+
     /************************************************************************************
      * Callback methods
      */

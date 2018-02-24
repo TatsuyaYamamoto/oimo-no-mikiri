@@ -8,9 +8,16 @@ import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/R
 import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
 import OnlineOverState, { EnterParams as OnlineEnterParams } from "./internal/OverState/OnlineOverState";
 
-import { GameEvents } from "../../models/online/OnlineGame";
+import { GameEvents, default as OnlineGame } from "../../models/online/OnlineGame";
 import Actor from "../../models/Actor";
 import { BattleEvents } from "../../models/Battle";
+import { Events as AppEvents } from "../ApplicationState";
+import MemberLeftModal from "../../helper/modal/MemberLeftModal";
+import RejectJoinModal from "../../helper/modal/RejectJoinModal";
+import { stop } from "../../helper/MusicPlayer";
+import { Ids as SoundIds } from "../../resources/sound";
+import JoinModal from "../../helper/modal/JoinModal";
+import ReadyModal from "../../helper/modal/ReadyModal";
 
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -92,7 +99,7 @@ class OnlineGameView extends GameView {
     protected onAttacked = (e: CustomEvent) => {
         const {attacker, attackTime} = e.detail;
 
-        const offEvents = () =>{
+        const offEvents = () => {
             this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
             this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
             this.game.currentBattle.off(BattleEvents.DRAW);
@@ -114,15 +121,16 @@ class OnlineGameView extends GameView {
         this.game.currentBattle.attack(attacker, attackTime);
     };
 
-    private onResultFixed = () => {
+    private onResultFixed = async () => {
         const {
             bestTime,
             winner,
             mode,
-            straightWins,
         } = this.game;
 
         console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
+
+        await (<OnlineGame>this.game).release();
 
         this.to<OnlineEnterParams>(InnerStates.OVER, {
             winner,
@@ -131,12 +139,38 @@ class OnlineGameView extends GameView {
             onePlayerWins: this.game.getWins(Actor.PLAYER),
             twoPlayerWins: this.game.getWins(Actor.OPPONENT),
         });
-
-        this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
     };
 
+    // TODO: exclusion control
+    // TODO: check another side's event trigger state.
     private onRestartRequested = () => {
-        this.game.start();
+
+        const gameId = (<OnlineGame> this.game).id;
+        const newGame = new OnlineGame(gameId);
+
+        const joinModal = new JoinModal(gameId);
+        const readyModal = new ReadyModal();
+
+        newGame.on(GameEvents.MEMBER_LEFT, () => {
+            new MemberLeftModal().open();
+            setTimeout(() => location.reload(), 2000);
+        });
+
+        newGame.once(GameEvents.FULFILLED_MEMBERS, () => {
+            joinModal.close();
+            readyModal.open();
+
+            setTimeout(() => {
+                readyModal.close();
+                dispatchEvent(AppEvents.REQUESTED_GAME_START, {game: newGame});
+            }, 1000)
+        });
+
+        joinModal.open();
+        newGame.join().catch((e) => {
+            // TODO: handle error.
+            console.error(e);
+        })
     };
 }
 

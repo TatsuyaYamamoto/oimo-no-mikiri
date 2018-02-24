@@ -17,8 +17,15 @@ abstract class EventEmitter {
         this._callbacks[eventType].push(callback);
     }
 
-    public off(eventType: string, callback?) {
+    public off(eventType?: string, callback?) {
         console.log(`${this.constructor.name}@Remove event.`, eventType);
+
+        if (!eventType) {
+            Object.keys(this._callbacks).forEach(eventType => {
+                delete this._callbacks[eventType];
+            });
+            return;
+        }
 
         if (!this._callbacks[eventType]) {
             return;
