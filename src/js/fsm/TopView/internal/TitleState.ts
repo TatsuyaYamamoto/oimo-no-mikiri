@@ -76,6 +76,7 @@ class TitleState extends AbstractTopState {
         playOnLoop(SoundIds.SOUND_ZENKAI);
 
         const {gameId} = parse(window.location.search);
+        this.clearQueryString();
 
         if (!gameId) {
             this.addClickWindowEventListener(this._handleTapWindow);
@@ -97,6 +98,11 @@ class TitleState extends AbstractTopState {
         dispatchEvent(Events.TAP_TITLE);
 
         play(SoundIds.SOUND_OK);
+    };
+
+    private clearQueryString = () => {
+        const url = `${location.protocol}//${location.host}${location.pathname}`;
+        history.replaceState(null, null, url);
     };
 }
 

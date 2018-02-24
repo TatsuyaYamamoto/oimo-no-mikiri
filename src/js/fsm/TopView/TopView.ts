@@ -18,6 +18,7 @@ import ReadyModal from "../../helper/modal/ReadyModal";
 import WaitingJoinModal from "../../helper/modal/WaitingJoinModal";
 import RoomCreationModal from "../../helper/modal/RoomCreationModal";
 import MemberLeftModal from "../../helper/modal/MemberLeftModal";
+import RejectJoinModal from "../../helper/modal/RejectJoinModal";
 
 import { Ids as SoundIds } from "../../resources/sound";
 import LocalGame from "../../models/local/LocalGame";
@@ -164,7 +165,7 @@ class TopViewState extends ViewContainer {
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
             waitingModal.close();
             readyModal.open();
-            this.clearQueryString();
+
             stop(SoundIds.SOUND_ZENKAI);
 
             setTimeout(() => {
@@ -197,7 +198,7 @@ class TopViewState extends ViewContainer {
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
             joinModal.close();
             readyModal.open();
-            this.clearQueryString();
+
             stop(SoundIds.SOUND_ZENKAI);
 
             setTimeout(() => {
@@ -208,12 +209,11 @@ class TopViewState extends ViewContainer {
             }, 1000)
         });
 
-        game.join();
-    };
-
-    private clearQueryString = () => {
-        const url = `${location.protocol}//${location.host}${location.pathname}`;
-        history.replaceState(null, null, url);
+        game.join().catch((e) => {
+            console.error(e);
+            joinModal.close();
+            new RejectJoinModal().open();
+        })
     };
 
     private _to = (stateTag: string) => {

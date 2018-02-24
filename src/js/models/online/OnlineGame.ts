@@ -33,8 +33,13 @@ class OnlineGame extends Game {
     /************************************************************************************
      * Static methods
      */
-    public static create() {
+    public static async create() {
         const gameId = database().ref().child("games").push().key;
+
+        await database().ref(`games/${gameId}`).set({
+            createdAt: database.ServerValue.TIMESTAMP,
+        });
+
         return new OnlineGame(gameId);
     }
 
@@ -68,9 +73,34 @@ class OnlineGame extends Game {
 
     public async join() {
         const {uid} = auth().currentUser;
-        const ref = this._gameRef.child("members").child(uid);
-        await ref.onDisconnect().set(null);
-        await ref.set(true);
+
+        const {snapshot} = await this.transaction((current) => {
+            if (!current) {
+                return current;
+            }
+
+            if (!current.members || Object.keys(current.members).length < 2) {
+                current.members = Object.assign({}, current.members, {
+                    [uid]: true
+                });
+            }
+            return current;
+        }, "join_game");
+
+        const currentGame = snapshot.val();
+
+        if (!currentGame) {
+            throw new Error("Provided game is not exist.");
+        }
+
+        const currentMemberIds = Object.keys(currentGame.members);
+        const isJoinSucceed = currentMemberIds.some(id => id === uid);
+
+        if (isJoinSucceed) {
+            await this._gameRef.child(`members/${uid}`).onDisconnect().set(null);
+        } else {
+            throw new Error("Provided game's members are already fulfilled.");
+        }
     }
 
 
@@ -108,6 +138,12 @@ class OnlineGame extends Game {
      */
     protected onMemberUpdated = (snapshot: database.DataSnapshot) => {
         if (!snapshot.exists()) {
+            return;
+        }
+
+        const {uid} = auth().currentUser;
+        if (!snapshot.hasChild(uid)) {
+            console.error("Updated member list dose not have own ID.");
             return;
         }
 
@@ -189,12 +225,7 @@ class OnlineGame extends Game {
         return this.transaction((current) => {
             if (current && current.currentRound !== nextRound) {
                 current.currentRound = nextRound;
-
-                if (nextRound === 1) {
-                    current.createdAt = now;
-                } else {
-                    current.updatedAt = now;
-                }
+                current.updatedAt = now;
             }
             return current;
         }, "process_round");
