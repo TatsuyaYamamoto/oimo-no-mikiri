@@ -17,7 +17,7 @@ import { stop } from "../../helper/MusicPlayer";
 import ReadyModal from "../../helper/modal/ReadyModal";
 import WaitingJoinModal from "../../helper/modal/WaitingJoinModal";
 import RoomCreationModal from "../../helper/modal/RoomCreationModal";
-import { requestCreateGame, requestJoinGame } from "../../helper/firebase";
+import MemberLeftModal from "../../helper/modal/MemberLeftModal";
 
 import { Ids as SoundIds } from "../../resources/sound";
 import LocalGame from "../../models/local/LocalGame";
@@ -150,6 +150,12 @@ class TopViewState extends ViewContainer {
         creationModal.open();
 
         const game = await OnlineGame.create();
+        game.join();
+        game.on(GameEvents.MEMBER_LEFT, () => {
+            new MemberLeftModal().open();
+            setTimeout(() => location.reload(), 2000);
+        });
+
         const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
 
         const waitingModal = new WaitingJoinModal(url);
@@ -184,6 +190,10 @@ class TopViewState extends ViewContainer {
         joinModal.open();
 
         const game = new OnlineGame(gameId);
+        game.on(GameEvents.MEMBER_LEFT, () => {
+            new MemberLeftModal().open();
+            setTimeout(() => location.reload(), 2000);
+        });
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
             joinModal.close();
             readyModal.open();

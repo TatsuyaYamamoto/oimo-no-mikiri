@@ -10,6 +10,7 @@ export enum GameEvents {
     CREATED = "game_created",
     MEMBER_JOINED = "member_joined",
     FULFILLED_MEMBERS = "fulfilled_members",
+    MEMBER_LEFT = "member_left",
     ROUND_PROCEED = "round_proceed",
 }
 
@@ -25,20 +26,15 @@ class OnlineGame extends Game {
         this._battles = new Map();
 
         this._gameRef = database().ref(`/games/${this._id}`);
-        this._gameRef.child("members").on("child_added", this.onMemberJoined);
+        this._gameRef.child("members").on("value", this.onMemberUpdated);
         this._gameRef.child("currentRound").on("value", this.onCurrentRoundUpdated);
     }
 
     /************************************************************************************
      * Static methods
      */
-    public static async create() {
+    public static create() {
         const gameId = database().ref().child("games").push().key;
-        const {uid} = auth().currentUser;
-        const updates = {};
-        updates[`/games/${gameId}/members/${uid}`] = true;
-        await database().ref().update(updates);
-
         return new OnlineGame(gameId);
     }
 
@@ -72,9 +68,9 @@ class OnlineGame extends Game {
 
     public async join() {
         const {uid} = auth().currentUser;
-        const updates = {};
-        updates[`/games/${this._id}/members/${uid}`] = true;
-        await database().ref().update(updates);
+        const ref = this._gameRef.child("members").child(uid);
+        await ref.onDisconnect().set(null);
+        await ref.set(true);
     }
 
 
@@ -110,28 +106,23 @@ class OnlineGame extends Game {
      *
      * @param {firebase.database.DataSnapshot} snapshot
      */
-    protected onMemberJoined = (snapshot: database.DataSnapshot) => {
+    protected onMemberUpdated = (snapshot: database.DataSnapshot) => {
         if (!snapshot.exists()) {
             return;
         }
 
-        const addedMemberId = snapshot.key;
-
-        const isExisting = this._memberIds.find((id) => id === addedMemberId);
-        if (isExisting) {
-            console.log("Existing member was added. then ignore this event.");
+        if (3 <= snapshot.numChildren()) {
+            console.error("invalid member length!");
             return;
         }
 
-        if (this._memberIds.length >= 2) {
-            // Ignore non-updated members length case.
-            // TODO: Consider non-updated length but updated member ids case.
-            console.error("Fire updated member event, but non-updated length. ignore.", this._memberIds, snapshot.key);
+        if (this.memberIds.length === 2 && snapshot.numChildren() < 2) {
+            console.log("Member was left.");
+            this.dispatch(GameEvents.MEMBER_LEFT);
             return;
         }
 
-        console.log(`New member joined. Id: ${addedMemberId}`);
-        this._memberIds.push(addedMemberId);
+        this._memberIds = Object.keys(snapshot.val());
 
         if (this._memberIds.length == 2) {
             console.log(`Game members are fulfilled.`);
@@ -156,7 +147,7 @@ class OnlineGame extends Game {
         if (nextRound === 1) {
             this._battles.clear();
         }
-        
+
         this._battles.set(nextRound, nextBattle);
         this._currentRound = nextRound;
 
