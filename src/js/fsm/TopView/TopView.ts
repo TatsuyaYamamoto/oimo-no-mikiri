@@ -212,7 +212,11 @@ class TopViewState extends ViewContainer {
         game.join().catch((e) => {
             console.error(e);
             joinModal.close();
-            new RejectJoinModal().open();
+
+            const rejectModal = new RejectJoinModal({
+                onClose: () => this._to(InnerStates.TITLE)
+            });
+            rejectModal.open();
         })
     };
 
