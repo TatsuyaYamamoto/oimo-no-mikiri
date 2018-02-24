@@ -141,7 +141,6 @@ class OnlineGameView extends GameView {
         });
     };
 
-    // TODO: exclusion control
     // TODO: check another side's event trigger state.
     private onRestartRequested = () => {
 

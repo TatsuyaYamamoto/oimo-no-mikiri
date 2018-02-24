@@ -1,11 +1,11 @@
-import {Texture, Sprite, Container} from 'pixi.js';
+import { Texture, Sprite, Container } from 'pixi.js';
 
 import Deliverable from "../../../../../framework/Deliverable";
-import {dispatchEvent} from "../../../../../framework/EventUtils";
+import { dispatchEvent } from "../../../../../framework/EventUtils";
 
 import AbstractGameState from "../GameViewState";
-import {Events} from '../../GameView';
-import {Events as AppEvents} from '../../../ApplicationState';
+import { Events } from '../../GameView';
+import { Events as AppEvents } from '../../../ApplicationState';
 
 import RestartButton from "../../../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../../../texture/sprite/button/BackToTopButton";
@@ -18,10 +18,10 @@ import WinnerName from "../../../../texture/containers/GameResultPaper/WinnerNam
 import Actor from "../../../../models/Actor";
 import Mode from "../../../../models/Mode";
 
-import {play, stop} from "../../../../helper/MusicPlayer";
-import {Action, Category, trackEvent} from "../../../../helper/tracker";
+import { play, stop } from "../../../../helper/MusicPlayer";
+import { Action, Category, trackEvent } from "../../../../helper/tracker";
 
-import {Ids as SoundIds} from '../../../../resources/sound';
+import { Ids as SoundIds } from '../../../../resources/sound';
 
 export interface EnterParams extends Deliverable {
     winner: Actor;
@@ -123,13 +123,20 @@ abstract class OverState extends AbstractGameState {
         super.onExit();
     }
 
+    // TODO: implements once method
+    private isRestartTapped = false;
+
     /**
      *
      * @private
      */
     private _onClickRestartButton = () => {
-        dispatchEvent(Events.RESTART_GAME);
+        if (this.isRestartTapped) {
+            return;
+        }
+        this.isRestartTapped = true;
 
+        dispatchEvent(Events.RESTART_GAME);
         play(SoundIds.SOUND_OK);
 
         trackEvent(
