@@ -127,8 +127,10 @@ class OnlineGameView extends GameView {
             winner,
             mode,
         } = this.game;
+        const onePlayerWins = this.game.getWins(Actor.PLAYER);
+        const twoPlayerWins = this.game.getWins(Actor.OPPONENT);
 
-        console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
+        console.log(`Fixed the game! player win: ${onePlayerWins}, opponent wins: ${twoPlayerWins}.`);
 
         await (<OnlineGame>this.game).release();
 
@@ -136,8 +138,8 @@ class OnlineGameView extends GameView {
             winner,
             bestTime,
             mode,
-            onePlayerWins: this.game.getWins(Actor.PLAYER),
-            twoPlayerWins: this.game.getWins(Actor.OPPONENT),
+            onePlayerWins,
+            twoPlayerWins,
         });
     };
 
