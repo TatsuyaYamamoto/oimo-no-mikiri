@@ -26,7 +26,7 @@ class StateMachine<S extends State> {
     }
 
     public update(elapsedTime: number): void {
-        this._currentState.update(elapsedTime);
+        this._currentState && this._currentState.update(elapsedTime);
     }
 
     /**
