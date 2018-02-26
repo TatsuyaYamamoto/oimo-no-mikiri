@@ -14,6 +14,7 @@ abstract class Game extends EventEmitter {
         super();
         this._mode = mode;
         this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
+        this._battles = new Map();
     }
 
     public get bestTime(): number {

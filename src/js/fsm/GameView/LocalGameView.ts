@@ -26,7 +26,8 @@ import {
 import Actor from "../../models/Actor";
 import { isSingleMode } from "../../models/Game";
 import { BattleEvents } from "../../models/Battle";
-import { GameEvents } from "../../models/online/OnlineGame";
+import { default as OnlineGame, GameEvents } from "../../models/online/OnlineGame";
+import LocalGame from "../../models/local/LocalGame";
 
 class LocalGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -144,31 +145,23 @@ class LocalGameView extends GameView {
     protected onAttacked = (e: CustomEvent) => {
         const {attacker, attackTime} = e.detail;
 
-        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                winner
-            });
-
+        const offEvents = () => {
             this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
             this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
             this.game.currentBattle.off(BattleEvents.DRAW);
+        };
+
+        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
+            offEvents();
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
         });
         this.game.currentBattle.on(BattleEvents.FALSE_STARTED, (winner) => {
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {
-                winner,
-                falseStarter: attacker
-            });
-
-            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
-            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
-            this.game.currentBattle.off(BattleEvents.DRAW);
+            offEvents();
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
         });
         this.game.currentBattle.on(BattleEvents.DRAW, () => {
+            offEvents();
             this.to<ResultStateEnterParams>(InnerStates.RESULT);
-
-            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
-            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
-            this.game.currentBattle.off(BattleEvents.DRAW);
         });
 
         this.game.currentBattle.attack(attacker, attackTime);
@@ -187,6 +180,8 @@ class LocalGameView extends GameView {
         } = this.game;
 
         console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
+
+        (<LocalGame>this.game).release();
 
         if (isSingleMode(this.game.mode)) {
             this.to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {

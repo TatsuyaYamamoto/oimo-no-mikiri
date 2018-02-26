@@ -2,7 +2,7 @@ import { database } from "firebase";
 
 import Battle, { BattleEvents } from "../Battle";
 import Actor from "../Actor";
-import { getRandomInteger } from "../../../framework/utils";
+import { GAME_PARAMETERS } from "../../Constants";
 
 export interface OnlineBattleParams {
     gameId: string;
@@ -45,10 +45,6 @@ class OnlineBattle extends Battle {
     /************************************************************************************
      * Status change methods
      */
-    public isFixed(): boolean {
-        return !!this._winner;
-    }
-
     public start() {
         return this.transaction((current) => {
             const time = this.createSignalTime();
@@ -61,7 +57,18 @@ class OnlineBattle extends Battle {
         }, "initial_battle");
     }
 
+    /**
+     *
+     * @param {Actor} attacker
+     * @param {number} attackTime
+     * @override
+     */
     public attack(attacker: Actor, attackTime: number): void {
+        if (!this.signalTime) {
+            console.error("This battle is not started! Battle#attack is executable after staring battle only.");
+            return;
+        }
+
         const uid = this.toId(attacker);
         const updates = {};
         updates[uid] = attackTime;
@@ -125,7 +132,7 @@ class OnlineBattle extends Battle {
             const opponentAttackTime = this._attackTimeMap.get(Actor.OPPONENT);
 
             if (0 <= playerAttackTime && 0 <= opponentAttackTime) {
-                if (Math.abs(playerAttackTime - opponentAttackTime) < 100) {
+                if (Math.abs(playerAttackTime - opponentAttackTime) < GAME_PARAMETERS.acceptable_attack_time_distance) {
                     console.log("This battle is drew. then it will be reset.");
                     this.draw();
 

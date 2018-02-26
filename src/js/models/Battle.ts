@@ -1,5 +1,6 @@
 import Actor from './Actor';
 import EventEmitter from "./online/EventEmitter";
+import { getRandomInteger } from "../../framework/utils";
 
 export enum BattleEvents {
     FIXED = "fixed",
@@ -17,7 +18,11 @@ abstract class Battle extends EventEmitter {
     constructor() {
         super();
 
+        this._winner = null;
+        this._winnerAttackTime = null;
         this._falseStartMap = new Map();
+        this._falseStartMap.set(Actor.PLAYER, false);
+        this._falseStartMap.set(Actor.OPPONENT, false);
     }
 
     get winner(): Actor {
@@ -25,6 +30,8 @@ abstract class Battle extends EventEmitter {
     };
 
     get winnerAttackTime(): number {
+        if (!this.isFixed()) console.error("The battle is not fixed.");
+
         return this._winnerAttackTime;
     };
 
@@ -36,9 +43,19 @@ abstract class Battle extends EventEmitter {
         return this._falseStartMap.get(actor);
     }
 
-    abstract isFixed(): boolean;
+    public isFixed(): boolean {
+        return !!this._winner;
+    }
+
+    abstract start(): void;
 
     abstract attack(actor: string, attackTime: number): void;
+
+    abstract release(): void;
+
+    protected createSignalTime(): number {
+        return getRandomInteger(3000, 5000);
+    }
 }
 
 export default Battle;

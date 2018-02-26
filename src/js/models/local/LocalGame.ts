@@ -1,44 +1,22 @@
 import Game, {
-    isMultiMode,
-    isOnlineMode,
     isSingleMode
 } from "../Game";
-import Battle from "./LocalBattle";
+import Battle, { default as LocalBattle } from "./LocalBattle";
 import Actor from '../Actor';
 import Mode from "../Mode";
 
 import { GAME_PARAMETERS, DEFAULT_ROUND_SIZE } from "../../Constants";
+import { GameEvents } from "../online/OnlineGame";
+import { database } from "firebase";
+import OnlineBattle from "../online/OnlineBattle";
 
 
-class LocalGame implements Game {
-    private _mode: Mode;
-    private _roundSize: number;
-    private _currentRound: number;
-    private _battles: Map<number, Battle>;
-
+class LocalGame extends Game {
     constructor(mode: Mode, roundSize?: number) {
-        this._mode = mode;
-        this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
-    }
-
-    public get mode() {
-        return this._mode;
-    }
-
-    public get roundSize(): number {
-        return this._roundSize;
-    }
-
-    public get currentRound(): number {
-        return this._currentRound;
-    }
-
-    public get currentBattle(): Battle {
-        return this._battles.get(this._currentRound);
-    }
-
-    public get battleLeft(): number {
-        return this.roundSize - this.currentRound + 1;
+        super(
+            mode,
+            roundSize || DEFAULT_ROUND_SIZE,
+        );
     }
 
     /**
@@ -120,13 +98,7 @@ class LocalGame implements Game {
     }
 
     public start(): void {
-        this._battles = new Map();
-        new Array(this.roundSize).forEach((ignore, round) => {
-            this._battles.set(round, new Battle());
-        });
-
-        this._currentRound = 1;
-        this._battles.set(this._currentRound, new Battle());
+        this.processRound(1);
     }
 
     public next(): void {
@@ -134,8 +106,7 @@ class LocalGame implements Game {
             console.error('Round of the game is already fulfilled.');
             return;
         }
-        this._currentRound++;
-        this._battles.set(this._currentRound, new Battle());
+        this.processRound(this._currentRound + 1);
     }
 
     public isFixed(): boolean {
@@ -157,6 +128,33 @@ class LocalGame implements Game {
         return this.getWins(Actor.PLAYER) >= requiredWins
             || this.getWins(Actor.OPPONENT) >= requiredWins;
     }
+
+    public release() {
+        this.off();
+
+        this._battles.forEach((battle: OnlineBattle) => {
+            battle.release();
+        });
+        this._battles.clear();
+    }
+
+    private processRound = (nextRound:number) => {
+
+        const prevRound = this._currentRound;
+        const nextBattle = new LocalBattle();
+
+        if (nextRound === 1) {
+            this._battles.clear();
+        }
+
+        this._battles.set(nextRound, nextBattle);
+        this._currentRound = nextRound;
+
+        nextBattle.start();
+
+        console.log(`Proceed to next round. Round${prevRound} -> Round${nextRound}`);
+        this.dispatch(GameEvents.ROUND_PROCEED, {nextRound});
+    };
 }
 
 export default LocalGame;

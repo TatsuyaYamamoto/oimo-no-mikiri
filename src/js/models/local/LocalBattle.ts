@@ -1,105 +1,90 @@
-import { getRandomInteger } from "../../../framework/utils";
-
 import Actor from '../Actor';
-import Battle from '../Battle';
+import Battle, { BattleEvents } from '../Battle';
 
 import { GAME_PARAMETERS } from "../../Constants";
 
-class LocalBattle implements Battle {
-    private _signalTime: number;
-    private _winner: Actor;
-    private _winnerAttackTime: number;
-    private _falseStartMap: Map<Actor, boolean>;
+class LocalBattle extends Battle {
     private _isJudging: boolean;
 
-    constructor() {
+    /**
+     * @override
+     */
+    public start() {
         this._signalTime = this.createSignalTime();
-        this._winner = null;
-        this._falseStartMap = new Map();
-        this._falseStartMap.set(Actor.PLAYER, false);
-        this._falseStartMap.set(Actor.OPPONENT, false);
         this._isJudging = false;
     }
 
-    public get winner(): Actor | null {
-        return this._winner;
-    }
+    /**
+     *
+     * @param {Actor} actor
+     * @param {number} attackTime
+     * @override
+     */
+    public attack(actor: Actor, attackTime: number): void {
+        if (!this.signalTime) {
+            console.error("This battle is not started! Battle#attack is executable after staring battle only.");
+            return;
+        }
 
-    public get winnerAttackTime(): number {
-        if (!this.isFixed()) console.error("The battle is not fixed.");
+        if (this.isFixed()) {
+            console.error('The battle is already fixed.');
+            return;
+        }
 
-        return this._winnerAttackTime;
-    }
 
-    public get signalTime(): number {
-        return this._signalTime;
-    }
+        if (attackTime < 0) {
+            if (this._falseStartMap.get(actor)) {
+                const winner = actor === Actor.PLAYER ? Actor.OPPONENT : Actor.PLAYER;
+                this._winner = winner;
+                this.fix(winner);
 
-    public isFalseStarted(actor: Actor): boolean {
-        return this._falseStartMap.get(actor);
-    }
+                this.dispatch(BattleEvents.FALSE_STARTED, winner);
+            } else {
+                this._falseStartMap.set(actor, true);
 
-    public isFixed(): boolean {
-        return !!this._winner;
-    }
+                // recreate for next battle.
+                this._signalTime = this.createSignalTime();
 
-    public attack(actor: Actor, attackTime: number): Promise<[string, Actor]> {
-        return new Promise((resolve, reject) => {
-            if (this.isFixed()) {
-                reject('The battle is already fixed.');
+                this.dispatch(BattleEvents.FALSE_STARTED);
             }
 
+        } else {
 
-            if (attackTime < 0) {
-                if (this._falseStartMap.get(actor)) {
-                    const winner = actor === Actor.PLAYER ? Actor.OPPONENT : Actor.PLAYER;
-                    this._winner = winner;
-                    this.fix(winner);
-                    resolve(["falseStart", winner]);
-                } else {
-                    this._falseStartMap.set(actor, true);
+            if (this._isJudging) {
+                this._isJudging = false;
+                console.log(`Draw! End waiting for judging. Last attacker: ${actor}, time: ${attackTime}`);
+                this.dispatch(BattleEvents.DRAW, {});
 
-                    // recreate for next battle.
-                    this._signalTime = this.createSignalTime();
+                // recreate for next battle.
+                this._signalTime = this.createSignalTime();
 
-                    resolve(["falseStart", null]);
-                }
+                return;
+            }
 
-            } else {
-
+            this._isJudging = true;
+            console.log(`Start waiting for judging. First attacker: ${actor}, time: ${attackTime}`);
+            setTimeout(() => {
                 if (this._isJudging) {
                     this._isJudging = false;
-                    console.log(`Draw! End waiting for judging. Last attacker: ${actor}, time: ${attackTime}`);
-                    resolve(["draw", null]);
 
-                    // recreate for next battle.
-                    this._signalTime = this.createSignalTime();
-
-                    return;
+                    console.log(`Succeed attack!`);
+                    this.fix(actor, attackTime);
+                    this.dispatch(BattleEvents.SUCCEED_ATTACK, actor);
                 }
-
-                this._isJudging = true;
-                console.log(`Start waiting for judging. First attacker: ${actor}, time: ${attackTime}`);
-                setTimeout(() => {
-                    if (this._isJudging) {
-                        this._isJudging = false;
-
-                        console.log(`Succeed attack!`);
-                        this.fix(actor, attackTime);
-                        resolve(["success", actor]);
-                    }
-                }, GAME_PARAMETERS.acceptable_attack_time_distance)
-            }
-        });
+            }, GAME_PARAMETERS.acceptable_attack_time_distance)
+        }
     }
 
-    protected fix(winner: Actor, winnerTime?: number): void {
+    /**
+     * @override
+     */
+    public release(): void {
+        this.off();
+    }
+
+    private fix(winner: Actor, winnerTime?: number): void {
         this._winner = winner;
         this._winnerAttackTime = winnerTime;
-    }
-
-    protected createSignalTime(): number {
-        return getRandomInteger(3000, 5000);
     }
 }
 

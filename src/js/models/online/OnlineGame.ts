@@ -23,7 +23,6 @@ class OnlineGame extends Game {
         super(Mode.MULTI_ONLINE);
         this._id = id;
         this._memberIds = [];
-        this._battles = new Map();
 
         this._gameRef = database().ref(`/games/${this._id}`);
         this._gameRef.child("members").on("value", this.onMemberUpdated);
