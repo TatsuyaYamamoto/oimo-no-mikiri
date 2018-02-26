@@ -35,10 +35,12 @@ class OnlineGame extends Game {
      */
     public static async create() {
         const gameId = database().ref().child("games").push().key;
+        const ref = database().ref(`games/${gameId}`);
 
-        await database().ref(`games/${gameId}`).set({
+        await ref.set({
             createdAt: database.ServerValue.TIMESTAMP,
         });
+        ref.onDisconnect().set(null);
 
         return new OnlineGame(gameId);
     }
@@ -65,6 +67,18 @@ class OnlineGame extends Game {
 
     public get npcAttackIntervalMillis(): number {
         throw new Error("Not implemented");
+    }
+
+    public get ownId(): string {
+        return auth().currentUser.uid;
+    }
+
+    public get opponentId(): string {
+        if (this._memberIds.length < 2) {
+            throw new Error("Member isn't fulfilled.");
+        }
+
+        return this._memberIds.find((id) => id !== auth().currentUser.uid);
     }
 
     /************************************************************************************
@@ -189,16 +203,19 @@ class OnlineGame extends Game {
             return;
         }
 
-        if (this.memberIds.length === 2 && snapshot.numChildren() < 2) {
-            console.log("Member was left.");
-            this.dispatch(GameEvents.MEMBER_LEFT);
-            return;
-        }
-
         this._memberIds = Object.keys(snapshot.val());
 
         if (this._memberIds.length === 2) {
             console.log(`Game members are fulfilled.`);
+
+            const opponentConnectingRef = database().ref(`users/${this.opponentId}/isConnecting`);
+            opponentConnectingRef.on("value", (snapshot: database.DataSnapshot) => {
+                if (snapshot.exists() && !snapshot.val()) {
+                    this.dispatch(GameEvents.MEMBER_LEFT);
+                }
+            });
+
+
             this.dispatch(GameEvents.FULFILLED_MEMBERS);
         }
     };
