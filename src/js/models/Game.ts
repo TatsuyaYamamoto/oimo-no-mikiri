@@ -99,6 +99,8 @@ abstract class Game extends EventEmitter {
     abstract next(): void;
 
     abstract isFixed(): boolean;
+
+    abstract release(): void;
 }
 
 export function isSingleMode(mode: Mode) {

@@ -13,9 +13,6 @@ import Actor from "../../models/Actor";
 import { BattleEvents } from "../../models/Battle";
 import { Events as AppEvents } from "../ApplicationState";
 import MemberLeftModal from "../../helper/modal/MemberLeftModal";
-import RejectJoinModal from "../../helper/modal/RejectJoinModal";
-import { stop } from "../../helper/MusicPlayer";
-import { Ids as SoundIds } from "../../resources/sound";
 import JoinModal from "../../helper/modal/JoinModal";
 import ReadyModal from "../../helper/modal/ReadyModal";
 
@@ -132,7 +129,7 @@ class OnlineGameView extends GameView {
 
         console.log(`Fixed the game! player win: ${onePlayerWins}, opponent wins: ${twoPlayerWins}.`);
 
-        await (<OnlineGame>this.game).release();
+        await this.game.release();
 
         this.to<OnlineEnterParams>(InnerStates.OVER, {
             winner,
