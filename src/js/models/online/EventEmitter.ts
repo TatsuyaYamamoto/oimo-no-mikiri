@@ -3,8 +3,9 @@ abstract class EventEmitter {
 
     public once(eventType: string, callback) {
         const onceCallback = (params) => {
-            callback(params);
             this.off(eventType, onceCallback);
+
+            callback(params);
         };
 
         this.on(eventType, onceCallback);

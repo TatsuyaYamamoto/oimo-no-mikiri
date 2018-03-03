@@ -166,14 +166,16 @@ class TopViewState extends ViewContainer {
             waitingModal.close();
             readyModal.open();
 
-            stop(SoundIds.SOUND_ZENKAI);
+            game.requestReady();
+        });
 
-            setTimeout(() => {
-                readyModal.close();
-                dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                    game
-                });
-            }, 1000)
+        game.once(GameEvents.REQUESTED_START, () => {
+            stop(SoundIds.SOUND_ZENKAI);
+            readyModal.close();
+
+            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                game
+            });
         });
 
         creationModal.close();
@@ -199,18 +201,18 @@ class TopViewState extends ViewContainer {
             joinModal.close();
             readyModal.open();
 
+            game.requestReady();
+        });
+        game.once(GameEvents.REQUESTED_START, () => {
             stop(SoundIds.SOUND_ZENKAI);
+            readyModal.close();
 
-            setTimeout(() => {
-                readyModal.close();
-                dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                    game
-                });
-            }, 1000)
+            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
+                game
+            });
         });
 
         game.join().catch((e) => {
-            console.error(e);
             joinModal.close();
 
             const rejectModal = new RejectJoinModal({

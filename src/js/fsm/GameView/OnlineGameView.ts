@@ -129,8 +129,6 @@ class OnlineGameView extends GameView {
 
         console.log(`Fixed the game! player win: ${onePlayerWins}, opponent wins: ${twoPlayerWins}.`);
 
-        await this.game.release();
-
         this.to<OnlineEnterParams>(InnerStates.OVER, {
             winner,
             bestTime,
@@ -142,33 +140,12 @@ class OnlineGameView extends GameView {
 
     // TODO: check another side's event trigger state.
     private onRestartRequested = () => {
-
-        const gameId = (<OnlineGame> this.game).id;
-        const newGame = new OnlineGame(gameId);
-
-        const joinModal = new JoinModal(gameId);
-        const readyModal = new ReadyModal();
-
-        newGame.on(GameEvents.MEMBER_LEFT, () => {
-            new MemberLeftModal().open();
-            setTimeout(() => location.reload(), 2000);
+        this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
+        this.game.once(GameEvents.REQUESTED_START, () => {
+            this.game.start();
         });
 
-        newGame.once(GameEvents.FULFILLED_MEMBERS, () => {
-            joinModal.close();
-            readyModal.open();
-
-            setTimeout(() => {
-                readyModal.close();
-                dispatchEvent(AppEvents.REQUESTED_GAME_START, {game: newGame});
-            }, 1000)
-        });
-
-        joinModal.open();
-        newGame.join().catch((e) => {
-            // TODO: handle error.
-            console.error(e);
-        })
+        (<OnlineGame>this.game).requestReady();
     };
 }
 
