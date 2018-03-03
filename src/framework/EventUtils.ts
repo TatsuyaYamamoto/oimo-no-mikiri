@@ -26,7 +26,7 @@ const cacheEvents = {};
  */
 export function dispatchEvent(type: string, detail?: object): void {
     if (!cacheEvents.hasOwnProperty(type)) {
-        console.error('Provided event type is not defined.');
+        console.error('Provided event type is not defined.', type);
     }
 
     eventTarget.dispatchEvent(new CustomEvent(type, {detail}));
