@@ -34,6 +34,9 @@ abstract class OverState extends AbstractGameState {
     private _restartButton: RestartButton;
     private _backToTopButton: BackToTopButton;
 
+    // TODO: implements once method
+    private isRestartTapped;
+
     private _resultPaper: Container;
 
     protected get gameOverLogo(): GameOverLogo {
@@ -79,6 +82,8 @@ abstract class OverState extends AbstractGameState {
         this._resultPaper = new Container();
         this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
+        this.isRestartTapped = false;
+
         const paperHeight = this.viewHeight * 0.9;
         const paperWidth = paperHeight * (1 / Math.sqrt(2));
 
@@ -103,6 +108,7 @@ abstract class OverState extends AbstractGameState {
             this._from(this.opponent.winTexture);
         opponentSprite.position.set(paperWidth * 0.2, paperHeight * 0.3);
 
+
         this._resultPaper.addChild(
             calligraphyPaper,
             topTime,
@@ -122,9 +128,6 @@ abstract class OverState extends AbstractGameState {
     onExit(): void {
         super.onExit();
     }
-
-    // TODO: implements once method
-    private isRestartTapped = false;
 
     /**
      *
