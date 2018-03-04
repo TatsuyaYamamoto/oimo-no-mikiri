@@ -6,6 +6,7 @@ import AbstractTopState from "./TopViewState";
 
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
+import SelectMultiPlayModeBoard from "../../../texture/containers/SelectMultiPlayModeBoard";
 
 import Mode from "../../../models/Mode";
 
@@ -20,6 +21,7 @@ import { Ids as SoundIds } from '../../../resources/sound';
 class MenuState extends AbstractTopState {
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
+    private _selectMultiPlayModeBoard: SelectMultiPlayModeBoard;
 
     /**
      * @override
@@ -43,14 +45,20 @@ class MenuState extends AbstractTopState {
         this._menuBoard.setOnSelectHomeListener(this._onSelectHome);
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
-        this._menuBoard.setOnTwoPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
-        this._menuBoard.setOnOnlineGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
+        this._menuBoard.setOnMultiPlayerGameStartClickListener(this._onMultiPlayerSelected);
+        // this._menuBoard.setOnMultiPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
+        // this._menuBoard.setOnOnlineGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
         this._selectLevelBoard = new SelectLevelBoard(this.viewHeight, this.viewHeight);
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectLevelBoard.setOnSelectLevelListener(this._onModeSelected);
+
+        this._selectMultiPlayModeBoard = new SelectMultiPlayModeBoard(this.viewHeight, this.viewHeight);
+        this._selectMultiPlayModeBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+        this._selectMultiPlayModeBoard.onClick("online", (e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
+        this._selectMultiPlayModeBoard.onClick("offline", (e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
 
         this.backGroundLayer.addChild(
             this.background
@@ -105,6 +113,21 @@ class MenuState extends AbstractTopState {
         );
         this.applicationLayer.addChild(
             this._selectLevelBoard,
+        );
+
+        play(SoundIds.SOUND_OK);
+    };
+
+    /**
+     *
+     * @private
+     */
+    private _onMultiPlayerSelected = () => {
+        this.applicationLayer.removeChild(
+            this._menuBoard,
+        );
+        this.applicationLayer.addChild(
+            this._selectMultiPlayModeBoard,
         );
 
         play(SoundIds.SOUND_OK);
