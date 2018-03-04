@@ -211,7 +211,7 @@ class OnlineGame extends Game {
             return;
         }
         console.log(`Received updated members. prev: ${this.members}, updated: ${snapshot.val()}`);
-        
+
         // Leave from the game?
         if (this.members.size === 2 && snapshot.numChildren() !== 2) {
             console.log(`Member left. current: ${Array.from(this.members.keys())}`);

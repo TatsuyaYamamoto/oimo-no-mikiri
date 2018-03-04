@@ -163,7 +163,7 @@ class OnlineBattle extends Battle {
                 } else if (playerAttackTime < opponentAttackTime) {
                     console.log(`False-started by ${Actor.PLAYER}.`);
 
-                    if (this._falseStartMap.has(Actor.PLAYER)) {
+                    if (this.isFalseStarted(Actor.PLAYER)) {
                         console.log(`This battle is fixed with false-start. winner: ${Actor.OPPONENT}.`);
                         this.fix(this.toId(Actor.OPPONENT));
 
@@ -175,7 +175,7 @@ class OnlineBattle extends Battle {
                 } else {
                     console.log(`False-started by ${Actor.OPPONENT}.`);
 
-                    if (this._falseStartMap.has(Actor.OPPONENT)) {
+                    if (this.isFalseStarted(Actor.OPPONENT)) {
                         console.log(`This battle is fixed with false-start. winner: ${Actor.PLAYER}.`);
 
                         this.fix(this.toId(Actor.PLAYER));
@@ -196,11 +196,7 @@ class OnlineBattle extends Battle {
 
         const uid = snapshot.key;
         const actor = this.toActor(uid);
-
-        if (this._falseStartMap.has(actor)) {
-            return;
-        }
-
+        
         this._falseStartMap.set(actor, true);
     };
 
