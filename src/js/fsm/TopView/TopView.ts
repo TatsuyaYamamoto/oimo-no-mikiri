@@ -12,12 +12,11 @@ import MenuState from "./internal/MenuState";
 import OnlineGame, { GameEvents } from "../../models/online/OnlineGame";
 import Mode from "../../models/Mode";
 
-import JoinModal from "../../helper/modal/JoinModal";
 import { stop } from "../../helper/MusicPlayer";
+import JoinModal from "../../helper/modal/JoinModal";
 import ReadyModal from "../../helper/modal/ReadyModal";
 import WaitingJoinModal from "../../helper/modal/WaitingJoinModal";
 import RoomCreationModal from "../../helper/modal/RoomCreationModal";
-import MemberLeftModal from "../../helper/modal/MemberLeftModal";
 import RejectJoinModal from "../../helper/modal/RejectJoinModal";
 
 import { Ids as SoundIds } from "../../resources/sound";

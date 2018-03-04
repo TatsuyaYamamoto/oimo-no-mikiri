@@ -4,8 +4,9 @@ import ViewContainer from "../../../framework/ViewContainer";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 
+import { Events as AppEvents } from "../ApplicationState";
+
 import ReadyState from "./internal/ReadyState";
-import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
 import {
     default as MultiPlayOverState,
     EnterParams as MultiPlayOverStateEnterParams
@@ -22,15 +23,14 @@ import {
     default as SinglePlayActionState,
     EnterParams as SinglePlayActionStateEnterParams
 } from "./internal/ActionState/SinglePlayActionState";
+import ResultState from "./internal/ResultState";
 
 import Actor from "../../models/Actor";
 import { isSingleMode } from "../../models/Game";
-import { BattleEvents } from "../../models/Battle";
-import { default as OnlineGame, GameEvents } from "../../models/online/OnlineGame";
-import LocalGame from "../../models/local/LocalGame";
-import { Events as AppEvents } from "../ApplicationState";
+
 import { Action, Category, trackEvent } from "../../helper/tracker";
 import { play, stop } from "../../helper/MusicPlayer";
+
 import { Ids as SoundIds } from "../../resources/sound";
 
 class LocalGameView extends GameView {
@@ -69,11 +69,8 @@ class LocalGameView extends GameView {
             [Events.BACK_TO_TOP]: this.onBackToTopRequested,
         });
 
-        this.game.on(GameEvents.ROUND_PROCEED, () => {
-            dispatchEvent(Events.REQUEST_READY);
-        });
-
         this.game.start();
+        dispatchEvent(Events.REQUEST_READY);
     }
 
     /**
@@ -160,8 +157,6 @@ class LocalGameView extends GameView {
         } = this.game;
 
         console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
-
-        (<LocalGame>this.game).release();
 
         if (isSingleMode(this.game.mode)) {
             this.to<SinglePlayOverStateEnterParams>(InnerStates.OVER, {

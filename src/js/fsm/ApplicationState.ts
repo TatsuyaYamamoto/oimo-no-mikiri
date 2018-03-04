@@ -11,7 +11,7 @@ import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
 import { toggleMute } from '../helper/MusicPlayer';
-import { isMultiMode } from "../models/Game";
+import { isMultiMode, isOnlineMode } from "../models/Game";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -121,7 +121,7 @@ class ApplicationState extends Application {
     private _handleRequestedGameStartEvent = (e: CustomEvent) => {
         const {game} = e.detail;
 
-        const nextState = isMultiMode(game.mode) ?
+        const nextState = isOnlineMode(game.mode) ?
             InnerStates.ONLINE_GAME :
             InnerStates.GAME;
 
