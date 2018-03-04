@@ -1,6 +1,7 @@
 import StateMachine from "../../../framework/StateMachine";
 import ViewContainer from "../../../framework/ViewContainer";
 import { addEvents, dispatchEvent } from "../../../framework/EventUtils";
+import Deliverable from "../../../framework/Deliverable";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 import ReadyState from "./internal/ReadyState";
@@ -12,11 +13,12 @@ import { GameEvents, default as OnlineGame } from "../../models/online/OnlineGam
 import Actor from "../../models/Actor";
 import { BattleEvents } from "../../models/Battle";
 import { Events as AppEvents } from "../ApplicationState";
+
 import { Action, Category, trackEvent } from "../../helper/tracker";
-import { play, stop } from "../../helper/MusicPlayer";
-import { Ids as SoundIds } from "../../resources/sound";
+import { play, playOnLoop, stop } from "../../helper/MusicPlayer";
 import MemberLeftModal from "../../helper/modal/MemberLeftModal";
-import Deliverable from "../../../framework/Deliverable";
+
+import { Ids as SoundIds } from "../../resources/sound";
 
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -32,6 +34,8 @@ class OnlineGameView extends GameView {
 
     onEnter(params: EnterParams): void {
         super.onEnter(params);
+
+        playOnLoop(SoundIds.SOUND_WAVE_LOOP, 0.2);
 
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
@@ -76,6 +80,7 @@ class OnlineGameView extends GameView {
      */
     onExit(): void | Deliverable {
         this.game.release();
+        stop(SoundIds.SOUND_WAVE_LOOP);
     }
 
     /**
@@ -181,7 +186,6 @@ class OnlineGameView extends GameView {
 
         dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
 
-        stop(SoundIds.SOUND_WAVE_LOOP);
         play(SoundIds.SOUND_CANCEL);
 
         trackEvent(
