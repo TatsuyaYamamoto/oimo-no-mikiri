@@ -210,18 +210,38 @@ class OnlineGame extends Game {
         if (!snapshot.exists()) {
             return;
         }
-        console.log("Received updated members. prev: ",this.members ,"updated: ", snapshot.val());
+
+        const prevMembers = new Map(this.members);
+
+        // Update local members status.
+        this.members.clear();
+        snapshot.forEach((child) => {
+            this.members.set(child.key, child.val());
+            return false; // Keep enumeration
+        });
+
+        const currentMembers = new Map(this.members);
+
+        console.log("Received updated members. prev: ", prevMembers, "current: ", currentMembers);
 
         // Leave from the game?
-        if (this.members.size === 2 && snapshot.numChildren() !== 2) {
-            console.log(`Member left. current: ${Array.from(this.members.keys())}`);
+        if (prevMembers.size === 2 && currentMembers.size !== 2) {
+            console.log("Member left.");
             this.dispatch(GameEvents.MEMBER_LEFT);
         }
 
         // Got fulfilled?
-        if (this.members.size !== 2 && snapshot.numChildren() === 2) {
+        if (prevMembers.size !== 2 && currentMembers.size === 2) {
             console.log(`Game members are fulfilled.`);
             this.dispatch(GameEvents.FULFILLED_MEMBERS);
+
+            // Set disconnect event.
+            const opponentConnectingRef = database().ref(`users/${this.opponentId}/isConnecting`);
+            opponentConnectingRef.on("value", (snapshot: database.DataSnapshot) => {
+                if (snapshot.exists() && !snapshot.val()) {
+                    this.dispatch(GameEvents.MEMBER_LEFT);
+                }
+            });
         }
 
         // Received to request game start?
@@ -241,18 +261,10 @@ class OnlineGame extends Game {
         });
 
         // Is every member ready?
-        const currentMembers = snapshot.val();
-        if (snapshot.numChildren() === 2 &&
-            Object.keys(currentMembers).every((uid) => currentMembers[uid] === true)) {
+        if (currentMembers.size === 2 &&
+            Array.from(currentMembers.values()).every(isReady => isReady)) {
             this.dispatch(GameEvents.IS_READY);
         }
-
-        // Update local members status.
-        this.members.clear();
-        snapshot.forEach((child) => {
-            this.members.set(child.key, child.val());
-            return false; // Keep enumeration
-        });
     };
 
     protected onCurrentRoundUpdated = async (snapshot: database.DataSnapshot) => {
