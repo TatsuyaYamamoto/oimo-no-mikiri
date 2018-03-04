@@ -16,6 +16,7 @@ import { Action, Category, trackEvent } from "../../helper/tracker";
 import { play, stop } from "../../helper/MusicPlayer";
 import { Ids as SoundIds } from "../../resources/sound";
 import MemberLeftModal from "../../helper/modal/MemberLeftModal";
+import Deliverable from "../../../framework/Deliverable";
 
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -48,6 +49,12 @@ class OnlineGameView extends GameView {
         });
 
         this.game.on(GameEvents.MEMBER_LEFT, () => {
+            // Left myself?
+            const ownId = (<OnlineGame>this.game).ownId;
+            if (!(<OnlineGame>this.game).members.has(ownId)) {
+                return;
+            }
+
             const modal = new MemberLeftModal();
             modal.open();
 
@@ -62,6 +69,13 @@ class OnlineGameView extends GameView {
         });
 
         this.game.start();
+    }
+
+    /**
+     * @override
+     */
+    onExit(): void | Deliverable {
+        this.game.release();
     }
 
     /**
@@ -163,7 +177,6 @@ class OnlineGameView extends GameView {
     };
 
     private onBackToTopRequested = () => {
-        this.game.release();
         (<OnlineGame>this.game).leave();
 
         dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
