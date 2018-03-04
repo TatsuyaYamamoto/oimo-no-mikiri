@@ -5,9 +5,11 @@ import Game from "../Game";
 import Battle from "../Battle";
 import Actor from "../Actor";
 import OnlineBattle from "./OnlineBattle";
+import { isUndefined } from "util";
 
 export enum GameEvents {
     REQUESTED_START = "requested_start",
+    IS_READY = "is_ready",
     CREATED = "game_created",
     MEMBER_JOINED = "member_joined",
     FULFILLED_MEMBERS = "fulfilled_members",
@@ -106,13 +108,18 @@ class OnlineGame extends Game {
         }
 
         const {uid} = auth().currentUser;
-        const updates = {};
-        updates[uid] = false;
-
         await this._gameRef.child("members").update({
             [uid]: false,
         });
         await this._gameRef.child(`members/${uid}`).onDisconnect().set(null);
+    }
+
+    public async leave() {
+        const {uid} = auth().currentUser;
+        await this._gameRef.child("members").update({
+            [uid]: null,
+        });
+        await this._gameRef.child(`members/${uid}`).onDisconnect().cancel();
     }
 
     public async requestReady() {
@@ -124,15 +131,16 @@ class OnlineGame extends Game {
 
     public async start(): Promise<void> {
         const now = database.ServerValue.TIMESTAMP;
-
+        const members = (await this._gameRef.child("members").once("value")).val();
         await this.transaction((current) => {
-            if (!current) {
-                return current;
+            if (current && current.currentRound !== 1) {
+                Object.assign(current, {
+                    currentRound: 1,
+                    battles: {},
+                    members,
+                    updatedAt: now,
+                });
             }
-            current.currentRound = 1;
-            current.battles = {};
-            current.updatedAt = now;
-
             return current;
         }, "start_game");
     }
@@ -182,8 +190,10 @@ class OnlineGame extends Game {
             battle.release();
         });
         this._battles.clear();
+        const members = (await this._gameRef.child("members").once("value")).val();
 
         await database().ref(`games/${this.id}`).set({
+            members,
             createdAt: database.ServerValue.TIMESTAMP,
         });
     }
@@ -200,46 +210,49 @@ class OnlineGame extends Game {
         if (!snapshot.exists()) {
             return;
         }
+        console.log(`Received updated members. prev: ${this.members}, updated: ${snapshot.val()}`);
+        
+        // Leave from the game?
+        if (this.members.size === 2 && snapshot.numChildren() !== 2) {
+            console.log(`Member left. current: ${Array.from(this.members.keys())}`);
+            this.dispatch(GameEvents.MEMBER_LEFT);
+        }
 
-        const prevMemberSize = this.members.size;
-        let isEveryPrevMemberReady = true;
-        this.members.forEach((isReady, key) => {
-            if (!isReady) {
-                isEveryPrevMemberReady = false;
+        // Got fulfilled?
+        if (this.members.size !== 2 && snapshot.numChildren() === 2) {
+            console.log(`Game members are fulfilled.`);
+            this.dispatch(GameEvents.FULFILLED_MEMBERS);
+        }
+
+        // Received to request game start?
+        snapshot.forEach((currentMemberSnapshot) => {
+            const uid = currentMemberSnapshot.key;
+
+            const isPrevMemberReady = this.members.get(uid);
+            if (isUndefined(isPrevMemberReady)) {
+                return false; // Go next enumeration element.
             }
+
+            const isReady = currentMemberSnapshot.val();
+            if (!isPrevMemberReady && isReady) {
+                this.dispatch(GameEvents.REQUESTED_START, uid);
+            }
+            return false; // Keep enumeration
         });
 
+        // Is every member ready?
+        const currentMembers = snapshot.val();
+        if (snapshot.numChildren() === 2 &&
+            Object.keys(currentMembers).every((uid) => currentMembers[uid] === true)) {
+            this.dispatch(GameEvents.IS_READY);
+        }
+
         // Update local members status.
+        this.members.clear();
         snapshot.forEach((child) => {
             this.members.set(child.key, child.val());
             return false; // Keep enumeration
         });
-
-        if (prevMemberSize !== 2 && this.members.size === 2) {
-            console.log(`Game members are fulfilled.`);
-
-            const opponentConnectingRef = database().ref(`users/${this.opponentId}/isConnecting`);
-            opponentConnectingRef.on("value", (snapshot: database.DataSnapshot) => {
-                if (snapshot.exists() && !snapshot.val()) {
-                    this.dispatch(GameEvents.MEMBER_LEFT);
-                }
-            });
-
-
-            this.dispatch(GameEvents.FULFILLED_MEMBERS);
-        }
-
-        if (this.members.size === 2) {
-            let isEveryMemberReady = true;
-            this.members.forEach((isReady, key) => {
-                if (!isReady) {
-                    isEveryMemberReady = false;
-                }
-            });
-            if (!isEveryPrevMemberReady && isEveryMemberReady) {
-                this.dispatch(GameEvents.REQUESTED_START);
-            }
-        }
     };
 
     protected onCurrentRoundUpdated = async (snapshot: database.DataSnapshot) => {
@@ -249,7 +262,6 @@ class OnlineGame extends Game {
 
         const prevRound = this._currentRound;
         const nextRound = snapshot.val();
-        console.error("onCurrentRoundUpdated", prevRound, nextRound)
         const nextBattle = new OnlineBattle({
             gameId: this._id,
             round: nextRound,

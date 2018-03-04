@@ -12,9 +12,9 @@ import { GameEvents, default as OnlineGame } from "../../models/online/OnlineGam
 import Actor from "../../models/Actor";
 import { BattleEvents } from "../../models/Battle";
 import { Events as AppEvents } from "../ApplicationState";
-import MemberLeftModal from "../../helper/modal/MemberLeftModal";
-import JoinModal from "../../helper/modal/JoinModal";
-import ReadyModal from "../../helper/modal/ReadyModal";
+import { Action, Category, trackEvent } from "../../helper/tracker";
+import { play, stop } from "../../helper/MusicPlayer";
+import { Ids as SoundIds } from "../../resources/sound";
 
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -43,6 +43,7 @@ class OnlineGameView extends GameView {
             [Events.ATTACK]: this.onAttacked,
             [Events.FIXED_RESULT]: this.onResultFixed,
             [Events.RESTART_GAME]: this.onRestartRequested,
+            [Events.BACK_TO_TOP]: this.onBackToTopRequested,
         });
 
         this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
@@ -141,11 +142,26 @@ class OnlineGameView extends GameView {
     // TODO: check another side's event trigger state.
     private onRestartRequested = () => {
         this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
-        this.game.once(GameEvents.REQUESTED_START, () => {
+        this.game.once(GameEvents.IS_READY, () => {
             this.game.start();
         });
 
         (<OnlineGame>this.game).requestReady();
+    };
+
+    private onBackToTopRequested = () => {
+        this.game.release();
+        (<OnlineGame>this.game).leave();
+
+        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
+
+        stop(SoundIds.SOUND_WAVE_LOOP);
+        play(SoundIds.SOUND_CANCEL);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "back_to_menu");
     };
 }
 

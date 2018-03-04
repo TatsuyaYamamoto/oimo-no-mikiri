@@ -4,6 +4,12 @@ import PlayerWins from "../../../../texture/containers/GameResultPaper/PlayerWin
 import TweetButton from "../../../../texture/sprite/button/TweetButton";
 
 import Actor from "../../../../models/Actor";
+import { dispatchEvent } from "../../../../../framework/EventUtils";
+import { Events as AppEvents } from "../../../ApplicationState";
+import { Action, Category, trackEvent } from "../../../../helper/tracker";
+import { play, stop } from "../../../../helper/MusicPlayer";
+import { Ids as SoundIds } from "../../../../resources/sound";
+import { Events } from "../../GameView";
 
 export interface EnterParams extends AbstractEnterParams {
     onePlayerWins: number;

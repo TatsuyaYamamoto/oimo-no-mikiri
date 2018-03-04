@@ -169,7 +169,7 @@ class TopViewState extends ViewContainer {
             game.requestReady();
         });
 
-        game.once(GameEvents.REQUESTED_START, () => {
+        game.once(GameEvents.IS_READY, () => {
             stop(SoundIds.SOUND_ZENKAI);
             readyModal.close();
 
@@ -203,7 +203,7 @@ class TopViewState extends ViewContainer {
 
             game.requestReady();
         });
-        game.once(GameEvents.REQUESTED_START, () => {
+        game.once(GameEvents.IS_READY, () => {
             stop(SoundIds.SOUND_ZENKAI);
             readyModal.close();
 

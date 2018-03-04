@@ -152,17 +152,9 @@ abstract class OverState extends AbstractGameState {
      *
      * @private
      */
-    private _onClickBackToTopButton = () => {
+    protected _onClickBackToTopButton = () => {
         // prevent to propagate to invoke tap event on title view.
-        setTimeout(() => dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP), 1);
-
-        stop(SoundIds.SOUND_WAVE_LOOP);
-        play(SoundIds.SOUND_CANCEL);
-
-        trackEvent(
-            Category.BUTTON,
-            Action.TAP,
-            "back_to_menu");
+        setTimeout(() => dispatchEvent(Events.BACK_TO_TOP), 1);
     };
 
     private _trackAchievementToGa = (bestTime: number, mode: Mode, winner: Actor) => {

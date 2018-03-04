@@ -24,6 +24,7 @@ export enum Events {
     ATTACK = 'GameView@ATTACK',
     FIXED_RESULT = 'GameView@FIXED_RESULT',
     RESTART_GAME = 'GameView@RESTART_GAME',
+    BACK_TO_TOP = 'GameView@BACK_TO_TOP',
 }
 
 export interface EnterParams extends Deliverable {

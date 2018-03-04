@@ -28,6 +28,10 @@ import { isSingleMode } from "../../models/Game";
 import { BattleEvents } from "../../models/Battle";
 import { default as OnlineGame, GameEvents } from "../../models/online/OnlineGame";
 import LocalGame from "../../models/local/LocalGame";
+import { Events as AppEvents } from "../ApplicationState";
+import { Action, Category, trackEvent } from "../../helper/tracker";
+import { play, stop } from "../../helper/MusicPlayer";
+import { Ids as SoundIds } from "../../resources/sound";
 
 class LocalGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -62,6 +66,7 @@ class LocalGameView extends GameView {
             [Events.ATTACK]: this.onAttacked,
             [Events.FIXED_RESULT]: this._onFixedResult,
             [Events.RESTART_GAME]: this._onRequestedRestart,
+            [Events.BACK_TO_TOP]: this.onBackToTopRequested,
         });
 
         this.game.on(GameEvents.ROUND_PROCEED, () => {
@@ -204,6 +209,18 @@ class LocalGameView extends GameView {
     private _onRequestedRestart = () => {
         this.game.start();
         dispatchEvent(Events.REQUEST_READY);
+    };
+
+    private onBackToTopRequested = () => {
+        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
+
+        stop(SoundIds.SOUND_WAVE_LOOP);
+        play(SoundIds.SOUND_CANCEL);
+
+        trackEvent(
+            Category.BUTTON,
+            Action.TAP,
+            "back_to_menu");
     };
 }
 
