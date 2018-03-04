@@ -2,6 +2,8 @@ import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
 
+import { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
+
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 
@@ -14,9 +16,13 @@ import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
 import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
-import { trackPageView, VirtualPageViews } from "../../helper/tracker";
-
 import Game, { isSingleMode } from '../../models/Game';
+import { BattleEvents } from "../../models/Battle";
+
+import { trackPageView, VirtualPageViews } from "../../helper/tracker";
+import { play } from "../../helper/MusicPlayer";
+
+import { Ids as SoundIds } from "../../resources/sound";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
@@ -103,6 +109,33 @@ abstract class GameView extends ViewContainer {
             this._opponent = new Ruby();
         }
     }
+    protected onAttacked = (e: CustomEvent) => {
+        const {attacker, attackTime} = e.detail;
+
+        const offEvents = () => {
+            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
+            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
+            this.game.currentBattle.off(BattleEvents.DRAW);
+        };
+
+        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
+            offEvents();
+            play(SoundIds.SOUND_ATTACK);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
+        });
+        this.game.currentBattle.on(BattleEvents.FALSE_STARTED, (winner) => {
+            offEvents();
+            play(SoundIds.SOUND_FALSE_START);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
+        });
+        this.game.currentBattle.on(BattleEvents.DRAW, () => {
+            offEvents();
+            play(SoundIds.SOUND_DRAW);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT);
+        });
+
+        this.game.currentBattle.attack(attacker, attackTime);
+    };
 
     /**
      *

@@ -147,31 +147,6 @@ class LocalGameView extends GameView {
         }
     };
 
-    protected onAttacked = (e: CustomEvent) => {
-        const {attacker, attackTime} = e.detail;
-
-        const offEvents = () => {
-            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
-            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
-            this.game.currentBattle.off(BattleEvents.DRAW);
-        };
-
-        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
-            offEvents();
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
-        });
-        this.game.currentBattle.on(BattleEvents.FALSE_STARTED, (winner) => {
-            offEvents();
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
-        });
-        this.game.currentBattle.on(BattleEvents.DRAW, () => {
-            offEvents();
-            this.to<ResultStateEnterParams>(InnerStates.RESULT);
-        });
-
-        this.game.currentBattle.attack(attacker, attackTime);
-    };
-
     /**
      *
      * @private
