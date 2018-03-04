@@ -136,6 +136,7 @@ class TopViewState extends ViewContainer {
                     this.createGame();
                 break;
             default:
+                stop(SoundIds.SOUND_ZENKAI);
                 dispatchEvent(AppEvents.REQUESTED_GAME_START, {
                     game: new LocalGame(mode)
                 });

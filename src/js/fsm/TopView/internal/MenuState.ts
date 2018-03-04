@@ -9,15 +9,12 @@ import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
 
 import Mode from "../../../models/Mode";
 
-import { play, stop, toggleMute } from "../../../helper/MusicPlayer";
+import { play, toggleMute } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
-import RoomCreationModal from "../../../helper/modal/RoomCreationModal";
-import WaitingJoinModal from "../../../helper/modal/WaitingJoinModal";
 
 import { URL } from '../../../Constants';
 import { Ids as SoundIds } from '../../../resources/sound';
-import { requestCreateGame } from "../../../helper/firebase";
 
 
 class MenuState extends AbstractTopState {
@@ -134,7 +131,6 @@ class MenuState extends AbstractTopState {
     };
 
     private _onModeSelected = (e, mode: Mode) => {
-        stop(SoundIds.SOUND_ZENKAI);
         play(SoundIds.SOUND_OK);
 
         dispatchEvent(Events.FIXED_PLAY_MODE, {mode});

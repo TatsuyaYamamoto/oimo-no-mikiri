@@ -210,7 +210,7 @@ class OnlineGame extends Game {
         if (!snapshot.exists()) {
             return;
         }
-        console.log(`Received updated members. prev: ${this.members}, updated: ${snapshot.val()}`);
+        console.log("Received updated members. prev: ",this.members ,"updated: ", snapshot.val());
 
         // Leave from the game?
         if (this.members.size === 2 && snapshot.numChildren() !== 2) {
