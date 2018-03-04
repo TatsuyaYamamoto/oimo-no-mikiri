@@ -35,8 +35,6 @@ class OnlineGameView extends GameView {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        playOnLoop(SoundIds.SOUND_WAVE_LOOP, 0.2);
-
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
             [InnerStates.ACTION]: new OnlineActionState(this),
@@ -79,8 +77,9 @@ class OnlineGameView extends GameView {
      * @override
      */
     onExit(): void | Deliverable {
+        super.onExit();
+
         this.game.release();
-        stop(SoundIds.SOUND_WAVE_LOOP);
     }
 
     /**

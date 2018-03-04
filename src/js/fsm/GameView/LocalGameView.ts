@@ -48,7 +48,6 @@ class LocalGameView extends GameView {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-
         this._gameStateMachine = new StateMachine({
             [InnerStates.READY]: new ReadyState(this),
             [InnerStates.ACTION]: isSingleMode(this.game.mode) ?

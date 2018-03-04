@@ -20,7 +20,7 @@ import Game, { isSingleMode } from '../../models/Game';
 import { BattleEvents } from "../../models/Battle";
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
-import { play } from "../../helper/MusicPlayer";
+import { play, playOnLoop, stop } from "../../helper/MusicPlayer";
 
 import { Ids as SoundIds } from "../../resources/sound";
 
@@ -91,6 +91,8 @@ abstract class GameView extends ViewContainer {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
+        playOnLoop(SoundIds.SOUND_WAVE_LOOP, 0.2);
+
         // Tracking
         trackPageView(VirtualPageViews.GAME);
 
@@ -109,6 +111,16 @@ abstract class GameView extends ViewContainer {
             this._opponent = new Ruby();
         }
     }
+
+    /**
+     * @override
+     */
+    onExit(): void | Deliverable {
+        super.onExit();
+
+        stop(SoundIds.SOUND_WAVE_LOOP);
+    }
+
     protected onAttacked = (e: CustomEvent) => {
         const {attacker, attackTime} = e.detail;
 
