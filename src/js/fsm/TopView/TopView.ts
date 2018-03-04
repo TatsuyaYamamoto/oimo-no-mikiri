@@ -152,11 +152,6 @@ class TopViewState extends ViewContainer {
 
         const game = await OnlineGame.create();
         game.join();
-        game.on(GameEvents.MEMBER_LEFT, () => {
-            new MemberLeftModal().open();
-            setTimeout(() => location.reload(), 2000);
-        });
-
         const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
 
         const waitingModal = new WaitingJoinModal(url);
@@ -193,10 +188,6 @@ class TopViewState extends ViewContainer {
         joinModal.open();
 
         const game = new OnlineGame(gameId);
-        game.on(GameEvents.MEMBER_LEFT, () => {
-            new MemberLeftModal().open();
-            setTimeout(() => location.reload(), 2000);
-        });
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
             joinModal.close();
             readyModal.open();

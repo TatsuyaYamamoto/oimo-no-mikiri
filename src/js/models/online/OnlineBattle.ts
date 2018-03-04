@@ -196,7 +196,7 @@ class OnlineBattle extends Battle {
 
         const uid = snapshot.key;
         const actor = this.toActor(uid);
-        
+
         this._falseStartMap.set(actor, true);
     };
 

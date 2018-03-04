@@ -15,6 +15,7 @@ import { Events as AppEvents } from "../ApplicationState";
 import { Action, Category, trackEvent } from "../../helper/tracker";
 import { play, stop } from "../../helper/MusicPlayer";
 import { Ids as SoundIds } from "../../resources/sound";
+import MemberLeftModal from "../../helper/modal/MemberLeftModal";
 
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -46,7 +47,19 @@ class OnlineGameView extends GameView {
             [Events.BACK_TO_TOP]: this.onBackToTopRequested,
         });
 
-        this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
+        this.game.on(GameEvents.MEMBER_LEFT, () => {
+            const modal = new MemberLeftModal();
+            modal.open();
+
+            setTimeout(() => {
+                modal.close();
+                dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
+            }, 2000);
+        });
+
+        this.game.once(GameEvents.ROUND_PROCEED, () => {
+            this._onRequestedReady();
+        });
 
         this.game.start();
     }
