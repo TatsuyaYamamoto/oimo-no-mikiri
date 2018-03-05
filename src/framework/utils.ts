@@ -76,9 +76,17 @@ export function copyTextToClipboard(text): boolean {
 
     document.body.appendChild(copyFrom);
 
-    copyFrom.select();
+    copyFrom.focus();
+    copyFrom.setSelectionRange(0, text.length);
+
     const isSucceed = document.execCommand("copy");
-    !isSucceed && console.error(`Failed to copy to clipboard. taget: ${text}`);
+
+    if (isSucceed) {
+        console.log(`Succeed to copy to clipboard. target: ${text}`);
+    } else {
+        console.error(`Failed to copy to clipboard.  target: ${text}`);
+
+    }
 
     document.body.removeChild(copyFrom);
 
