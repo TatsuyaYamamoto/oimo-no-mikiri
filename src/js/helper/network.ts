@@ -1,14 +1,14 @@
 /**
  * @fileOverview convenience functions related to network, WebAPI and browser location.
  */
-import {t} from '../../framework/i18n';
-import {getRandomInteger} from "../../framework/utils";
+import { t } from '../../framework/i18n';
+import { getRandomInteger } from "../../framework/utils";
 
 import Mode from "../models/Mode";
 import Actor from "../models/Actor";
 
-import {Ids as StringIds} from '../resources/string';
-import {APP_SERVER_BASE_URL, URL} from '../Constants';
+import { Ids as StringIds } from '../resources/string';
+import { APP_SERVER_BASE_URL, URL } from '../Constants';
 
 /**
  * Convenience function to change browser location.
@@ -81,4 +81,47 @@ export function postPlayLog(bestTime: number, mode: Mode, straightWins: number):
         },
         body: JSON.stringify({point})
     })
+}
+
+
+export function showTweetView(text: string, url?: string) {
+    // TODO Support URL scheme.
+
+    tweetByWebIntent({
+        text,
+        url,
+        hashtags: ["おいものみきり", "そこんところ工房"],
+    })
+}
+
+/**
+ * @see https://dev.twitter.com/web/tweet-button/web-intent
+ */
+type webIntentParams = {
+    text?: string;
+    url?: string;
+    hashtags?: string[];
+    via?: string;
+}
+
+let WindowObjectReference = null;
+
+/**
+ * @see https://dev.twitter.com/web/tweet-button/web-intent
+ */
+export function tweetByWebIntent(params: webIntentParams) {
+    const endpoint = "https://twitter.com/intent/tweet";
+    const hashtags = encodeURIComponent(params.hashtags.join(","));
+    const text = encodeURIComponent(params.text);
+    const url = encodeURIComponent(params.url);
+
+    const intentUrl = `${endpoint}?text=${text}&url=${url}&hashtags=${hashtags}`;
+
+    console.log(intentUrl);
+
+    if(!WindowObjectReference|| WindowObjectReference.closed) {
+        WindowObjectReference = window.open(intentUrl, "TwitterIntentWindowName", );
+    } else {
+        WindowObjectReference.focus();
+    }
 }

@@ -2,6 +2,7 @@ import { copyTextToClipboard } from "../../framework/utils";
 
 import SweetAlert from "sweetalert2";
 import * as tippy from "tippy.js";
+import { showTweetView } from "./network";
 
 export function closeModal() {
     SweetAlert.close();
@@ -9,39 +10,43 @@ export function closeModal() {
 
 export function openCreateRoomModal(url: string) {
     const alert = SweetAlert({
-        title: "ルームを作成します！",
+        title: "ルームを作成しました。",
+        text: `招待用URLからゲームにアクセスすることで、対戦が行えます。`,
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
     });
-    const alertActions = document.querySelectorAll(".swal2-actions")[0];
-    alertActions.setAttribute("style", "display: flex;");
-    alertActions.innerHTML = `
-        <button class="swal2-confirm swal2-styled" id="button-create-room-copy-url" title="I'm a tooltip!">URLをコピーする</button>
-        <button class="swal2-confirm swal2-styled" id="button-create-room-tweet">ツイートする</button>
-        <button class="swal2-cancel swal2-styled"  id="button-create-room-cancel">キャンセル</button>
-    `;
 
-    const copyButton = document.createElement("button");
-    copyButton.classList.add("swal2-styled", "swal2-confirm");
+    const baseButton = document.createElement("button");
+    baseButton.classList.add("swal2-styled");
+    baseButton.style.cssText = "padding: 0.4em;";
+
+    const copyButton = <HTMLButtonElement>baseButton.cloneNode();
+    copyButton.textContent = "URLをコピーする";
+    copyButton.classList.add("swal2-confirm");
     copyButton.addEventListener("click", () => {
         copyTextToClipboard(url);
     });
 
-    const tweetButton = document.getElementById("button-create-room-tweet");
+    const tweetButton = <HTMLButtonElement>baseButton.cloneNode();
+    tweetButton.textContent = "Twitterで招待する";
+    tweetButton.classList.add("swal2-confirm");
     tweetButton.addEventListener("click", () => {
-        const url = "http://example.com/";
-        window.open(url);
+        showTweetView("ゲームしよう！", url);
     });
 
-    const cancelButton = document.getElementById("button-create-room-cancel");
+    const cancelButton = <HTMLButtonElement>baseButton.cloneNode();
+    cancelButton.textContent = "キャンセル";
+    cancelButton.classList.add("swal2-cancel");
     cancelButton.addEventListener("click", () => {
         closeModal();
     });
 
-    (<HTMLDivElement>document.querySelectorAll(".swal2-styled").item(0)).style.cssText = `
-        margin: 10px;
-    `;
+    const alertActions = document.querySelectorAll(".swal2-actions")[0];
+    alertActions.setAttribute("style", "display: flex;");
+    alertActions.appendChild(copyButton);
+    alertActions.appendChild(tweetButton);
+    alertActions.appendChild(cancelButton);
 
     tippy("#button-create-room-copy-url", {
         trigger: "click",

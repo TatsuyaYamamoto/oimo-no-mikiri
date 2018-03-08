@@ -5,18 +5,17 @@ import Deliverable from "../../../framework/Deliverable";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 import ReadyState from "./internal/ReadyState";
-import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
+import ResultState from "./internal/ResultState";
 import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
 import OnlineOverState, { EnterParams as OnlineEnterParams } from "./internal/OverState/OnlineOverState";
 
 import { GameEvents, default as OnlineGame } from "../../models/online/OnlineGame";
 import Actor from "../../models/Actor";
-import { BattleEvents } from "../../models/Battle";
 import { Events as AppEvents } from "../ApplicationState";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
-import { play, playOnLoop, stop } from "../../helper/MusicPlayer";
-import MemberLeftModal from "../../helper/modal/MemberLeftModal";
+import { play } from "../../helper/MusicPlayer";
+import { closeModal, openMemberLeftModal } from "../../helper/modals";
 
 import { Ids as SoundIds } from "../../resources/sound";
 
@@ -57,11 +56,11 @@ class OnlineGameView extends GameView {
                 return;
             }
 
-            const modal = new MemberLeftModal();
-            modal.open();
+            openMemberLeftModal();
 
             setTimeout(() => {
-                modal.close();
+                closeModal();
+
                 dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
             }, 2000);
         });

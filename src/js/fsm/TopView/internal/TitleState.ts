@@ -10,14 +10,10 @@ import { Events } from "../TopView";
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import { play, playOnLoop, stop } from "../../../helper/MusicPlayer";
+import { play, playOnLoop } from "../../../helper/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
-import { requestJoinGame } from "../../../helper/firebase";
 
-import OnlineGame from "../../../models/online/OnlineGame";
 import Mode from "../../../models/Mode";
-import JoinModal from "../../../helper/modal/JoinModal";
-import ReadyModal from "../../../helper/modal/ReadyModal";
 
 import { Ids as SoundIds } from '../../../resources/sound';
 import { Ids as StringIds } from '../../../resources/string';

@@ -11,16 +11,19 @@ import MenuState from "./internal/MenuState";
 
 import OnlineGame, { GameEvents } from "../../models/online/OnlineGame";
 import Mode from "../../models/Mode";
+import LocalGame from "../../models/local/LocalGame";
 
 import { stop } from "../../helper/MusicPlayer";
-import JoinModal from "../../helper/modal/JoinModal";
-import ReadyModal from "../../helper/modal/ReadyModal";
-import WaitingJoinModal from "../../helper/modal/WaitingJoinModal";
-import RoomCreationModal from "../../helper/modal/RoomCreationModal";
-import RejectJoinModal from "../../helper/modal/RejectJoinModal";
 
 import { Ids as SoundIds } from "../../resources/sound";
-import LocalGame from "../../models/local/LocalGame";
+
+import {
+    closeModal,
+    openCreateRoomModal,
+    openJoinRoomModal,
+    openReadyRoomModal,
+    openRejectJoinRoomModal
+} from "../../helper/modals";
 
 export enum Events {
     TAP_TITLE = 'GameView@TAP_TITLE',
@@ -147,34 +150,23 @@ class TopViewState extends ViewContainer {
      *
      */
     private createGame = async () => {
-        const creationModal = new RoomCreationModal();
-        creationModal.open();
-
         const game = await OnlineGame.create();
         game.join();
-        const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
-
-        const waitingModal = new WaitingJoinModal(url);
-        const readyModal = new ReadyModal();
-
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
-            waitingModal.close();
-            readyModal.open();
-
+            openReadyRoomModal();
             game.requestReady();
         });
 
         game.once(GameEvents.IS_READY, () => {
             stop(SoundIds.SOUND_ZENKAI);
-            readyModal.close();
-
-            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                game
-            });
+            console.error("colose!!!");
+            closeModal();
+            setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
 
-        creationModal.close();
-        waitingModal.open();
+        const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
+
+        openCreateRoomModal(url);
     };
 
     /**
@@ -182,34 +174,26 @@ class TopViewState extends ViewContainer {
      * @param {string} gameId
      */
     private joinGame = (gameId: string) => {
-        const joinModal = new JoinModal(gameId);
-        const readyModal = new ReadyModal();
-
-        joinModal.open();
+        openJoinRoomModal(gameId);
 
         const game = new OnlineGame(gameId);
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
-            joinModal.close();
-            readyModal.open();
-
+            openReadyRoomModal();
             game.requestReady();
         });
         game.once(GameEvents.IS_READY, () => {
             stop(SoundIds.SOUND_ZENKAI);
-            readyModal.close();
-
-            dispatchEvent(AppEvents.REQUESTED_GAME_START, {
-                game
-            });
+            closeModal();
+            setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
 
         game.join().catch((e) => {
-            joinModal.close();
+            openRejectJoinRoomModal(gameId);
 
-            const rejectModal = new RejectJoinModal({
-                onClose: () => this._to(InnerStates.TITLE)
-            });
-            rejectModal.open();
+            setTimeout(() => {
+                closeModal();
+                this._to(InnerStates.TITLE);
+            }, 2000);
         })
     };
 
