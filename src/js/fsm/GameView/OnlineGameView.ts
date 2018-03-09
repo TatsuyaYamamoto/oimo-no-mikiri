@@ -147,7 +147,8 @@ class OnlineGameView extends GameView {
             }
 
             const result = await openRestartConfirmModal();
-            if(result){
+
+            if (result.value) {
                 this.game.once(GameEvents.IS_READY, () => {
                     closeModal();
                     setTimeout(() => this.game.start(), 0);
@@ -158,7 +159,7 @@ class OnlineGameView extends GameView {
                 });
 
                 (<OnlineGame>this.game).requestReady();
-            }else{
+            } else {
                 this.onBackToTopRequested();
             }
         });
