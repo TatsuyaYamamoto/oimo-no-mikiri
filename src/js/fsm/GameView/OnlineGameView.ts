@@ -15,7 +15,12 @@ import { Events as AppEvents } from "../ApplicationState";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
 import { play } from "../../helper/MusicPlayer";
-import { closeModal, openMemberLeftModal } from "../../helper/modals";
+import {
+    closeModal,
+    openMemberLeftModal,
+    openRestartConfirmModal,
+    openWaitingRestartModal
+} from "../../helper/modals";
 
 import { Ids as SoundIds } from "../../resources/sound";
 
@@ -135,6 +140,29 @@ class OnlineGameView extends GameView {
 
         console.log(`Fixed the game! player win: ${onePlayerWins}, opponent wins: ${twoPlayerWins}.`);
 
+        this.game.once(GameEvents.REQUESTED_START, async (requestedUserId) => {
+            if ((<OnlineGame>this.game).ownId === requestedUserId) {
+                // Ignore own request.
+                return;
+            }
+
+            const result = await openRestartConfirmModal();
+            if(result){
+                this.game.once(GameEvents.IS_READY, () => {
+                    closeModal();
+                    setTimeout(() => this.game.start(), 0);
+                });
+
+                this.game.once(GameEvents.ROUND_PROCEED, () => {
+                    this._onRequestedReady();
+                });
+
+                (<OnlineGame>this.game).requestReady();
+            }else{
+                this.onBackToTopRequested();
+            }
+        });
+
         this.to<OnlineEnterParams>(InnerStates.OVER, {
             winner,
             bestTime,
@@ -145,10 +173,16 @@ class OnlineGameView extends GameView {
     };
 
     // TODO: check another side's event trigger state.
-    private onRestartRequested = () => {
-        this.game.once(GameEvents.ROUND_PROCEED, this._onRequestedReady);
+    private onRestartRequested = async () => {
+        openWaitingRestartModal();
+
         this.game.once(GameEvents.IS_READY, () => {
-            this.game.start();
+            closeModal();
+            setTimeout(() => this.game.start(), 0);
+        });
+
+        this.game.once(GameEvents.ROUND_PROCEED, () => {
+            this._onRequestedReady();
         });
 
         (<OnlineGame>this.game).requestReady();

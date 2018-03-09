@@ -86,6 +86,25 @@ export function openRejectJoinRoomModal(roomId) {
     });
 }
 
+export function openWaitingRestartModal(){
+    return SweetAlert({
+        title: `対戦相手をまちますお`,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
+}
+
+export function openRestartConfirmModal(){
+    return SweetAlert({
+        title: `対戦相手が`,
+        showConfirmButton: true,
+        showCancelButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
+}
+
 export function openMemberLeftModal() {
     return SweetAlert({
         title: `メンバーがルームを退出しました。タイトル画面に戻ります。`,
