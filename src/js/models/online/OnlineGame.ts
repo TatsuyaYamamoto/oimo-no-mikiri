@@ -245,19 +245,17 @@ class OnlineGame extends Game {
         }
 
         // Received to request game start?
-        snapshot.forEach((currentMemberSnapshot) => {
-            const uid = currentMemberSnapshot.key;
+        this.members.forEach((isReady, uid) => {
 
-            const isPrevMemberReady = this.members.get(uid);
+            const isPrevMemberReady = prevMembers.get(uid);
             if (isUndefined(isPrevMemberReady)) {
-                return false; // Go next enumeration element.
+                return;
             }
 
-            const isReady = currentMemberSnapshot.val();
             if (!isPrevMemberReady && isReady) {
+                console.log(`Request starting game by ${uid}`);
                 this.dispatch(GameEvents.REQUESTED_START, uid);
             }
-            return false; // Keep enumeration
         });
 
         // Is every member ready?
