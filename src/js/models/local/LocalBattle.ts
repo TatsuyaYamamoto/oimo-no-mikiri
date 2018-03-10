@@ -38,14 +38,14 @@ class LocalBattle extends Battle {
                 this._winner = winner;
                 this.fix(winner);
 
-                this.dispatch(BattleEvents.FALSE_STARTED, winner);
+                this.dispatch(BattleEvents.FALSE_STARTED, {winner, attacker: actor});
             } else {
                 this._falseStartMap.set(actor, true);
 
                 // recreate for next battle.
                 this._signalTime = this.createSignalTime();
 
-                this.dispatch(BattleEvents.FALSE_STARTED);
+                this.dispatch(BattleEvents.FALSE_STARTED, {attacker: actor});
             }
 
         } else {

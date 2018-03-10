@@ -5,7 +5,7 @@ import Deliverable from "../../../framework/Deliverable";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 import ReadyState from "./internal/ReadyState";
-import ResultState from "./internal/ResultState";
+import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
 import OnlineActionState, { EnterParams as ActionEnterParams } from "./internal/ActionState/OnlineActionState";
 import OnlineOverState, { EnterParams as OnlineEnterParams } from "./internal/OverState/OnlineOverState";
 
@@ -20,6 +20,9 @@ import {
     openRestartConfirmModal,
     openWaitingRestartModal
 } from "../../helper/modals";
+import { Ids as SoundIds } from "../../resources/sound";
+import { play } from "../../helper/MusicPlayer";
+import { BattleEvents } from "../../models/Battle";
 
 @AutoBind
 class OnlineGameView extends GameView {
@@ -109,6 +112,28 @@ class OnlineGameView extends GameView {
             twoPlayer: this.game.getWins(Actor.OPPONENT),
         };
 
+        const offEvents = () => {
+            this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
+            this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
+            this.game.currentBattle.off(BattleEvents.DRAW);
+        };
+
+        this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
+            offEvents();
+            play(SoundIds.SOUND_ATTACK);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
+        });
+        this.game.currentBattle.on(BattleEvents.FALSE_STARTED, ({winner, attacker}) => {
+            offEvents();
+            play(SoundIds.SOUND_FALSE_START);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
+        });
+        this.game.currentBattle.on(BattleEvents.DRAW, () => {
+            offEvents();
+            play(SoundIds.SOUND_DRAW);
+            this.to<ResultStateEnterParams>(InnerStates.RESULT);
+        });
+
         this.to<ActionEnterParams>(InnerStates.ACTION, {
             signalTime,
             isFalseStarted,
@@ -180,7 +205,7 @@ class OnlineGameView extends GameView {
      * @param {CustomEvent} e
      * @override
      */
-    protected onAttacked(e: CustomEvent){
+    protected onAttacked(e: CustomEvent) {
         super.onAttacked(e);
     }
 

@@ -167,10 +167,13 @@ class OnlineBattle extends Battle {
                         console.log(`This battle is fixed with false-start. winner: ${Actor.OPPONENT}.`);
                         this.fix(this.toId(Actor.OPPONENT));
 
-                        this.dispatch(BattleEvents.FALSE_STARTED, Actor.OPPONENT);
+                        this.dispatch(BattleEvents.FALSE_STARTED, {
+                            winner: Actor.OPPONENT,
+                            attacker: actor
+                        });
                     } else {
                         this.falseStart(Actor.PLAYER);
-                        this.dispatch(BattleEvents.FALSE_STARTED);
+                        this.dispatch(BattleEvents.FALSE_STARTED, {attacker: actor});
                     }
                 } else {
                     console.log(`False-started by ${Actor.OPPONENT}.`);
@@ -179,10 +182,13 @@ class OnlineBattle extends Battle {
                         console.log(`This battle is fixed with false-start. winner: ${Actor.PLAYER}.`);
 
                         this.fix(this.toId(Actor.PLAYER));
-                        this.dispatch(BattleEvents.FALSE_STARTED, Actor.PLAYER);
+                        this.dispatch(BattleEvents.FALSE_STARTED, {
+                            winner: Actor.PLAYER,
+                            attacker: actor
+                        });
                     } else {
                         this.falseStart(Actor.OPPONENT);
-                        this.dispatch(BattleEvents.FALSE_STARTED);
+                        this.dispatch(BattleEvents.FALSE_STARTED, {attacker: actor});
                     }
                 }
             }
