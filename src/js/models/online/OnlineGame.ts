@@ -40,6 +40,7 @@ class OnlineGame extends Game {
         await ref.set({
             createdAt: database.ServerValue.TIMESTAMP,
         });
+        ref.onDisconnect().set(null);
 
         return new OnlineGame(gameId);
     }
@@ -262,6 +263,9 @@ class OnlineGame extends Game {
         if (prevMembers.size !== 2 && currentMembers.size === 2) {
             console.log(`Game members are fulfilled.`);
             this.dispatch(GameEvents.FULFILLED_MEMBERS);
+
+            // After fulfilled, this game resource remove event is member left.
+            this._gameRef.onDisconnect().cancel();
 
             // Set disconnect event.
             const opponentConnectingRef = database().ref(`users/${this.opponentId}/isConnecting`);
