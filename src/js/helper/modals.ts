@@ -23,7 +23,9 @@ export function openCreateRoomModal(url: string) {
 
     const copyButton = <HTMLButtonElement>baseButton.cloneNode();
     copyButton.textContent = "URLをコピーする";
+    copyButton.id = "button-create-room-copy-url";
     copyButton.classList.add("swal2-confirm");
+    copyButton.setAttribute("title","コピーが完了しました");
     copyButton.addEventListener("click", () => {
         copyTextToClipboard(url);
     });
