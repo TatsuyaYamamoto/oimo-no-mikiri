@@ -97,6 +97,8 @@ abstract class ViewContainer extends Container implements State {
     onExit(): void | Deliverable {
         console.log(`${this.constructor.name}@onExit`);
 
+        this.stateMachine.current && this.stateMachine.current.onExit();
+
         this.backGroundLayer.removeChildren();
         this.applicationLayer.removeChildren();
         this.informationLayer.removeChildren();

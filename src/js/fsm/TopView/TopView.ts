@@ -155,7 +155,6 @@ class TopViewState extends ViewContainer {
 
         game.once(GameEvents.IS_READY, () => {
             stop(SoundIds.SOUND_ZENKAI);
-            console.error("colose!!!");
             closeModal();
             setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
