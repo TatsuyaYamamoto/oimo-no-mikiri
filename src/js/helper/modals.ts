@@ -10,7 +10,7 @@ export function closeModal() {
 
 export function openCreateRoomModal(url: string) {
     const alert = SweetAlert({
-        title: "ルームを作成しました。",
+        title: "ルームを作成しました！",
         text: `招待用URLからゲームにアクセスすることで、対戦が行えます。`,
         showConfirmButton: false,
         allowOutsideClick: false,
@@ -61,7 +61,8 @@ export function openCreateRoomModal(url: string) {
 
 export function openJoinRoomModal(roomId) {
     return SweetAlert({
-        title: `${roomId}に参加します`,
+        title: `ゲームに参加します！`,
+        text: `ID: ${roomId}`,
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -77,27 +78,38 @@ export function openReadyRoomModal() {
     });
 }
 
-export function openRejectJoinRoomModal(roomId) {
+export function openRejectJoinRoomModal(type) {
+    let text = "予期しないエラーが発生してしまいました。";
+
+    switch (type) {
+        case "already_fulfilled":
+            text = "対戦メンバーが決定済みのため、ゲームに参加できませんでした。";
+            break;
+        case "no_game":
+            text = "作成されていない、または削除済みのゲームでした。";
+            break;
+    }
+
     return SweetAlert({
-        title: `${roomId}に参加できませんでした`,
+        text,
+        showConfirmButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
+}
+
+export function openWaitingRestartModal() {
+    return SweetAlert({
+        title: `対戦相手を入力待っています！`,
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
     });
 }
 
-export function openWaitingRestartModal(){
+export function openRestartConfirmModal() {
     return SweetAlert({
-        title: `対戦相手をまちますお`,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-    });
-}
-
-export function openRestartConfirmModal(){
-    return SweetAlert({
-        title: `対戦相手が`,
+        title: `対戦相手がもう1度ゲームを始めようとしています！`,
         showConfirmButton: true,
         showCancelButton: true,
         allowOutsideClick: false,
@@ -107,8 +119,9 @@ export function openRestartConfirmModal(){
 
 export function openMemberLeftModal() {
     return SweetAlert({
-        title: `メンバーがルームを退出しました。タイトル画面に戻ります。`,
-        showConfirmButton: false,
+        title: `メンバーがルームを退出しました！`,
+        text: "タイトル画面に戻ります。",
+        showConfirmButton: true,
         allowOutsideClick: false,
         allowEscapeKey: false,
     });

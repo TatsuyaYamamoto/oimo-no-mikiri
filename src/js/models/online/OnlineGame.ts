@@ -28,8 +28,6 @@ class OnlineGame extends Game {
         this._members = new Map<string, boolean>();
 
         this._gameRef = database().ref(`/games/${this._id}`);
-        this._gameRef.child("members").on("value", this.onMemberUpdated);
-        this._gameRef.child("currentRound").on("value", this.onCurrentRoundUpdated);
     }
 
     /************************************************************************************
@@ -98,20 +96,51 @@ class OnlineGame extends Game {
      * Status change methods
      */
 
-    public async join() {
-        // TODO validate current member state
-
-        const membersSnapshot: database.DataSnapshot = await this._gameRef.child("members").once("value");
-
-        if (3 <= membersSnapshot.numChildren()) {
-            throw new Error("Provided game is already fulfilled.");
-        }
-
+    public join() {
         const {uid} = auth().currentUser;
-        await this._gameRef.child("members").update({
-            [uid]: false,
+
+        const checkGameExistPromise = (gameSnapshot) => new Promise((resolve, reject) => {
+            if (gameSnapshot.exists()) {
+                resolve();
+            } else {
+                reject("no_game");
+            }
         });
-        await this._gameRef.child(`members/${uid}`).onDisconnect().set(null);
+
+        const joinInTransaction = () => this.transaction(function (current) {
+            if (!current) {
+                return current;
+            }
+
+            if (!current.members || Object.keys(current.members).length < 2) {
+                current.members = Object.assign({}, current.members, {
+                    [uid]: false,
+                });
+            }
+
+            return current;
+
+        }, "join_game");
+
+        const checkFulfilledMemberPromise = ({committed, snapshot}) => new Promise((resolve, reject) => {
+            if (snapshot.hasChild(`members/${uid}`)) {
+                resolve();
+            } else {
+                reject("already_fulfilled");
+            }
+        });
+
+        return Promise.resolve()
+            .then(() => this._gameRef.once("value"))
+            .then(checkGameExistPromise)
+            .then(() => this._gameRef.child("members").once("value"))
+            .then(joinInTransaction)
+            .then(checkFulfilledMemberPromise)
+            .then(() => {
+                this._gameRef.child("members").on("value", this.onMemberUpdated);
+                this._gameRef.child("currentRound").on("value", this.onCurrentRoundUpdated);
+                this._gameRef.child(`members/${uid}`).onDisconnect().set(null);
+            });
     }
 
     public async leave() {

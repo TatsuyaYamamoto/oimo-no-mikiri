@@ -183,13 +183,9 @@ class TopViewState extends ViewContainer {
             setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
 
-        game.join().catch((e) => {
-            openRejectJoinRoomModal(gameId);
+        game.join().catch((type) => {
+            openRejectJoinRoomModal(type);
 
-            setTimeout(() => {
-                closeModal();
-                this.to(InnerStates.TITLE);
-            }, 2000);
         })
     };
 }
