@@ -1,3 +1,5 @@
+import AutoBind from "autobind-decorator";
+
 import ViewContainer from "../../../framework/ViewContainer";
 import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
@@ -40,16 +42,15 @@ enum InnerStates {
     CREDIT = "credit",
 }
 
+@AutoBind
 class TopViewState extends ViewContainer {
-    private _topStateMachine: StateMachine<ViewContainer>;
-
     /**
      * @override
      */
     update(elapsedTime: number): void {
         super.update(elapsedTime);
 
-        this._topStateMachine.update(elapsedTime);
+        this.stateMachine.update(elapsedTime);
     }
 
     /**
@@ -58,7 +59,7 @@ class TopViewState extends ViewContainer {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this._topStateMachine = new StateMachine({
+        this.stateMachine = new StateMachine({
             [InnerStates.TITLE]: new TitleState(),
             [InnerStates.MENU]: new MenuState(),
             [InnerStates.HOW_TO_PLAY]: new HowToPlayState(),
@@ -66,14 +67,14 @@ class TopViewState extends ViewContainer {
         });
 
         addEvents({
-            [Events.TAP_TITLE]: this._handleTapTitleEvent,
-            [Events.REQUEST_BACK_TO_MENU]: this._handleRequestBackMenuEvent,
-            [Events.REQUEST_HOW_TO_PLAY]: this._handleRequestHowToPlayEvent,
-            [Events.REQUEST_CREDIT]: this._handleRequestCredit,
-            [Events.FIXED_PLAY_MODE]: this._handleFixedPlayModeEvent,
+            [Events.TAP_TITLE]: this.handleTapTitleEvent,
+            [Events.REQUEST_BACK_TO_MENU]: this.handleRequestBackMenuEvent,
+            [Events.REQUEST_HOW_TO_PLAY]: this.handleRequestHowToPlayEvent,
+            [Events.REQUEST_CREDIT]: this.handleRequestCredit,
+            [Events.FIXED_PLAY_MODE]: this.handleFixedPlayModeEvent,
         });
 
-        this._to(InnerStates.TITLE);
+        this.to(InnerStates.TITLE);
     }
 
     /**
@@ -92,41 +93,39 @@ class TopViewState extends ViewContainer {
 
     /**
      *
-     * @private
      */
-    private _handleTapTitleEvent = () => {
-        this._to(InnerStates.MENU);
+    private handleTapTitleEvent = () => {
+        this.to(InnerStates.MENU);
+    };
+
+    /**
+     *
+     */
+    private handleRequestHowToPlayEvent = () => {
+        this.to(InnerStates.HOW_TO_PLAY);
     };
 
     /**
      *
      * @private
      */
-    private _handleRequestHowToPlayEvent = () => {
-        this._to(InnerStates.HOW_TO_PLAY);
+    private handleRequestBackMenuEvent = () => {
+        this.to(InnerStates.MENU);
     };
 
     /**
      *
      * @private
      */
-    private _handleRequestBackMenuEvent = () => {
-        this._to(InnerStates.MENU);
+    private handleRequestCredit = () => {
+        this.to(InnerStates.CREDIT);
     };
 
     /**
      *
      * @private
      */
-    private _handleRequestCredit = () => {
-        this._to(InnerStates.CREDIT);
-    };
-
-    /**
-     *
-     * @private
-     */
-    private _handleFixedPlayModeEvent = (e: CustomEvent) => {
+    private handleFixedPlayModeEvent = (e: CustomEvent) => {
         const {mode, gameId} = e.detail;
         console.log("Fixed play mode: ", mode);
 
@@ -192,16 +191,10 @@ class TopViewState extends ViewContainer {
 
             setTimeout(() => {
                 closeModal();
-                this._to(InnerStates.TITLE);
+                this.to(InnerStates.TITLE);
             }, 2000);
         })
     };
-
-    private _to = (stateTag: string) => {
-        this._topStateMachine.change(stateTag);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this._topStateMachine.current);
-    }
 }
 
 export default TopViewState;

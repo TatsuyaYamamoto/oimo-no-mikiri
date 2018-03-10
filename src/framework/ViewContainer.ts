@@ -1,10 +1,11 @@
-import {Container, DisplayObject} from 'pixi.js';
+import { Container, DisplayObject } from 'pixi.js';
 
 import State from "./State";
 import Deliverable from "./Deliverable";
 
 import config from "./config";
-import {isSupportTouchEvent} from "./utils";
+import { isSupportTouchEvent } from "./utils";
+import StateMachine from "./StateMachine";
 
 /**
  * A Container represents a collection of basic containers; {@link this#backGroundLayer},
@@ -13,6 +14,8 @@ import {isSupportTouchEvent} from "./utils";
  * @class
  */
 abstract class ViewContainer extends Container implements State {
+    protected stateMachine: StateMachine<ViewContainer>;
+
     private _backGroundLayer: Container;
     private _applicationLayer: Container;
     private _informationLayer: Container;
@@ -164,6 +167,21 @@ abstract class ViewContainer extends Container implements State {
      */
     public removeChildren(beginIndex?: number, endIndex?: number): DisplayObject[] {
         return super.removeChildren(beginIndex, endIndex);
+    }
+
+    /**
+     *
+     * @param {string} stateTag
+     * @param {T} params
+     */
+    protected to<T>(stateTag: string, params?: T) {
+        if (!this.stateMachine) {
+            return;
+        }
+
+        this.stateMachine.change(stateTag, params);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this.stateMachine.current);
     }
 }
 

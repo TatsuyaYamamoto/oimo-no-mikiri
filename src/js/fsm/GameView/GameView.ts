@@ -1,5 +1,4 @@
 import ViewContainer from "../../../framework/ViewContainer";
-import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
 
 import { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
@@ -72,8 +71,6 @@ abstract class GameView extends ViewContainer {
         }
     }
 
-    protected abstract get gameStateMachine(): StateMachine<ViewContainer>;
-
     public get game(): Game {
         return this._game;
     }
@@ -84,7 +81,7 @@ abstract class GameView extends ViewContainer {
      */
     update(elapsedTime: number): void {
         super.update(elapsedTime);
-        this.gameStateMachine.update(elapsedTime);
+        this.stateMachine.update(elapsedTime);
     }
 
     /**
@@ -158,19 +155,6 @@ abstract class GameView extends ViewContainer {
         stop(SoundIds.SOUND_WAVE_LOOP);
         play(SoundIds.SOUND_CANCEL);
     };
-
-    /**
-     *
-     *
-     * @param {string} stateTag
-     * @param {T} params
-     * @private
-     */
-    protected to = <T>(stateTag: string, params?: T): void => {
-        this.gameStateMachine.change(stateTag, params);
-        this.applicationLayer.removeChildren();
-        this.applicationLayer.addChild(this.gameStateMachine.current);
-    }
 }
 
 export default GameView;
