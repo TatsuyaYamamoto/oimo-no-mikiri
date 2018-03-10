@@ -10,7 +10,7 @@ import LocalGameView from "./GameView/LocalGameView";
 import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
-import { toggleMute } from '../helper/MusicPlayer';
+import { toggleSound } from '../helper/MusicPlayer';
 import { isOnlineMode } from "../models/Game";
 
 export enum Events {
@@ -61,8 +61,8 @@ class ApplicationState extends Application {
         });
 
         window.addEventListener('resize', this.onResize);
-        window.addEventListener('blur', toggleMute);
-        window.addEventListener('focus', toggleMute);
+        window.addEventListener('blur', this.turnSoundOff);
+        window.addEventListener('focus', this.turnSoundOn);
 
         this.to(InnerStates.INITIAL);
     }
@@ -75,8 +75,8 @@ class ApplicationState extends Application {
             Events.INITIALIZED,
         ]);
         window.removeEventListener('resize', this.onResize);
-        window.removeEventListener('blur', toggleMute);
-        window.removeEventListener('focus', toggleMute);
+        window.removeEventListener('blur', this.turnSoundOff);
+        window.removeEventListener('focus', this.turnSoundOn);
     }
 
     /**
@@ -104,7 +104,6 @@ class ApplicationState extends Application {
 
     /**
      *
-     * @private
      */
     private handleInitializedEvent() {
         this.to(InnerStates.TOP);
@@ -112,7 +111,6 @@ class ApplicationState extends Application {
 
     /**
      *
-     * @private
      */
     private handleRequestedGameStartEvent(e: CustomEvent) {
         const {game} = e.detail;
@@ -126,11 +124,18 @@ class ApplicationState extends Application {
 
     /**
      *
-     * @private
      */
     private handleRequestedBackToTopEvent() {
         this.to(InnerStates.TOP);
     };
+
+    private turnSoundOn(){
+        toggleSound("on");
+    }
+
+    private turnSoundOff(){
+        toggleSound("off");
+    }
 }
 
 export default ApplicationState;

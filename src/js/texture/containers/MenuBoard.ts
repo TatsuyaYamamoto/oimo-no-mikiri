@@ -1,7 +1,7 @@
-import {Container, interaction} from 'pixi.js';
+import { Container, interaction } from 'pixi.js';
 
-import {loadTexture} from "../../../framework/AssetLoader";
-import {isSupportTouchEvent} from "../../../framework/utils";
+import { loadTexture } from "../../../framework/AssetLoader";
+import { isSupportTouchEvent } from "../../../framework/utils";
 
 import Sprite from "../internal/Sprite";
 import Button from "../internal/Button";
@@ -11,7 +11,7 @@ import SelectCharacterButton from "../sprite/button/SelectCharacterButton";
 import HomeButton from "../sprite/button/HomeButton";
 import SoundButton from "../sprite/button/SoundButton";
 
-import {Ids} from "../../resources/image";
+import { Ids } from "../../resources/image";
 
 /**
  * @class
@@ -35,6 +35,10 @@ class MenuBoard extends Container {
     private _howToPlayButton: HowToPlayButton;
     private _creditButton: CreditButton;
     private _selectCharacterButton: SelectCharacterButton;
+
+    public get soundButton(): SoundButton {
+        return this._soundButton;
+    }
 
     constructor(width: number, height: number) {
         super();

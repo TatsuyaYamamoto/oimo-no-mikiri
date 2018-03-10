@@ -1,3 +1,5 @@
+import AutoBind from "autobind-decorator";
+
 import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 
@@ -10,14 +12,14 @@ import SelectMultiPlayModeBoard from "../../../texture/containers/SelectMultiPla
 
 import Mode from "../../../models/Mode";
 
-import { play, toggleMute } from "../../../helper/MusicPlayer";
+import { play, toggleSound } from "../../../helper/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
 
 import { URL } from '../../../Constants';
 import { Ids as SoundIds } from '../../../resources/sound';
 
-
+@AutoBind
 class MenuState extends AbstractTopState {
     private _menuBoard: MenuBoard;
     private _selectLevelBoard: SelectLevelBoard;
@@ -46,8 +48,6 @@ class MenuState extends AbstractTopState {
         this._menuBoard.setOnSelectSoundListener(this._onToggleSound);
         this._menuBoard.setOnOnePlayerGameStartClickListener(this._onOnePlayerSelected);
         this._menuBoard.setOnMultiPlayerGameStartClickListener(this._onMultiPlayerSelected);
-        // this._menuBoard.setOnMultiPlayerGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
-        // this._menuBoard.setOnOnlineGameStartClickListener((e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
         this._menuBoard.setOnSelectHowToPlayListener(this._onSelectHowToPlay);
         this._menuBoard.setOnSelectCreditListener(this._onSelectCredit);
 
@@ -66,7 +66,10 @@ class MenuState extends AbstractTopState {
 
         this.applicationLayer.addChild(
             this._menuBoard,
-        )
+        );
+
+        window.addEventListener('blur', this.turnSoundOff);
+        window.addEventListener('focus', this.turnSoundOn);
     }
 
     /**
@@ -74,6 +77,9 @@ class MenuState extends AbstractTopState {
      */
     onExit(): void {
         super.onExit();
+
+        window.removeEventListener('blur', this.turnSoundOff);
+        window.removeEventListener('focus', this.turnSoundOn);
     }
 
     /**
@@ -95,7 +101,7 @@ class MenuState extends AbstractTopState {
      */
     private _onToggleSound = () => {
         play(SoundIds.SOUND_TOGGLE_SOUND);
-        toggleMute();
+        toggleSound();
 
         trackEvent(
             Category.BUTTON,
@@ -159,6 +165,14 @@ class MenuState extends AbstractTopState {
         dispatchEvent(Events.FIXED_PLAY_MODE, {mode});
 
         trackEvent(Category.BUTTON, Action.TAP, mode);
+    };
+
+    private turnSoundOn(){
+        this._menuBoard.soundButton.turnOn();
+    }
+
+    private turnSoundOff(){
+        this._menuBoard.soundButton.turnOff();
     }
 }
 
