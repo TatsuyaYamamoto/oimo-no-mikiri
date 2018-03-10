@@ -40,7 +40,6 @@ class OnlineGame extends Game {
         await ref.set({
             createdAt: database.ServerValue.TIMESTAMP,
         });
-        ref.onDisconnect().set(null);
 
         return new OnlineGame(gameId);
     }
@@ -143,6 +142,12 @@ class OnlineGame extends Game {
             });
     }
 
+
+    public async remove() {
+        await this.release();
+        await this._gameRef.set(null);
+    }
+
     public async leave() {
         const {uid} = auth().currentUser;
         await this._gameRef.child("members").update({
@@ -219,12 +224,6 @@ class OnlineGame extends Game {
             battle.release();
         });
         this._battles.clear();
-        const members = (await this._gameRef.child("members").once("value")).val();
-
-        await database().ref(`games/${this.id}`).set({
-            members,
-            createdAt: database.ServerValue.TIMESTAMP,
-        });
     }
 
     /************************************************************************************

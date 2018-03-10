@@ -49,6 +49,7 @@ class OnlineGameView extends GameView {
             }
 
             openMemberLeftModal();
+            (<OnlineGame>this.game).remove();
 
             setTimeout(() => {
                 closeModal();
