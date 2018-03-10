@@ -1,3 +1,5 @@
+import AutoBind from "autobind-decorator";
+
 import StateMachine from "../../../framework/StateMachine";
 import ViewContainer from "../../../framework/ViewContainer";
 import { addEvents, dispatchEvent } from "../../../framework/EventUtils";
@@ -14,7 +16,6 @@ import Actor from "../../models/Actor";
 import { Events as AppEvents } from "../ApplicationState";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
-import { play } from "../../helper/MusicPlayer";
 import {
     closeModal,
     openMemberLeftModal,
@@ -22,8 +23,7 @@ import {
     openWaitingRestartModal
 } from "../../helper/modals";
 
-import { Ids as SoundIds } from "../../resources/sound";
-
+@AutoBind
 class OnlineGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
 
@@ -173,7 +173,6 @@ class OnlineGameView extends GameView {
         });
     };
 
-    // TODO: check another side's event trigger state.
     private onRestartRequested = async () => {
         openWaitingRestartModal();
 
@@ -189,12 +188,21 @@ class OnlineGameView extends GameView {
         (<OnlineGame>this.game).requestReady();
     };
 
-    private onBackToTopRequested = () => {
+    /**
+     * @param {CustomEvent} e
+     * @override
+     */
+    protected onAttacked(e: CustomEvent){
+        super.onAttacked(e);
+    }
+
+    /**
+     * @override
+     */
+    protected onBackToTopRequested() {
+        super.onBackToTopRequested();
+
         (<OnlineGame>this.game).leave();
-
-        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
-
-        play(SoundIds.SOUND_CANCEL);
 
         trackEvent(
             Category.BUTTON,

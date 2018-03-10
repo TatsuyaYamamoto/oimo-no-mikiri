@@ -4,8 +4,6 @@ import ViewContainer from "../../../framework/ViewContainer";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 
-import { Events as AppEvents } from "../ApplicationState";
-
 import ReadyState from "./internal/ReadyState";
 import {
     default as MultiPlayOverState,
@@ -29,9 +27,6 @@ import Actor from "../../models/Actor";
 import { isSingleMode } from "../../models/Game";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
-import { play, stop } from "../../helper/MusicPlayer";
-
-import { Ids as SoundIds } from "../../resources/sound";
 
 class LocalGameView extends GameView {
     private _gameStateMachine: StateMachine<ViewContainer>;
@@ -180,11 +175,11 @@ class LocalGameView extends GameView {
         dispatchEvent(Events.REQUEST_READY);
     };
 
-    private onBackToTopRequested = () => {
-        dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP);
-
-        stop(SoundIds.SOUND_WAVE_LOOP);
-        play(SoundIds.SOUND_CANCEL);
+    /**
+     * @override
+     */
+    protected onBackToTopRequested() {
+        super.onBackToTopRequested();
 
         trackEvent(
             Category.BUTTON,

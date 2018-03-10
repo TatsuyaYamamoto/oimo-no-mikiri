@@ -5,7 +5,6 @@ import { dispatchEvent } from "../../../../../framework/EventUtils";
 
 import AbstractGameState from "../GameViewState";
 import { Events } from '../../GameView';
-import { Events as AppEvents } from '../../../ApplicationState';
 
 import RestartButton from "../../../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../../../texture/sprite/button/BackToTopButton";
@@ -153,8 +152,7 @@ abstract class OverState extends AbstractGameState {
      * @private
      */
     protected _onClickBackToTopButton = () => {
-        // prevent to propagate to invoke tap event on title view.
-        setTimeout(() => dispatchEvent(Events.BACK_TO_TOP), 1);
+        dispatchEvent(Events.BACK_TO_TOP);
     };
 
     private _trackAchievementToGa = (bestTime: number, mode: Mode, winner: Actor) => {

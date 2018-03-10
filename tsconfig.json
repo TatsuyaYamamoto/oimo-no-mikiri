@@ -5,6 +5,7 @@
     "lib": [
       "dom",
       "es2015"
-    ]
+    ],
+    "experimentalDecorators": true
   }
 }

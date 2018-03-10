@@ -23,6 +23,8 @@ import { trackPageView, VirtualPageViews } from "../../helper/tracker";
 import { play, playOnLoop, stop } from "../../helper/MusicPlayer";
 
 import { Ids as SoundIds } from "../../resources/sound";
+import { dispatchEvent } from "../../../framework/EventUtils";
+import { Events as AppEvents } from "../ApplicationState";
 
 export enum Events {
     REQUEST_READY = 'GameView@REQUEST_READY',
@@ -121,7 +123,7 @@ abstract class GameView extends ViewContainer {
         stop(SoundIds.SOUND_WAVE_LOOP);
     }
 
-    protected onAttacked = (e: CustomEvent) => {
+    protected onAttacked(e: CustomEvent) {
         const {attacker, attackTime} = e.detail;
 
         const offEvents = () => {
@@ -147,6 +149,14 @@ abstract class GameView extends ViewContainer {
         });
 
         this.game.currentBattle.attack(attacker, attackTime);
+    };
+
+    protected onBackToTopRequested() {
+        // prevent to propagate to invoke tap event on title view.
+        setTimeout(() => dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP), 1);
+
+        stop(SoundIds.SOUND_WAVE_LOOP);
+        play(SoundIds.SOUND_CANCEL);
     };
 
     /**
