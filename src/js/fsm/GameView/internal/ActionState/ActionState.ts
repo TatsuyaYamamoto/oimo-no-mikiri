@@ -1,6 +1,5 @@
 import { dispatchEvent } from "../../../../../framework/EventUtils";
 import Deliverable from "../../../../../framework/Deliverable";
-import { getRandomInteger } from "../../../../../framework/utils";
 
 import AbstractGameState from "../GameViewState";
 import { Events } from "../../GameView";
@@ -13,8 +12,6 @@ import Actor from '../../../../models/Actor';
 import { play } from "../../../../helper/MusicPlayer";
 
 import { Ids as SoundIds } from '../../../../resources/sound';
-
-import { GAME_PARAMETERS } from '../../../../Constants';
 
 export interface EnterParams extends Deliverable {
     signalTime: number,

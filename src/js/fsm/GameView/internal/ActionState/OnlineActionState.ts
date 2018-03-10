@@ -1,7 +1,10 @@
+import * as anime from 'animejs'
+
 import ActionState, { EnterParams as ActionEnterParams } from "./ActionState";
 import * as Mousetrap from "mousetrap";
 import BattleStatusBoard from "../../../../texture/containers/label/BattleStatusBoard";
 import Actor from "../../../../models/Actor";
+import PlayCharaIndicateLabel from "../../../../texture/containers/PlayCharaIndicateLabel";
 
 export interface EnterParams extends ActionEnterParams {
     battleLeft: number,
@@ -10,16 +13,10 @@ export interface EnterParams extends ActionEnterParams {
 }
 
 class OnlineActionState extends ActionState {
-    private _battleStatusBoard: BattleStatusBoard;
-    private _playerAttachAreaRange: number;
-
-    protected get battleStatusBoard(): BattleStatusBoard {
-        return this._battleStatusBoard;
-    }
-
-    protected get playerAttachAreaRange(): number {
-        return this._playerAttachAreaRange;
-    }
+    private battleStatusBoard: BattleStatusBoard;
+    private playerCharaIndicateLabel: PlayCharaIndicateLabel;
+    private opponentCharaIndicateLabel: PlayCharaIndicateLabel;
+    private playerAttachAreaRange: number;
 
     /**
      * @override
@@ -37,13 +34,19 @@ class OnlineActionState extends ActionState {
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._playerAttachAreaRange = window.innerWidth / 2;
+        this.playerAttachAreaRange = window.innerWidth / 2;
 
-        this._battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
-        this._battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
-        this._battleStatusBoard.battleLeft = params.battleLeft;
-        this._battleStatusBoard.onePlayerWins = params.wins.onePlayer;
-        this._battleStatusBoard.twoPlayerWins = params.wins.twoPlayer;
+        this.battleStatusBoard = new BattleStatusBoard(this.viewWidth, this.viewHeight);
+        this.battleStatusBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.12);
+        this.battleStatusBoard.battleLeft = params.battleLeft;
+        this.battleStatusBoard.onePlayerWins = params.wins.onePlayer;
+        this.battleStatusBoard.twoPlayerWins = params.wins.twoPlayer;
+
+        this.playerCharaIndicateLabel = new PlayCharaIndicateLabel("あなた");
+        this.playerCharaIndicateLabel.position.set(this.viewWidth * 0.3, this.viewHeight * 0.25);
+
+        this.opponentCharaIndicateLabel = new PlayCharaIndicateLabel("あいて");
+        this.opponentCharaIndicateLabel.position.set(this.viewWidth * 0.7, this.viewHeight * 0.25);
 
         this.backGroundLayer.addChild(
             this.background,
@@ -56,10 +59,31 @@ class OnlineActionState extends ActionState {
             this.opponentFalseStartCheck,
             this.signalSprite,
             this.battleStatusBoard,
+            this.playerCharaIndicateLabel,
+            this.opponentCharaIndicateLabel,
         );
 
         Mousetrap.bind('a', () => {
             this.onAttacked(Actor.PLAYER);
+        });
+
+        // Fade out player and opponent indicate label.
+        const values = {
+            playerAlpha: 1,
+            opponentAlpha: 1,
+        };
+
+        anime({
+            easing: 'linear',
+            delay: 700,
+            duration: 1000,
+            targets: values,
+            playerAlpha: 0,
+            opponentAlpha: 0,
+            update: () => {
+                this.playerCharaIndicateLabel.alpha = values.playerAlpha;
+                this.opponentCharaIndicateLabel.alpha = values.opponentAlpha;
+            },
         });
     }
 
