@@ -1,6 +1,6 @@
-import StateMachine from "../../../framework/StateMachine";
+import AutoBind from "autobind-decorator";
+
 import { addEvents, dispatchEvent, removeEvents } from "../../../framework/EventUtils";
-import ViewContainer from "../../../framework/ViewContainer";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 
@@ -28,22 +28,13 @@ import { isSingleMode } from "../../models/Game";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
 
+@AutoBind
 class LocalGameView extends GameView {
-    private _gameStateMachine: StateMachine<ViewContainer>;
-
-    /**
-     *
-     * @return {StateMachine<ViewContainer>}
-     * @override
-     */
-    protected get gameStateMachine(): StateMachine<ViewContainer> {
-        return this._gameStateMachine;
-    }
 
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._gameStateMachine = new StateMachine({
+        this.stateMachine.set({
             [InnerStates.READY]: new ReadyState(this),
             [InnerStates.ACTION]: isSingleMode(this.game.mode) ?
                 new SinglePlayActionState(this) :
@@ -55,11 +46,11 @@ class LocalGameView extends GameView {
         });
 
         addEvents({
-            [Events.REQUEST_READY]: this._onRequestedReady,
-            [Events.IS_READY]: this._onReady,
+            [Events.REQUEST_READY]: this.onRequestedReady,
+            [Events.IS_READY]: this.onReady,
             [Events.ATTACK]: this.onAttacked,
-            [Events.FIXED_RESULT]: this._onFixedResult,
-            [Events.RESTART_GAME]: this._onRequestedRestart,
+            [Events.FIXED_RESULT]: this.onFixedResult,
+            [Events.RESTART_GAME]: this.onRequestedRestart,
             [Events.BACK_TO_TOP]: this.onBackToTopRequested,
         });
 
@@ -86,7 +77,7 @@ class LocalGameView extends GameView {
      *
      * @private
      */
-    private _onRequestedReady = () => {
+    protected onRequestedReady(){
         if (this.game.isFixed()) {
             dispatchEvent(Events.FIXED_RESULT);
             return;
@@ -105,9 +96,8 @@ class LocalGameView extends GameView {
 
     /**
      *
-     * @private
      */
-    private _onReady = () => {
+    protected onReady(){
         const signalTime = this.game.currentBattle.signalTime;
         const isFalseStarted = {
             player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
@@ -140,9 +130,8 @@ class LocalGameView extends GameView {
 
     /**
      *
-     * @private
      */
-    private _onFixedResult = () => {
+    protected onFixedResult() {
         const {
             bestTime,
             winner,
@@ -170,10 +159,14 @@ class LocalGameView extends GameView {
         }
     };
 
-    private _onRequestedRestart = () => {
+    protected onRequestedRestart() {
         this.game.start();
         dispatchEvent(Events.REQUEST_READY);
     };
+
+    protected onAttacked(e: CustomEvent) {
+        super.onAttacked(e);
+    }
 
     /**
      * @override

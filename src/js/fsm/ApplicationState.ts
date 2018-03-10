@@ -1,10 +1,8 @@
 import AutoBind from "autobind-decorator";
 
 import Application from "../../framework/Application";
-import StateMachine from "../../framework/StateMachine";
 import { getCurrentViewSize, getScale } from "../../framework/utils";
 import { addEvents, removeEvents } from '../../framework/EventUtils';
-import ViewContainer from "../../framework/ViewContainer";
 
 import InitialViewState from "./InitialView";
 import { EnterParams as GameViewEnterParams } from "./GameView/GameView";
@@ -30,8 +28,6 @@ enum InnerStates {
 
 @AutoBind
 class ApplicationState extends Application {
-    private viewStateMachine: StateMachine<ViewContainer>;
-
     constructor() {
         super(getCurrentViewSize());
     }
@@ -40,7 +36,7 @@ class ApplicationState extends Application {
      * @override
      */
     update(elapsedTime: number): void {
-        this.viewStateMachine.update(elapsedTime);
+        this.stateMachine.update(elapsedTime);
     }
 
     /**
@@ -51,7 +47,7 @@ class ApplicationState extends Application {
         this.updateStageScale();
 
         // TODO create instance each changing state.
-        this.viewStateMachine = new StateMachine({
+        this.stateMachine.set({
             [InnerStates.INITIAL]: new InitialViewState(),
             [InnerStates.TOP]: new TopViewState(),
             [InnerStates.GAME]: new LocalGameView(),
@@ -90,18 +86,6 @@ class ApplicationState extends Application {
         this.updateRendererSize();
         this.updateStageScale();
     };
-
-    /**
-     *
-     *
-     * @param {string} stateTag
-     * @param {T} params
-     */
-    protected to = <T>(stateTag: string, params?: T): void => {
-        this.viewStateMachine.change(stateTag, params);
-        this.stage.removeChildren();
-        this.stage.addChild(this.viewStateMachine.current);
-    }
 
     /**
      *

@@ -1,7 +1,5 @@
 import AutoBind from "autobind-decorator";
 
-import StateMachine from "../../../framework/StateMachine";
-import ViewContainer from "../../../framework/ViewContainer";
 import { addEvents, dispatchEvent } from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
 
@@ -25,21 +23,10 @@ import {
 
 @AutoBind
 class OnlineGameView extends GameView {
-    private _gameStateMachine: StateMachine<ViewContainer>;
-
-    /**
-     *
-     * @return {StateMachine<ViewContainer>}
-     * @override
-     */
-    protected get gameStateMachine(): StateMachine<ViewContainer> {
-        return this._gameStateMachine;
-    }
-
     onEnter(params: EnterParams): void {
         super.onEnter(params);
 
-        this._gameStateMachine = new StateMachine({
+        this.stateMachine.set({
             [InnerStates.READY]: new ReadyState(this),
             [InnerStates.ACTION]: new OnlineActionState(this),
             [InnerStates.RESULT]: new ResultState(this),

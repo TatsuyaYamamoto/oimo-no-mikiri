@@ -14,7 +14,7 @@ import StateMachine from "./StateMachine";
  * @class
  */
 abstract class ViewContainer extends Container implements State {
-    protected stateMachine: StateMachine<ViewContainer>;
+    private _stateMachine: StateMachine<ViewContainer>;
 
     private _backGroundLayer: Container;
     private _applicationLayer: Container;
@@ -27,6 +27,8 @@ abstract class ViewContainer extends Container implements State {
 
     constructor() {
         super();
+
+        this._stateMachine = new StateMachine<ViewContainer>();
 
         this._backGroundLayer = new Container();
         this._applicationLayer = new Container();
@@ -53,6 +55,10 @@ abstract class ViewContainer extends Container implements State {
 
     protected get elapsedTimeMillis(): number {
         return this._elapsedTimeMillis;
+    }
+
+    protected get stateMachine(): StateMachine<ViewContainer> {
+        return this._stateMachine;
     }
 
     public get backGroundLayer(): Container {

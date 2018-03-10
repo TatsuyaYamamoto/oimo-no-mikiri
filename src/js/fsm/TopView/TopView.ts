@@ -1,7 +1,6 @@
 import AutoBind from "autobind-decorator";
 
 import ViewContainer from "../../../framework/ViewContainer";
-import StateMachine from "../../../framework/StateMachine";
 import Deliverable from "../../../framework/Deliverable";
 import { dispatchEvent, addEvents, removeEvents } from "../../../framework/EventUtils";
 
@@ -59,7 +58,7 @@ class TopViewState extends ViewContainer {
     onEnter(params: Deliverable): void {
         super.onEnter(params);
 
-        this.stateMachine = new StateMachine({
+        this.stateMachine.set({
             [InnerStates.TITLE]: new TitleState(),
             [InnerStates.MENU]: new MenuState(),
             [InnerStates.HOW_TO_PLAY]: new HowToPlayState(),
@@ -67,11 +66,11 @@ class TopViewState extends ViewContainer {
         });
 
         addEvents({
-            [Events.TAP_TITLE]: this.handleTapTitleEvent,
-            [Events.REQUEST_BACK_TO_MENU]: this.handleRequestBackMenuEvent,
-            [Events.REQUEST_HOW_TO_PLAY]: this.handleRequestHowToPlayEvent,
-            [Events.REQUEST_CREDIT]: this.handleRequestCredit,
-            [Events.FIXED_PLAY_MODE]: this.handleFixedPlayModeEvent,
+            [Events.TAP_TITLE]: this.onTitleEventTap,
+            [Events.REQUEST_BACK_TO_MENU]: this.onBackMenuRequested,
+            [Events.REQUEST_HOW_TO_PLAY]: this.onHowToPlayeRequested,
+            [Events.REQUEST_CREDIT]: this.onCreditRequested,
+            [Events.FIXED_PLAY_MODE]: this.onPlayModeFixed,
         });
 
         this.to(InnerStates.TITLE);
@@ -94,14 +93,14 @@ class TopViewState extends ViewContainer {
     /**
      *
      */
-    private handleTapTitleEvent = () => {
+    protected onTitleEventTap() {
         this.to(InnerStates.MENU);
     };
 
     /**
      *
      */
-    private handleRequestHowToPlayEvent = () => {
+    protected onHowToPlayeRequested() {
         this.to(InnerStates.HOW_TO_PLAY);
     };
 
@@ -109,23 +108,21 @@ class TopViewState extends ViewContainer {
      *
      * @private
      */
-    private handleRequestBackMenuEvent = () => {
+    protected onBackMenuRequested() {
         this.to(InnerStates.MENU);
     };
 
     /**
      *
-     * @private
      */
-    private handleRequestCredit = () => {
+    protected onCreditRequested() {
         this.to(InnerStates.CREDIT);
     };
 
     /**
      *
-     * @private
      */
-    private handleFixedPlayModeEvent = (e: CustomEvent) => {
+    protected onPlayModeFixed(e: CustomEvent) {
         const {mode, gameId} = e.detail;
         console.log("Fixed play mode: ", mode);
 
@@ -148,7 +145,7 @@ class TopViewState extends ViewContainer {
     /**
      *
      */
-    private createGame = async () => {
+    private async createGame() {
         const game = await OnlineGame.create();
         game.join();
         game.once(GameEvents.FULFILLED_MEMBERS, () => {
@@ -172,7 +169,7 @@ class TopViewState extends ViewContainer {
      *
      * @param {string} gameId
      */
-    private joinGame = (gameId: string) => {
+    private joinGame(gameId: string) {
         openJoinRoomModal(gameId);
 
         const game = new OnlineGame(gameId);
