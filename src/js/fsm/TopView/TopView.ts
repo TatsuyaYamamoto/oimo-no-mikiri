@@ -14,7 +14,7 @@ import OnlineGame, { GameEvents } from "../../models/online/OnlineGame";
 import Mode from "../../models/Mode";
 import LocalGame from "../../models/local/LocalGame";
 
-import { stop } from "../../helper/MusicPlayer";
+import { playOnLoop, stop } from "../../helper/MusicPlayer";
 
 import { Ids as SoundIds } from "../../resources/sound";
 
@@ -73,6 +73,8 @@ class TopViewState extends ViewContainer {
             [Events.FIXED_PLAY_MODE]: this.onPlayModeFixed,
         });
 
+        playOnLoop(SoundIds.SOUND_ZENKAI);
+
         this.to(InnerStates.TITLE);
     }
 
@@ -81,6 +83,8 @@ class TopViewState extends ViewContainer {
      */
     onExit(): void {
         super.onExit();
+
+        stop(SoundIds.SOUND_ZENKAI);
 
         removeEvents([
             Events.TAP_TITLE,
@@ -134,7 +138,6 @@ class TopViewState extends ViewContainer {
                     this.createGame();
                 break;
             default:
-                stop(SoundIds.SOUND_ZENKAI);
                 dispatchEvent(AppEvents.REQUESTED_GAME_START, {
                     game: new LocalGame(mode)
                 });
@@ -154,7 +157,6 @@ class TopViewState extends ViewContainer {
         });
 
         game.once(GameEvents.IS_READY, () => {
-            stop(SoundIds.SOUND_ZENKAI);
             closeModal();
             setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
@@ -177,14 +179,15 @@ class TopViewState extends ViewContainer {
             game.requestReady();
         });
         game.once(GameEvents.IS_READY, () => {
-            stop(SoundIds.SOUND_ZENKAI);
             closeModal();
             setTimeout(() => dispatchEvent(AppEvents.REQUESTED_GAME_START, {game}), 0);
         });
 
         game.join().catch((type) => {
-            openRejectJoinRoomModal(type);
-
+            openRejectJoinRoomModal(type).then(() => {
+                // Prevent move menu from title view.
+                setTimeout(()=>this.to(InnerStates.TITLE), 1);
+            });
         })
     };
 }

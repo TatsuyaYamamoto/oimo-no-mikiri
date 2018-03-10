@@ -10,7 +10,7 @@ import { Events } from "../TopView";
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import { play, playOnLoop } from "../../../helper/MusicPlayer";
+import { play } from "../../../helper/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
 
 import Mode from "../../../models/Mode";
@@ -67,9 +67,6 @@ class TitleState extends AbstractTopState {
             this._tapInfoText,
             this._appVersion
         );
-
-
-        playOnLoop(SoundIds.SOUND_ZENKAI);
 
         const {gameId} = parse(window.location.search);
         this.clearQueryString();
