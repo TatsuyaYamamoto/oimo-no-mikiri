@@ -77,7 +77,7 @@ class LocalGameView extends GameView {
      *
      * @private
      */
-    protected onRequestedReady(){
+    protected onRequestedReady() {
         if (this.game.isFixed()) {
             dispatchEvent(Events.FIXED_RESULT);
             return;
@@ -97,7 +97,7 @@ class LocalGameView extends GameView {
     /**
      *
      */
-    protected onReady(){
+    protected onReady() {
         const signalTime = this.game.currentBattle.signalTime;
         const isFalseStarted = {
             player: this.game.currentBattle.isFalseStarted(Actor.PLAYER),
@@ -136,7 +136,6 @@ class LocalGameView extends GameView {
             bestTime,
             winner,
             mode,
-            straightWins,
         } = this.game;
 
         console.log(`Fixed the game! player win: ${this.game.getWins(Actor.PLAYER)}, opponent wins: ${this.game.getWins(Actor.OPPONENT)}.`);
@@ -146,7 +145,7 @@ class LocalGameView extends GameView {
                 winner,
                 bestTime,
                 mode,
-                straightWins
+                straightWins: this.game.straightWins,
             });
         } else {
             this.to<MultiPlayOverStateEnterParams>(InnerStates.OVER, {
