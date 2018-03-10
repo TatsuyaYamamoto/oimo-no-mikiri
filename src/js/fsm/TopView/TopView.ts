@@ -19,12 +19,14 @@ import { playOnLoop, stop } from "../../helper/MusicPlayer";
 import { Ids as SoundIds } from "../../resources/sound";
 
 import {
-    closeModal,
+    closeModal, openConfirmCloseGameModal,
     openCreateRoomModal,
     openJoinRoomModal,
     openReadyRoomModal,
     openRejectJoinRoomModal
 } from "../../helper/modals";
+import { showTweetView } from "../../helper/network";
+import { copyTextToClipboard } from "../../../framework/utils";
 
 export enum Events {
     TAP_TITLE = 'GameView@TAP_TITLE',
@@ -163,7 +165,36 @@ class TopViewState extends ViewContainer {
 
         const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${game.id}`;
 
-        openCreateRoomModal(url);
+        const openWaitingModal = () => {
+            openCreateRoomModal(url)
+                .then((result) => {
+                    switch (result) {
+                        case "copy":
+                            copyTextToClipboard(url);
+                            break;
+                        case "tweet":
+                            showTweetView("ゲームしよう！", url);
+                            break;
+                        case "cancel":
+                            openConfirmCloseGameModal().then((result) => {
+                                if (result.value) {
+                                    openWaitingModal();
+                                } else {
+                                    closeModal();
+                                    game.remove();
+                                }
+                            });
+
+                            break;
+                        default:
+                            console.error(`Receive unhandlable event. ${result}`);
+                            break;
+                    }
+                })
+
+        };
+
+        openWaitingModal();
     };
 
     /**
@@ -186,7 +217,7 @@ class TopViewState extends ViewContainer {
         game.join().catch((type) => {
             openRejectJoinRoomModal(type).then(() => {
                 // Prevent move menu from title view.
-                setTimeout(()=>this.to(InnerStates.TITLE), 1);
+                setTimeout(() => this.to(InnerStates.TITLE), 1);
             });
         })
     };

@@ -1,15 +1,12 @@
-import { copyTextToClipboard } from "../../framework/utils";
-
 import SweetAlert from "sweetalert2";
 import * as tippy from "tippy.js";
-import { showTweetView } from "./network";
 
 export function closeModal() {
     SweetAlert.close();
 }
 
 export function openCreateRoomModal(url: string) {
-    const alert = SweetAlert({
+    SweetAlert({
         title: "ルームを作成しました！",
         text: `招待用URLからゲームにアクセスすることで、対戦が行えます。`,
         showConfirmButton: false,
@@ -25,24 +22,15 @@ export function openCreateRoomModal(url: string) {
     copyButton.textContent = "URLをコピーする";
     copyButton.id = "button-create-room-copy-url";
     copyButton.classList.add("swal2-confirm");
-    copyButton.setAttribute("title","コピーが完了しました");
-    copyButton.addEventListener("click", () => {
-        copyTextToClipboard(url);
-    });
+    copyButton.setAttribute("title", "コピーが完了しました");
 
     const tweetButton = <HTMLButtonElement>baseButton.cloneNode();
     tweetButton.textContent = "Twitterで招待する";
     tweetButton.classList.add("swal2-confirm");
-    tweetButton.addEventListener("click", () => {
-        showTweetView("ゲームしよう！", url);
-    });
 
     const cancelButton = <HTMLButtonElement>baseButton.cloneNode();
     cancelButton.textContent = "キャンセル";
     cancelButton.classList.add("swal2-cancel");
-    cancelButton.addEventListener("click", () => {
-        closeModal();
-    });
 
     const alertActions = document.querySelectorAll(".swal2-actions")[0];
     alertActions.setAttribute("style", "display: flex;");
@@ -58,7 +46,11 @@ export function openCreateRoomModal(url: string) {
         },
     });
 
-    return alert;
+    return new Promise((resolve, reject) => {
+        copyButton.addEventListener("click", () => resolve("copy"));
+        tweetButton.addEventListener("click", () => resolve("tweet"));
+        cancelButton.addEventListener("click", () => resolve("cancel"));
+    });
 }
 
 export function openJoinRoomModal(roomId) {
@@ -124,6 +116,22 @@ export function openMemberLeftModal() {
         title: `メンバーがルームを退出しました！`,
         text: "タイトル画面に戻ります。",
         showConfirmButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
+}
+
+export function openConfirmCloseGameModal() {
+    return SweetAlert({
+        title: `ゲームをキャンセルしますか？`,
+        text: "キャンセルすると対戦相手の受付が行えなくなります。",
+        showConfirmButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: "やっぱりしない！",
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: "キャンセルする...。",
+        reverseButtons: true,
         allowOutsideClick: false,
         allowEscapeKey: false,
     });
