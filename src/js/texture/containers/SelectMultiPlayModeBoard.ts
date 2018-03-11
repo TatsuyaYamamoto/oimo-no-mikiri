@@ -18,21 +18,21 @@ export type ClickEventType = "offline" | "online";
 /**
  * @class
  */
-class SelectLevelBoardBackGround extends Sprite {
+class MenuBoardBackGround extends Sprite {
     constructor() {
-        super(loadTexture(Ids.SELECT_LEVEL_BOARD));
+        super(loadTexture(Ids.MENU_BOARD));
     }
 }
 
 class SelectMultiPlayModeBoard extends Container {
-    private background: SelectLevelBoardBackGround;
+    private background: MenuBoardBackGround;
     private offlineButton: BeginnerLevelButton;
     private onlineButton: ExpertLevelButton;
 
     constructor(width: number, height: number) {
         super();
 
-        this.background = new SelectLevelBoardBackGround();
+        this.background = new MenuBoardBackGround();
         this.background.position.set(0);
 
         this.offlineButton = new Button(loadTexture(Ids.BUTTON_MENU_OFFLINE_GAME));
