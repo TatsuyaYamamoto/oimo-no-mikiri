@@ -1,11 +1,15 @@
 import SweetAlert from "sweetalert2";
 import * as tippy from "tippy.js";
+import { copyTextToClipboard } from "../../framework/utils";
+import { showTweetView } from "./network";
 
 export function closeModal() {
     SweetAlert.close();
 }
 
-export function openCreateRoomModal(url: string) {
+export function openCreateRoomModal(gameId: string) {
+    const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
+
     SweetAlert({
         title: "ルームを作成しました！",
         text: `招待用URLからゲームにアクセスすることで、対戦が行えます。`,
@@ -47,9 +51,17 @@ export function openCreateRoomModal(url: string) {
     });
 
     return new Promise((resolve, reject) => {
-        copyButton.addEventListener("click", () => resolve("copy"));
-        tweetButton.addEventListener("click", () => resolve("tweet"));
-        cancelButton.addEventListener("click", () => resolve("cancel"));
+        copyButton.addEventListener("click", () => {
+            copyTextToClipboard(url);
+            resolve("copy");
+        });
+        tweetButton.addEventListener("click", () => {
+            showTweetView("ゲームしよう！", url);
+            resolve("tweet")
+        });
+        cancelButton.addEventListener("click", () => {
+            resolve("cancel")
+        });
     });
 }
 
