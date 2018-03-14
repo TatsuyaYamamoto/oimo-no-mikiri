@@ -2,6 +2,7 @@ import AutoBind from "autobind-decorator";
 
 import { addEvents, dispatchEvent } from "../../../framework/EventUtils";
 import Deliverable from "../../../framework/Deliverable";
+import { show as showConnecting, hide as hideConnecting } from "../../../framework/ConnectingIndicator";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 import ReadyState from "./internal/ReadyState";
@@ -112,26 +113,28 @@ class OnlineGameView extends GameView {
             twoPlayer: this.game.getWins(Actor.OPPONENT),
         };
 
-        const offEvents = () => {
+        const showResult = (params: { winner?: Actor, falseStarter?: Actor }) => {
+            hideConnecting();
+
             this.game.currentBattle.off(BattleEvents.SUCCEED_ATTACK);
             this.game.currentBattle.off(BattleEvents.FALSE_STARTED);
             this.game.currentBattle.off(BattleEvents.DRAW);
+
+            this.to<ResultStateEnterParams>(InnerStates.RESULT, params);
         };
 
         this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
-            offEvents();
             play(SoundIds.SOUND_ATTACK);
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
+            showResult({winner});
         });
         this.game.currentBattle.on(BattleEvents.FALSE_STARTED, ({winner, attacker}) => {
-            offEvents();
             play(SoundIds.SOUND_FALSE_START);
-            this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
+            showResult({winner, falseStarter: attacker});
         });
         this.game.currentBattle.on(BattleEvents.DRAW, () => {
-            offEvents();
+            hideConnecting();
             play(SoundIds.SOUND_DRAW);
-            this.to<ResultStateEnterParams>(InnerStates.RESULT);
+            showResult({});
         });
 
         this.to<ActionEnterParams>(InnerStates.ACTION, {
@@ -206,6 +209,8 @@ class OnlineGameView extends GameView {
      * @override
      */
     protected onAttacked(e: CustomEvent) {
+        showConnecting();
+
         super.onAttacked(e);
     }
 
