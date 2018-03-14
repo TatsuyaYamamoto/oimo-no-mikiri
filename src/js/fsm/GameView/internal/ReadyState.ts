@@ -10,7 +10,7 @@ import {Events} from '../GameView';
 import PlayerCloseUp from "../../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../../texture/sprite/character/OpponentCloseUp";
 
-import {play} from "../../../helper/MusicPlayer";
+import {play} from "../../../../framework/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import {SKIP_READY_ANIMATION} from '../../../Constants';

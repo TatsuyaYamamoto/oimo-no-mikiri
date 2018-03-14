@@ -6,7 +6,7 @@
 import PixiSound from 'pixi-sound/lib';
 import Sound from "pixi-sound/lib/Sound";
 
-import { loadSound } from "../../framework/AssetLoader";
+import { loadSound } from "./AssetLoader";
 
 export function play(soundId: string | number, volume?: number) {
     const sound = loadSound(soundId);

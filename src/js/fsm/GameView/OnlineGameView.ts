@@ -22,7 +22,7 @@ import {
     openWaitingRestartModal
 } from "../../helper/modals";
 import { Ids as SoundIds } from "../../resources/sound";
-import { play } from "../../helper/MusicPlayer";
+import { play } from "../../../framework/MusicPlayer";
 import { BattleEvents } from "../../models/Battle";
 
 @AutoBind

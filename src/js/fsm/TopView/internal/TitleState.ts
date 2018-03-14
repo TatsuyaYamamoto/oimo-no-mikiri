@@ -10,7 +10,7 @@ import { Events } from "../TopView";
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import { play } from "../../../helper/MusicPlayer";
+import { play } from "../../../../framework/MusicPlayer";
 import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
 
 import Mode from "../../../models/Mode";

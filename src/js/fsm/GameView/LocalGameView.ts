@@ -28,7 +28,7 @@ import { isSingleMode } from "../../models/Game";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
 import { Ids as SoundIds } from "../../resources/sound";
-import { play } from "../../helper/MusicPlayer";
+import { play } from "../../../framework/MusicPlayer";
 import { BattleEvents } from "../../models/Battle";
 
 @AutoBind

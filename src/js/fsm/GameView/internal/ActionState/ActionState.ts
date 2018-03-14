@@ -9,7 +9,7 @@ import FalseStartCheck from "../../../../texture/sprite/text/FalseStartCheck";
 
 import Actor from '../../../../models/Actor';
 
-import { play } from "../../../../helper/MusicPlayer";
+import { play } from "../../../../../framework/MusicPlayer";
 
 import { Ids as SoundIds } from '../../../../resources/sound';
 

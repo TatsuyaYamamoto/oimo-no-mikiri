@@ -12,7 +12,7 @@ import SelectMultiPlayModeBoard from "../../../texture/containers/SelectMultiPla
 
 import Mode from "../../../models/Mode";
 
-import { play, toggleSound } from "../../../helper/MusicPlayer";
+import { play, toggleSound } from "../../../../framework/MusicPlayer";
 import { goTo } from "../../../helper/network";
 import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
 

@@ -19,7 +19,7 @@ import Game, { isSingleMode } from '../../models/Game';
 import { BattleEvents } from "../../models/Battle";
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
-import { play, playOnLoop, stop } from "../../helper/MusicPlayer";
+import { play, playOnLoop, stop } from "../../../framework/MusicPlayer";
 
 import { Ids as SoundIds } from "../../resources/sound";
 import { dispatchEvent } from "../../../framework/EventUtils";

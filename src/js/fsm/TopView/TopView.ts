@@ -16,7 +16,7 @@ import OnlineGame, { GameEvents } from "../../models/online/OnlineGame";
 import Mode from "../../models/Mode";
 import LocalGame from "../../models/local/LocalGame";
 
-import { playOnLoop, stop } from "../../helper/MusicPlayer";
+import { playOnLoop, stop } from "../../../framework/MusicPlayer";
 
 import { Ids as SoundIds } from "../../resources/sound";
 

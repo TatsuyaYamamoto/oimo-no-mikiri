@@ -10,7 +10,7 @@ import LocalGameView from "./GameView/LocalGameView";
 import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
-import { toggleSound } from '../helper/MusicPlayer';
+import { toggleSound } from '../../framework/MusicPlayer';
 import { isOnlineMode } from "../models/Game";
 
 export enum Events {
