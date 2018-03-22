@@ -1,9 +1,9 @@
 import AutoBind from "autobind-decorator";
 
 import Deliverable from "../../../../framework/Deliverable";
-import { dispatchEvent } from "../../../../framework/EventUtils";
+import {dispatchEvent} from "../../../../framework/EventUtils";
 
-import { Events } from "../TopView";
+import {Events} from "../TopView";
 import AbstractTopState from "./TopViewState";
 
 import MenuBoard from "../../../texture/containers/MenuBoard";
@@ -12,12 +12,12 @@ import SelectMultiPlayModeBoard from "../../../texture/containers/SelectMultiPla
 
 import Mode from "../../../models/Mode";
 
-import { play, toggleSound } from "../../../../framework/MusicPlayer";
-import { goTo } from "../../../helper/network";
-import { Action, Category, trackEvent, trackPageView, VirtualPageViews } from "../../../helper/tracker";
+import {play, toggleSound} from "../../../../framework/MusicPlayer";
+import {goTo} from "../../../helper/network";
+import {Action, Category, trackEvent, trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
-import { URL } from '../../../Constants';
-import { Ids as SoundIds } from '../../../resources/sound';
+import {URL} from '../../../Constants';
+import {Ids as SoundIds} from '../../../resources/sound';
 
 @AutoBind
 class MenuState extends AbstractTopState {
@@ -54,11 +54,13 @@ class MenuState extends AbstractTopState {
         this._selectLevelBoard = new SelectLevelBoard(this.viewHeight, this.viewHeight);
         this._selectLevelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectLevelBoard.setOnSelectLevelListener(this._onModeSelected);
+        this._selectLevelBoard.onClick("back", this.backHomeMenu);
 
         this._selectMultiPlayModeBoard = new SelectMultiPlayModeBoard(this.viewHeight, this.viewHeight);
         this._selectMultiPlayModeBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
         this._selectMultiPlayModeBoard.onClick("online", (e) => this._onModeSelected(e, Mode.MULTI_ONLINE));
         this._selectMultiPlayModeBoard.onClick("offline", (e) => this._onModeSelected(e, Mode.MULTI_LOCAL));
+        this._selectMultiPlayModeBoard.onClick("back", this.backHomeMenu);
 
         this.backGroundLayer.addChild(
             this.background
@@ -81,6 +83,17 @@ class MenuState extends AbstractTopState {
         window.removeEventListener('blur', this.turnSoundOff);
         window.removeEventListener('focus', this.turnSoundOn);
     }
+
+    private backHomeMenu = () => {
+        this.applicationLayer.removeChild(this._selectMultiPlayModeBoard);
+        this.applicationLayer.removeChild(this._selectLevelBoard);
+
+        this.applicationLayer.addChild(
+            this._menuBoard,
+        );
+
+        play(SoundIds.SOUND_CANCEL);
+    };
 
     /**
      *
@@ -167,11 +180,11 @@ class MenuState extends AbstractTopState {
         trackEvent(Category.BUTTON, Action.TAP, mode);
     };
 
-    private turnSoundOn(){
+    private turnSoundOn() {
         this._menuBoard.soundButton.turnOn();
     }
 
-    private turnSoundOff(){
+    private turnSoundOff() {
         this._menuBoard.soundButton.turnOff();
     }
 }

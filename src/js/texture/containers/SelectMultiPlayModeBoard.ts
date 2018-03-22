@@ -1,19 +1,15 @@
-import { Container, interaction } from 'pixi.js';
+import {Container, interaction} from 'pixi.js';
 
-import { loadTexture } from "../../../framework/AssetLoader";
-import { isSupportTouchEvent } from "../../../framework/utils";
+import {loadTexture} from "../../../framework/AssetLoader";
+import {isSupportTouchEvent} from "../../../framework/utils";
 
 import Sprite from "../internal/Sprite";
 
-import BeginnerLevelButton from "../sprite/button/BeginnerLevelButton";
-import NoviceLevelButton from "../sprite/button/NoviceLevelButton";
-import ExpertLevelButton from "../sprite/button/ExpertLevelButton";
-
-import { Ids } from "../../resources/image";
+import {Ids} from "../../resources/image";
 import Mode from "../../models/Mode";
 import Button from "../internal/Button";
 
-export type ClickEventType = "offline" | "online";
+export type ClickEventType = "offline" | "online" | "back";
 
 /**
  * @class
@@ -26,14 +22,18 @@ class MenuBoardBackGround extends Sprite {
 
 class SelectMultiPlayModeBoard extends Container {
     private background: MenuBoardBackGround;
-    private offlineButton: BeginnerLevelButton;
-    private onlineButton: ExpertLevelButton;
+    private offlineButton: Button;
+    private onlineButton: Button;
+    private backButton: Button;
 
     constructor(width: number, height: number) {
         super();
 
         this.background = new MenuBoardBackGround();
         this.background.position.set(0);
+
+        this.backButton = new Button(loadTexture(Ids.BUTTON_MENU_BACK));
+        this.backButton.position.set(-1 * width * 0.65, -1 * height * 0.3);
 
         this.offlineButton = new Button(loadTexture(Ids.BUTTON_MENU_OFFLINE_GAME));
         this.offlineButton.position.set(-1 * width * 0.2, height * 0.05);
@@ -43,12 +43,13 @@ class SelectMultiPlayModeBoard extends Container {
 
         this.addChild(
             this.background,
+            this.backButton,
             this.offlineButton,
             this.onlineButton,
         );
     }
 
-    public onClick(event: ClickEventType, fn: (event: interaction.InteractionEvent, mode: Mode) => void) {
+    public onClick(event: ClickEventType, fn: (event: interaction.InteractionEvent, mode?: Mode) => void) {
         const type = isSupportTouchEvent() ? 'touchstart' : 'click';
 
         switch (event) {
@@ -60,6 +61,11 @@ class SelectMultiPlayModeBoard extends Container {
             case "offline":
                 this.offlineButton.interactive = true;
                 this.offlineButton.on(type, (event: interaction.InteractionEvent) => fn(event, Mode.MULTI_LOCAL));
+                break;
+
+            case "back":
+                this.backButton.interactive = true;
+                this.backButton.on(type, (event: interaction.InteractionEvent) => fn(event));
                 break;
         }
     }
