@@ -1,10 +1,11 @@
-import {Container, DisplayObject} from 'pixi.js';
+import { Container, DisplayObject } from 'pixi.js';
 
 import State from "./State";
 import Deliverable from "./Deliverable";
 
 import config from "./config";
-import {isSupportTouchEvent} from "./utils";
+import { isSupportTouchEvent } from "./utils";
+import StateMachine from "./StateMachine";
 
 /**
  * A Container represents a collection of basic containers; {@link this#backGroundLayer},
@@ -13,6 +14,8 @@ import {isSupportTouchEvent} from "./utils";
  * @class
  */
 abstract class ViewContainer extends Container implements State {
+    private _stateMachine: StateMachine<ViewContainer>;
+
     private _backGroundLayer: Container;
     private _applicationLayer: Container;
     private _informationLayer: Container;
@@ -24,6 +27,8 @@ abstract class ViewContainer extends Container implements State {
 
     constructor() {
         super();
+
+        this._stateMachine = new StateMachine<ViewContainer>();
 
         this._backGroundLayer = new Container();
         this._applicationLayer = new Container();
@@ -50,6 +55,10 @@ abstract class ViewContainer extends Container implements State {
 
     protected get elapsedTimeMillis(): number {
         return this._elapsedTimeMillis;
+    }
+
+    protected get stateMachine(): StateMachine<ViewContainer> {
+        return this._stateMachine;
     }
 
     public get backGroundLayer(): Container {
@@ -87,6 +96,8 @@ abstract class ViewContainer extends Container implements State {
      */
     onExit(): void | Deliverable {
         console.log(`${this.constructor.name}@onExit`);
+
+        this.stateMachine.current && this.stateMachine.current.onExit();
 
         this.backGroundLayer.removeChildren();
         this.applicationLayer.removeChildren();
@@ -164,6 +175,21 @@ abstract class ViewContainer extends Container implements State {
      */
     public removeChildren(beginIndex?: number, endIndex?: number): DisplayObject[] {
         return super.removeChildren(beginIndex, endIndex);
+    }
+
+    /**
+     *
+     * @param {string} stateTag
+     * @param {T} params
+     */
+    protected to<T>(stateTag: string, params?: T) {
+        if (!this.stateMachine) {
+            return;
+        }
+
+        this.stateMachine.change(stateTag, params);
+        this.applicationLayer.removeChildren();
+        this.applicationLayer.addChild(this.stateMachine.current);
     }
 }
 

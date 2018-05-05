@@ -8,7 +8,7 @@ import {Events} from "../TopView";
 import CreditItem from "../../../texture/sprite/text/CreditItem";
 import BackToMenuButton from "../../../texture/sprite/button/BackToMenuButton";
 
-import {play} from "../../../helper/MusicPlayer";
+import {play} from "../../../../framework/MusicPlayer";
 import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';

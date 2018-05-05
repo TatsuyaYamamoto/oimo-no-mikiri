@@ -4,19 +4,19 @@
  */
 import {SoundManifest} from "../../framework/AssetLoader";
 
-export const Ids = {
-    SOUND_OK: 'SOUND_OK',
-    SOUND_CANCEL: 'SOUND_CANCEL',
-    SOUND_TOGGLE_SOUND: 'SOUND_TOGGLE_SOUND',
+export enum Ids {
+    SOUND_OK,
+    SOUND_CANCEL,
+    SOUND_TOGGLE_SOUND,
 
-    SOUND_ZENKAI: 'SOUND_ZENKAI',
-    SOUND_WAVE_LOOP: 'SOUND_WAVE_LOOP',
-    SOUND_HARISEN: 'SOUND_HARISEN',
-    SOUND_ATTACK: 'SOUND_ATTACK',
-    SOUND_READY: 'SOUND_READY',
-    SOUND_FALSE_START: 'SOUND_FALSE_START',
-    SOUND_DRAW: 'SOUND_DRAW',
-};
+    SOUND_ZENKAI,
+    SOUND_WAVE_LOOP,
+    SOUND_HARISEN,
+    SOUND_ATTACK,
+    SOUND_READY,
+    SOUND_FALSE_START,
+    SOUND_DRAW,
+}
 
 const manifest: SoundManifest = {
     [Ids.SOUND_OK]: 'ok.mp3',

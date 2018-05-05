@@ -10,7 +10,7 @@ import {Events} from '../GameView';
 import PlayerCloseUp from "../../../texture/sprite/character/PlayerCloseUp";
 import OpponentCloseUp from "../../../texture/sprite/character/OpponentCloseUp";
 
-import {playOnLoop, play} from "../../../helper/MusicPlayer";
+import {play} from "../../../../framework/MusicPlayer";
 
 import {Ids as SoundIds} from '../../../resources/sound';
 import {SKIP_READY_ANIMATION} from '../../../Constants';
@@ -48,6 +48,9 @@ class ReadyState extends AbstractGameState {
         this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
         this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
         this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
+
+        this.player.playWait();
+        this.opponent.playWait();
 
         this._playerCharacterCloseup = this.player.closeUpTexture;
         this._playerCharacterCloseup.position.set(this.viewWidth * 1, this.viewHeight * 0);
@@ -99,8 +102,6 @@ class ReadyState extends AbstractGameState {
         } else {
             this._playAnimation();
         }
-
-        playOnLoop(SoundIds.SOUND_WAVE_LOOP, 0.2);
     }
 
     /**

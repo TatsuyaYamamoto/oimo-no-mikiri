@@ -7,10 +7,10 @@
  * User can get assets cached in {@link AssetsCache} with {@link loadTexture} and {@link loadSound}.
  */
 
-import {Texture, loaders} from 'pixi.js';
+import { Texture, loaders } from 'pixi.js';
 import Sound from "pixi-sound/lib/Sound";
 
-import {getCurrentLanguage} from "./i18n";
+import { getCurrentLanguage } from "./i18n";
 import config from "./config";
 
 const IMAGE_BASE_DIR = 'assets/image/';
@@ -36,7 +36,7 @@ export interface Asset extends loaders.Resource {
  */
 export interface ImageManifest {
     [language: string]: {
-        [key: string]: string
+        [key: number]: any
     };
 }
 
@@ -44,7 +44,7 @@ export interface ImageManifest {
  * Sound manifest interface that the loader requires.
  */
 export interface SoundManifest {
-    [key: string]: string
+    [key: number]: any
 }
 
 /**
@@ -72,7 +72,7 @@ class AssetLoader extends loaders.Loader {
         // add each asset info to loader.
         const assetIds = Object.keys(targetManifest);
         assetIds.forEach(id => this.add({
-            name: id,
+            name: `image@${id}`,
             url: `${IMAGE_BASE_DIR}${targetManifest[id]}`
         }));
     }
@@ -87,7 +87,7 @@ class AssetLoader extends loaders.Loader {
         // add each asset info to loader.
         const assetIds = Object.keys(soundManifest);
         assetIds.forEach(id => this.add({
-            name: id,
+            name: `sound@${id}`,
             url: `${SOUND_BASE_DIR}${soundManifest[id]}`
         }));
     }
@@ -115,8 +115,8 @@ class AssetLoader extends loaders.Loader {
  * @param {string} id
  * @returns {Texture}
  */
-export function loadTexture(id: string): Texture {
-    return AssetsCache[id].texture;
+export function loadTexture(id: string | number): Texture {
+    return AssetsCache[`image@${id}`].texture;
 }
 
 /**
@@ -125,9 +125,9 @@ export function loadTexture(id: string): Texture {
  * @param {string} id
  * @returns {PIXI.Texture[]}
  */
-export function loadFrames(id: string): Texture[] {
-    return Object.keys(AssetsCache[id].textures).map(textureKey => {
-        return AssetsCache[id].textures[textureKey];
+export function loadFrames(id: string | number): Texture[] {
+    return Object.keys(AssetsCache[`image@${id}`].textures).map(textureKey => {
+        return AssetsCache[`image@${id}`].textures[textureKey];
     });
 }
 
@@ -137,8 +137,8 @@ export function loadFrames(id: string): Texture[] {
  * @param {string} id
  * @return {Sound}
  */
-export function loadSound(id: string): Sound {
-    return AssetsCache[id].sound;
+export function loadSound(id: string | number): Sound {
+    return AssetsCache[`sound@${id}`].sound;
 }
 
 export default AssetLoader;

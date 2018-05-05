@@ -1,22 +1,20 @@
+- var title = "DEVELOPMENT おいものみきり！"
+
 doctype html
 html
-    head
-        meta(charset="utf-8")
-        title おいものみきり！
-        meta(name="viewport", content="width=device-width, initial-scale=1")
-        style(type="text/css").
-            body {
-                margin: 0;
-                -webkit-user-select: none;
-                user-select: none;
-            }
+  head
+    meta(charset="utf-8")
+    title #{title}
+    meta(name="viewport", content="width=device-width, initial-scale=1")
 
-            #main {
-                text-align: center;
-            }
+    link(rel="stylesheet" type="text/css" href="./assets/css/index.css")
 
-            canvas {
-                vertical-align: bottom;
-            }
-    body
-        div#main
+  body
+    div#first-gesture-guide
+      h2 Please tap on the display!
+
+      h1 おいものみきり！
+      div produced by そこんところ工房
+
+    div#main
+

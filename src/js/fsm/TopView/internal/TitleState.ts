@@ -1,18 +1,22 @@
+import { parse } from "query-string";
+
 import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from '../../../../framework/EventUtils';
-import {t} from "../../../../framework/i18n";
+import { dispatchEvent } from '../../../../framework/EventUtils';
+import { t } from "../../../../framework/i18n";
 
 import AbstractTopState from "./TopViewState";
-import {Events} from "../TopView";
+import { Events } from "../TopView";
 
 import TitleLogo from "../../../texture/sprite/TitleLogo";
 import Text from "../../../texture/internal/Text";
 
-import {play, playOnLoop} from "../../../helper/MusicPlayer";
-import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
+import { play } from "../../../../framework/MusicPlayer";
+import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
 
-import {Ids as SoundIds} from '../../../resources/sound';
-import {Ids as StringIds} from '../../../resources/string';
+import Mode from "../../../models/Mode";
+
+import { Ids as SoundIds } from '../../../resources/sound';
+import { Ids as StringIds } from '../../../resources/string';
 
 const {version} = require('../../../../../package.json');
 
@@ -64,9 +68,15 @@ class TitleState extends AbstractTopState {
             this._appVersion
         );
 
-        this.addClickWindowEventListener(this._handleTapWindow);
+        const {gameId} = parse(window.location.search);
+        this.clearQueryString();
 
-        playOnLoop(SoundIds.SOUND_ZENKAI);
+        if (!gameId) {
+            this.addClickWindowEventListener(this._handleTapWindow);
+        }else{
+            const mode = Mode.MULTI_ONLINE;
+            dispatchEvent(Events.FIXED_PLAY_MODE, {mode, gameId});
+        }
     }
 
     /**
@@ -81,6 +91,11 @@ class TitleState extends AbstractTopState {
         dispatchEvent(Events.TAP_TITLE);
 
         play(SoundIds.SOUND_OK);
+    };
+
+    private clearQueryString = () => {
+        const url = `${location.protocol}//${location.host}${location.pathname}`;
+        history.replaceState(null, null, url);
     };
 }
 

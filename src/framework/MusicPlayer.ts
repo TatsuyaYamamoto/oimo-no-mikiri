@@ -6,9 +6,9 @@
 import PixiSound from 'pixi-sound/lib';
 import Sound from "pixi-sound/lib/Sound";
 
-import {loadSound} from "../../framework/AssetLoader";
+import { loadSound } from "./AssetLoader";
 
-export function play(soundId: string, volume?: number) {
+export function play(soundId: string | number, volume?: number) {
     const sound = loadSound(soundId);
     const v = sound.volume;
     const completed = () => {
@@ -22,7 +22,7 @@ export function play(soundId: string, volume?: number) {
     sound.play(completed);
 }
 
-export function playOnLoop(soundId: string, volume?: number) {
+export function playOnLoop(soundId: string | number, volume?: number) {
     const sound = loadSound(soundId);
     const v = sound.volume;
     const completed = () => {
@@ -36,7 +36,7 @@ export function playOnLoop(soundId: string, volume?: number) {
     sound.play({loop: true}, completed);
 }
 
-export function stop(soundId: string) {
+export function stop(soundId: string | number) {
     loadSound(soundId).stop();
 }
 
@@ -45,16 +45,32 @@ export function stop(soundId: string) {
  *
  * @return {boolean} if all sounds are muted.
  */
-export function toggleMute(): boolean {
-    if (PixiSound.context.muted) {
-        PixiSound.unmuteAll();
-    } else {
-        PixiSound.muteAll();
-    }
+export function toggleSound(turn?: "on" | "off"): boolean {
+    switch (turn) {
+        case "on":
+            PixiSound.unmuteAll();
+            break;
 
+        case "off":
+            PixiSound.muteAll();
+            break;
+
+        default:
+            if (PixiSound.context.muted) {
+                PixiSound.unmuteAll();
+            } else {
+                PixiSound.muteAll();
+            }
+
+            break;
+    }
     return PixiSound.context.muted;
 }
 
-export function isMute():boolean{
+export function isMute(): boolean {
     return PixiSound.context.muted;
+}
+
+export function resumeContext(): Promise<void> {
+  return PixiSound.context.audioContext.resume();
 }

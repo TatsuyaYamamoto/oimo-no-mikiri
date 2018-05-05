@@ -3,7 +3,7 @@ import {Texture, interaction} from 'pixi.js';
 import Button from "../../internal/Button";
 import {Ids} from '../../../resources/image';
 import {loadFrames} from "../../../../framework/AssetLoader";
-import {isMute} from "../../../helper/MusicPlayer";
+import {isMute} from "../../../../framework/MusicPlayer";
 
 class SoundButton extends Button {
     private _onTexture: Texture;

@@ -1,15 +1,12 @@
 import {Graphics} from 'pixi.js';
 import ViewContainer from "../../../../framework/ViewContainer";
 
-import GameView from '../../GameView';
+import GameView from '../GameView';
 
 import Player from "../../../texture/sprite/character/Player";
 import Opponent from "../../../texture/sprite/character/Opponent";
 import Oimo from "../../../texture/sprite/character/Oimo";
 import BackGround from "../../../texture/containers/BackGround";
-
-import Battle from "../../../models/Battle";
-import Game from "../../../models/Game";
 
 class WhiteLayer extends Graphics {
     constructor(width: number, height: number) {

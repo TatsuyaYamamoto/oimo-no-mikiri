@@ -17,6 +17,7 @@ import {SKIP_BRAND_LOGO_ANIMATION} from "../Constants";
 
 import {Category, TimingVariable, trackPageView, trackTiming, VirtualPageViews} from "../helper/tracker";
 import {isIOS} from "../../framework/utils";
+import { resumeContext } from '../../framework/MusicPlayer';
 
 export enum Events {
     COMPLETE_PRELOAD = "InitialViewState@COMPLETE_LOAD",
@@ -48,11 +49,11 @@ class InitialViewState extends ViewContainer {
 
         // TODO: check logged-in.
 
-        if (isIOS()) {
-            this._showIosInitInfo();
-        } else {
-            this._startPreload();
-        }
+        // Resume AudioContext because Pixi-sound module starts before user's gesture.
+        // @see https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+        resumeContext();
+
+        this._startPreload();
     }
 
     /**
@@ -66,27 +67,6 @@ class InitialViewState extends ViewContainer {
             Events.COMPLETE_LOGO_ANIMATION,
         ]);
     }
-
-    private _showIosInitInfo = () =>{
-        this._tapInfoText = new Text(t(StringIds.TAP_DISPLAY_INFO), {
-            fontSize: 40,
-            stroke: '#ffffff',
-            strokeThickness: 2,
-        });
-        this._tapInfoText.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        this.addClickWindowEventListener(this._onIosInitClicked);
-
-        this.applicationLayer.addChild(
-            this._tapInfoText,
-        );
-    };
-
-    private _onIosInitClicked = () => {
-        this.removeClickWindowEventListener(this._onIosInitClicked);
-        this.applicationLayer.removeChildren();
-
-        this._startPreload();
-    };
 
     /**
      *

@@ -15,18 +15,27 @@ class StateMachine<S extends State> {
     private _currentState: S;
     private _states: Map<String | number, S> = new Map();
 
-    constructor(states: { [key: string]: S }) {
-        Object.keys(states).forEach((key) => {
-            this._states.set(key, states[key]);
-        });
-    }
-
     public get current(): S {
         return this._currentState;
     }
 
     public update(elapsedTime: number): void {
-        this._currentState.update(elapsedTime);
+        this._currentState && this._currentState.update(elapsedTime);
+    }
+
+    public add(states: { [key: string]: S }): void {
+        Object.keys(states).forEach((key) => {
+            this._states.set(key, states[key]);
+        });
+    }
+
+    public clear(): void {
+        this._states.clear();
+    }
+
+    public set(states: { [key: string]: S }): void {
+        this.clear();
+        this.add(states);
     }
 
     /**

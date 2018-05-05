@@ -1,16 +1,17 @@
+import AutoBind from "autobind-decorator";
+
 import Application from "../../framework/Application";
-import StateMachine from "../../framework/StateMachine";
-import {getCurrentViewSize, getScale} from "../../framework/utils";
-import {addEvents, removeEvents} from '../../framework/EventUtils';
-import ViewContainer from "../../framework/ViewContainer";
+import { getCurrentViewSize, getScale } from "../../framework/utils";
+import { addEvents, removeEvents } from '../../framework/EventUtils';
 
 import InitialViewState from "./InitialView";
-import GameViewState, {EnterParams as GameViewEnterParams} from "./GameView";
+import { EnterParams as GameViewEnterParams } from "./GameView/GameView";
+import LocalGameView from "./GameView/LocalGameView";
+import OnlineGameView from "./GameView/OnlineGameView";
 import TopViewState from "./TopView";
 
-import Mode from "../models/Mode";
-
-import {toggleMute} from '../helper/MusicPlayer';
+import { toggleSound } from '../../framework/MusicPlayer';
+import { isOnlineMode } from "../models/Game";
 
 export enum Events {
     INITIALIZED = "ApplicationState@INITIALIZED",
@@ -22,11 +23,11 @@ enum InnerStates {
     INITIAL = "initial",
     TOP = "top",
     GAME = "game",
+    ONLINE_GAME = "online_game",
 }
 
+@AutoBind
 class ApplicationState extends Application {
-    private _viewStateMachine: StateMachine<ViewContainer>;
-
     constructor() {
         super(getCurrentViewSize());
     }
@@ -35,33 +36,35 @@ class ApplicationState extends Application {
      * @override
      */
     update(elapsedTime: number): void {
-        this._viewStateMachine.update(elapsedTime);
+        this.stateMachine.update(elapsedTime);
     }
 
     /**
      * @override
      */
     onEnter(): void {
-        this._updateRendererSize();
-        this._updateStageScale();
+        this.updateRendererSize();
+        this.updateStageScale();
 
-        this._viewStateMachine = new StateMachine({
+        // TODO create instance each changing state.
+        this.stateMachine.set({
             [InnerStates.INITIAL]: new InitialViewState(),
             [InnerStates.TOP]: new TopViewState(),
-            [InnerStates.GAME]: new GameViewState(),
+            [InnerStates.GAME]: new LocalGameView(),
+            [InnerStates.ONLINE_GAME]: new OnlineGameView(),
         });
 
         addEvents({
-            [Events.INITIALIZED]: this._handleInitializedEvent,
-            [Events.REQUESTED_GAME_START]: this._handleRequestedGameStartEvent,
-            [Events.REQUESTED_BACK_TO_TOP]: this._handleRequestedBackToTopEvent,
+            [Events.INITIALIZED]: this.handleInitializedEvent,
+            [Events.REQUESTED_GAME_START]: this.handleRequestedGameStartEvent,
+            [Events.REQUESTED_BACK_TO_TOP]: this.handleRequestedBackToTopEvent,
         });
 
         window.addEventListener('resize', this.onResize);
-        window.addEventListener('blur', toggleMute);
-        window.addEventListener('focus', toggleMute);
+        window.addEventListener('blur', this.turnSoundOff);
+        window.addEventListener('focus', this.turnSoundOn);
 
-        this._to(InnerStates.INITIAL);
+        this.to(InnerStates.INITIAL);
     }
 
     /**
@@ -72,73 +75,66 @@ class ApplicationState extends Application {
             Events.INITIALIZED,
         ]);
         window.removeEventListener('resize', this.onResize);
-        window.removeEventListener('blur', toggleMute);
-        window.removeEventListener('focus', toggleMute);
+        window.removeEventListener('blur', this.turnSoundOff);
+        window.removeEventListener('focus', this.turnSoundOn);
     }
 
     /**
      *
-     * @private
      */
-    private onResize = (): void => {
-        this._updateRendererSize();
-        this._updateStageScale();
+    protected onResize(): void {
+        this.updateRendererSize();
+        this.updateStageScale();
     };
 
     /**
      *
-     * @private
      */
-    private _updateRendererSize = () => {
+    private updateRendererSize() {
         const {width, height} = getCurrentViewSize();
         this.renderer.resize(width, height);
     };
 
     /**
      *
-     * @private
      */
-    private _updateStageScale = () => {
+    private updateStageScale() {
         this.stage.scale.x = this.stage.scale.y = getScale();
     };
 
     /**
      *
-     * @private
      */
-    private _handleInitializedEvent = () => {
-        this._to(InnerStates.TOP);
+    private handleInitializedEvent() {
+        this.to(InnerStates.TOP);
     };
 
     /**
      *
-     * @private
      */
-    private _handleRequestedGameStartEvent = (e: CustomEvent) => {
-        const {mode} = e.detail;
+    private handleRequestedGameStartEvent(e: CustomEvent) {
+        const {game} = e.detail;
 
-        this._to<GameViewEnterParams>(InnerStates.GAME, {mode});
+        const nextState = isOnlineMode(game.mode) ?
+            InnerStates.ONLINE_GAME :
+            InnerStates.GAME;
+
+        this.to<GameViewEnterParams>(nextState, {game});
     };
 
     /**
      *
-     * @private
      */
-    private _handleRequestedBackToTopEvent = () => {
-        this._to(InnerStates.TOP);
+    private handleRequestedBackToTopEvent() {
+        this.to(InnerStates.TOP);
     };
 
-    /**
-     *
-     *
-     * @param {string} stateTag
-     * @param {T} params
-     * @private
-     */
-    private _to = <T>(stateTag: string, params?: T): void => {
-        this._viewStateMachine.change(stateTag, params);
-        this.stage.removeChildren();
-        this.stage.addChild(this._viewStateMachine.current);
+    private turnSoundOn(){
+        toggleSound("on");
+    }
+
+    private turnSoundOff(){
+        toggleSound("off");
     }
 }
 

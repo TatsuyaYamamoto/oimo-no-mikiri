@@ -13,7 +13,7 @@ import Hanamaru from "../../../texture/sprite/character/Hanamaru";
 import Uchicchi from "../../../texture/sprite/character/Uchicchi";
 import Oimo from "../../../texture/sprite/character/Oimo";
 
-import {play} from "../../../helper/MusicPlayer";
+import {play} from "../../../../framework/MusicPlayer";
 import {trackPageView, VirtualPageViews} from "../../../helper/tracker";
 
 import {Ids as SoundIds} from '../../../resources/sound';

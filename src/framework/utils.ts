@@ -63,3 +63,51 @@ export function isSupportTouchEvent(): boolean {
 export function getRandomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
+
+/**
+ * Copy text to clipboard.
+ *
+ * @param text
+ * @return {boolean}
+ */
+export function copyTextToClipboard(text): boolean {
+    const copyFrom = document.createElement("textarea");
+    copyFrom.textContent = text;
+
+    document.body.appendChild(copyFrom);
+
+    copyFrom.focus();
+    copyFrom.setSelectionRange(0, text.length);
+
+    const isSucceed = document.execCommand("copy");
+
+    if (isSucceed) {
+        console.log(`Succeed to copy to clipboard. target: ${text}`);
+    } else {
+        console.error(`Failed to copy to clipboard.  target: ${text}`);
+
+    }
+
+    document.body.removeChild(copyFrom);
+
+    return isSucceed;
+}
+
+export function timeout(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(), ms);
+    });
+}
+
+export function vibrate (patternMillis: number | number[]) {
+    if(!navigator.vibrate){
+        console.warn("Vibrate API is not supporting.");
+        return;
+    }
+
+    const isSucceed = navigator.vibrate(patternMillis)
+
+    if(!isSucceed){
+        console.error("Failed to vibrate.");
+    }
+}

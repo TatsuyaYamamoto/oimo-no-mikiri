@@ -1,11 +1,10 @@
-import {Texture, Sprite, Container} from 'pixi.js';
+import { Texture, Sprite, Container } from 'pixi.js';
 
 import Deliverable from "../../../../../framework/Deliverable";
-import {dispatchEvent} from "../../../../../framework/EventUtils";
+import { dispatchEvent } from "../../../../../framework/EventUtils";
 
 import AbstractGameState from "../GameViewState";
-import {Events} from '../../GameView';
-import {Events as AppEvents} from '../../../ApplicationState';
+import { Events } from '../../GameView';
 
 import RestartButton from "../../../../texture/sprite/button/RestartButton";
 import BackToTopButton from "../../../../texture/sprite/button/BackToTopButton";
@@ -18,10 +17,10 @@ import WinnerName from "../../../../texture/containers/GameResultPaper/WinnerNam
 import Actor from "../../../../models/Actor";
 import Mode from "../../../../models/Mode";
 
-import {play, stop} from "../../../../helper/MusicPlayer";
-import {Action, Category, trackEvent} from "../../../../helper/tracker";
+import { play } from "../../../../../framework/MusicPlayer";
+import { Action, Category, trackEvent } from "../../../../helper/tracker";
 
-import {Ids as SoundIds} from '../../../../resources/sound';
+import { Ids as SoundIds } from '../../../../resources/sound';
 
 export interface EnterParams extends Deliverable {
     winner: Actor;
@@ -33,6 +32,9 @@ abstract class OverState extends AbstractGameState {
     private _gameOverLogo: GameOverLogo;
     private _restartButton: RestartButton;
     private _backToTopButton: BackToTopButton;
+
+    // TODO: implements once method
+    private isRestartTapped;
 
     private _resultPaper: Container;
 
@@ -79,6 +81,8 @@ abstract class OverState extends AbstractGameState {
         this._resultPaper = new Container();
         this._resultPaper.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
 
+        this.isRestartTapped = false;
+
         const paperHeight = this.viewHeight * 0.9;
         const paperWidth = paperHeight * (1 / Math.sqrt(2));
 
@@ -102,6 +106,7 @@ abstract class OverState extends AbstractGameState {
             this._from(this.opponent.loseTexture) :
             this._from(this.opponent.winTexture);
         opponentSprite.position.set(paperWidth * 0.2, paperHeight * 0.3);
+
 
         this._resultPaper.addChild(
             calligraphyPaper,
@@ -128,8 +133,12 @@ abstract class OverState extends AbstractGameState {
      * @private
      */
     private _onClickRestartButton = () => {
-        dispatchEvent(Events.RESTART_GAME);
+        if (this.isRestartTapped) {
+            return;
+        }
+        this.isRestartTapped = true;
 
+        dispatchEvent(Events.RESTART_GAME);
         play(SoundIds.SOUND_OK);
 
         trackEvent(
@@ -142,17 +151,8 @@ abstract class OverState extends AbstractGameState {
      *
      * @private
      */
-    private _onClickBackToTopButton = () => {
-        // prevent to propagate to invoke tap event on title view.
-        setTimeout(() => dispatchEvent(AppEvents.REQUESTED_BACK_TO_TOP), 1);
-
-        stop(SoundIds.SOUND_WAVE_LOOP);
-        play(SoundIds.SOUND_CANCEL);
-
-        trackEvent(
-            Category.BUTTON,
-            Action.TAP,
-            "back_to_menu");
+    protected _onClickBackToTopButton = () => {
+        dispatchEvent(Events.BACK_TO_TOP);
     };
 
     private _trackAchievementToGa = (bestTime: number, mode: Mode, winner: Actor) => {

@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 
 import State from "./State";
 import config from "./config";
+import StateMachine from "./StateMachine";
+import ViewContainer from "./ViewContainer";
 
 /**
  * Root class of the application.
@@ -30,6 +32,8 @@ import config from "./config";
  * @class
  */
 abstract class Application extends PIXI.Application implements State {
+    private _stateMachine: StateMachine<ViewContainer>;
+
     constructor(options: PIXI.ApplicationOptions) {
         super(Object.assign({
             backgroundColor: config.rendererBackgroundColor,
@@ -38,6 +42,12 @@ abstract class Application extends PIXI.Application implements State {
 
         // setup tick callback function.
         this.ticker.add(() => this.update(this.ticker.elapsedMS));
+
+        this._stateMachine = new StateMachine<ViewContainer>();
+    }
+
+    protected get stateMachine(): StateMachine<ViewContainer> {
+        return this._stateMachine;
     }
 
     /**
@@ -82,6 +92,12 @@ abstract class Application extends PIXI.Application implements State {
      * @override
      */
     onExit(): void {
+    }
+
+    protected to<T>(stateTag: string, params?: T): void{
+        this.stateMachine.change(stateTag, params);
+        this.stage.removeChildren();
+        this.stage.addChild(this.stateMachine.current);
     }
 }
 

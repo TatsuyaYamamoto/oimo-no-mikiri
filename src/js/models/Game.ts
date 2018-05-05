@@ -1,83 +1,27 @@
 import Battle from "./Battle";
 import Actor from './Actor';
-import Mode, {Level} from "./Mode";
+import Mode from "./Mode";
+import EventEmitter from "./online/EventEmitter";
+import { DEFAULT_ROUND_SIZE } from "../Constants";
 
-import {GAME_PARAMETERS} from "../Constants";
+abstract class Game extends EventEmitter {
+    protected _mode: Mode;
+    protected _roundSize: number;
+    protected _currentRound: number;
+    protected _battles: Map<number, Battle>;
 
-class Game {
-    private _mode: Mode;
-
-    private _currentRound: number;
-    private _battles: Map<number, Battle>;
-
-    constructor(mode) {
+    constructor(mode: Mode, roundSize?: number) {
+        super();
         this._mode = mode;
-    }
-
-    public get isOnePlayerMode(): boolean {
-        return this._mode.numberOfPlayer === 1;
-    }
-
-    public get isTwoPlayerMode(): boolean {
-        return this._mode.numberOfPlayer === 2;
-    }
-
-    public get mode() {
-        return this._mode;
-    }
-
-    public get roundSize(): number {
-        return this._mode.roundSize;
-    }
-
-    public get currentRound(): number {
-        return this._currentRound;
-    }
-
-    public get currentBattle(): Battle {
-        return this._battles.get(this._currentRound);
-    }
-
-    public get npcAttackIntervalMillis(): number {
-        if (!this.isOnePlayerMode) {
-            console.error("The game is not one player mode, then an opponent won't attack automatically.");
-            return;
-        }
-
-        const {
-            reaction_rate,
-            reaction_rate_tuning
-        } = GAME_PARAMETERS;
-
-        return reaction_rate[this.mode.level][this.currentRound] * reaction_rate_tuning * 1000;
-    }
-
-    public getWins(actor: Actor): number {
-        let wins = 0;
-
-        this._battles.forEach((b) => {
-            if (b.winner === actor) {
-                wins++;
-            }
-        });
-
-        return wins;
-    }
-
-    public get winner(): Actor {
-        let playerWins = this.getWins(Actor.PLAYER);
-        let opponentWins = this.getWins(Actor.OPPONENT);
-
-        return playerWins > opponentWins ?
-            Actor.PLAYER :
-            Actor.OPPONENT;
+        this._roundSize = roundSize || DEFAULT_ROUND_SIZE;
+        this._battles = new Map();
     }
 
     public get bestTime(): number {
         let time = 99999;
 
         this._battles.forEach((b) => {
-            if (this.isOnePlayerMode) {
+            if (isSingleMode(this.mode)) {
                 if (b.winnerAttackTime < time && b.winner === Actor.PLAYER) {
                     time = b.winnerAttackTime;
                 }
@@ -92,7 +36,7 @@ class Game {
     }
 
     public get straightWins(): number {
-        if (!this.isOnePlayerMode) {
+        if (!isSingleMode(this.mode)) {
             console.error('This variable is not supported outside of one player mode.');
             return;
         }
@@ -106,44 +50,78 @@ class Game {
         return wins;
     }
 
-    public start(): void {
-        this._battles = new Map();
-        new Array(this.roundSize).forEach((ignore, round) => {
-            this._battles.set(round, new Battle());
+
+    public get winner(): Actor {
+        let playerWins = this.getWins(Actor.PLAYER);
+        let opponentWins = this.getWins(Actor.OPPONENT);
+
+        return playerWins > opponentWins ?
+            Actor.PLAYER :
+            Actor.OPPONENT;
+    }
+
+    public get mode() {
+        return this._mode;
+    }
+
+    public get roundSize(): number {
+        return this._roundSize;
+    }
+
+    public get currentRound(): number {
+        return this._currentRound;
+    }
+
+    public get currentBattle(): Battle {
+        return this._battles.get(this._currentRound);
+    }
+
+    public get battleLeft(): number {
+        return this.roundSize - this.currentRound + 1;
+    }
+
+    public getWins(actor: Actor): number {
+        let wins = 0;
+
+        this._battles.forEach((b) => {
+            if (b.winner === actor) {
+                wins++;
+            }
         });
 
-        this._currentRound = 1;
-        this._battles.set(this._currentRound, new Battle());
+        return wins;
     }
 
-    public next(): void {
-        if (this.currentRound >= this.roundSize) {
-            console.error('Round of the game is already fulfilled.');
-            return;
-        }
-        this._currentRound++;
-        this._battles.set(this._currentRound, new Battle());
-    }
+    abstract get npcAttackIntervalMillis(): number;
 
-    public isFixed(): boolean {
-        // Is already lost on 1player-mode?
-        if (this.isOnePlayerMode) {
-            let isLost = false;
+    abstract start(): void;
 
-            this._battles.forEach((b) => {
-                if (b.winner === Actor.OPPONENT) {
-                    isLost = true;
-                }
-            });
+    abstract next(): void;
 
-            return isLost;
-        }
+    abstract isFixed(): boolean;
 
-        // Player or opponent won required time?
-        const requiredWins = Math.ceil(this.roundSize / 2);
-        return this.getWins(Actor.PLAYER) >= requiredWins
-            || this.getWins(Actor.OPPONENT) >= requiredWins;
-    }
+    abstract release(): void;
+}
+
+export function isSingleMode(mode: Mode) {
+    return [
+        Mode.SINGLE_BEGINNER,
+        Mode.SINGLE_NOVICE,
+        Mode.SINGLE_EXPERT
+    ].some((singleMode) => mode === singleMode);
+}
+
+export function isMultiMode(mode: Mode) {
+    return [
+        Mode.MULTI_LOCAL,
+        Mode.MULTI_ONLINE,
+    ].some((multiMode) => mode === multiMode);
+}
+
+export function isOnlineMode(mode: Mode) {
+    return [
+        Mode.MULTI_ONLINE,
+    ].some((multiMode) => mode === multiMode);
 }
 
 export default Game;

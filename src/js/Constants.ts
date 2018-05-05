@@ -1,4 +1,4 @@
-import {Level} from './models/Mode'
+import Mode from './models/Mode'
 
 /**
  * Parameters for game tuning.
@@ -17,21 +17,21 @@ export const GAME_PARAMETERS = {
      * @see http://dic.nicovideo.jp/a/%E5%88%B9%E9%82%A3%E3%81%AE%E8%A6%8B%E6%96%AC%E3%82%8A
      */
     reaction_rate: {
-        [Level.BEGINNER]: {
+        [Mode.SINGLE_BEGINNER]: {
             1: 81 / 60,
             2: 49 / 60,
             3: 20 / 60,
             4: 15 / 60,
             5: 10 / 60
         },
-        [Level.NOVICE]: {
+        [Mode.SINGLE_NOVICE]: {
             1: 62 / 60,
             2: 40 / 60,
             3: 16 / 60,
             4: 12 / 60,
             5: 9 / 60
         },
-        [Level.EXPERT]: {
+        [Mode.SINGLE_EXPERT]: {
             1: 17 / 60,
             2: 13 / 60,
             3: 11 / 60,
@@ -69,6 +69,21 @@ export const BASIC_IMAGE_WIDTH = 800;
  * @type {number}
  */
 export const BASIC_IMAGE_HEIGHT = BASIC_IMAGE_WIDTH / ASPECT_RATIO;
+
+/**
+ * Default round size of game.
+ *
+ * @type {number}
+ */
+export const DEFAULT_ROUND_SIZE = 5;
+
+export const VIBRATE_TIME = {
+    SIGNAL: 0,
+    TRY_TO_ATTACK: 20,
+    ATTACK: 100,
+    FALSE_START: 20,
+    DRAW: 100,
+};
 
 /**
  * Skip ready state animation before game action if true.
@@ -119,3 +134,12 @@ export const URL = {
 export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production' ?
     "UA-64858827-7" :   // For oimo production tracking.
     "UA-64858827-8";    // For test tracking.
+
+export const FIREBASE_OPTIONS = process.env.NODE_ENV === 'production' ? {} : {
+    "apiKey": "AIzaSyB16fI2MRL411jYOCjW1eL7hTuwOvlq3w8",
+    "databaseURL": "https://oimo-no-mikiri-development.firebaseio.com",
+    "storageBucket": "oimo-no-mikiri-development.appspot.com",
+    "authDomain": "oimo-no-mikiri-development.firebaseapp.com",
+    "messagingSenderId": "888607734391",
+    "projectId": "oimo-no-mikiri-development"
+};

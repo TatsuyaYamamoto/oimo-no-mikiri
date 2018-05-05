@@ -1,26 +1,43 @@
 import Actor from './Actor';
+import EventEmitter from "./online/EventEmitter";
+import { getRandomInteger } from "../../framework/utils";
 
-export default class Battle {
-    private _winner: Actor;
-    private _winnerAttackTime: number;
-    private _falseStartMap: Map<Actor, boolean>;
+export enum BattleEvents {
+    FIXED = "fixed",
+    SUCCEED_ATTACK = "succeed_attack",
+    FALSE_STARTED = "false_started",
+    DRAW = "draw",
+}
+
+abstract class Battle extends EventEmitter {
+    protected _winner: Actor;
+    protected _winnerAttackTime: number;
+    protected _signalTime: number;
+    protected _falseStartMap: Map<Actor, boolean>;
 
     constructor() {
+        super();
+
         this._winner = null;
+        this._winnerAttackTime = null;
         this._falseStartMap = new Map();
         this._falseStartMap.set(Actor.PLAYER, false);
         this._falseStartMap.set(Actor.OPPONENT, false);
     }
 
-    public get winner(): Actor | null {
+    get winner(): Actor {
         return this._winner;
-    }
+    };
 
-    public get winnerAttackTime(): number {
+    get winnerAttackTime(): number {
         if (!this.isFixed()) console.error("The battle is not fixed.");
 
         return this._winnerAttackTime;
-    }
+    };
+
+    get signalTime(): number {
+        return this._signalTime;
+    };
 
     public isFalseStarted(actor: Actor): boolean {
         return this._falseStartMap.get(actor);
@@ -30,31 +47,15 @@ export default class Battle {
         return !!this._winner;
     }
 
-    public win(actor: Actor, time: number): void {
-        if (this.isFixed()) {
-            console.error('The battle is already fixed.');
-            return;
-        }
+    abstract start(): void;
 
-        this._winner = actor;
-        this._winnerAttackTime = time;
-    }
+    abstract attack(actor: string, attackTime: number): void;
 
-    public falseStart(actor: Actor): void {
-        if (this.isFixed()) {
-            console.error('The battle is already fixed.');
-            return;
-        }
+    abstract release(): void;
 
-        if (this._falseStartMap.get(actor)) {
-            this._winner = actor === Actor.PLAYER ? Actor.OPPONENT : Actor.PLAYER;
-            return;
-        }
-
-        this._falseStartMap.set(actor, true);
-    }
-
-    public draw(): void {
-        // do nothing.
+    protected createSignalTime(): number {
+        return getRandomInteger(3000, 5000);
     }
 }
+
+export default Battle;

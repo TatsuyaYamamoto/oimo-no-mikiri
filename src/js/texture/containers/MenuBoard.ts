@@ -1,7 +1,7 @@
-import {Container, interaction} from 'pixi.js';
+import { Container, interaction } from 'pixi.js';
 
-import {loadTexture} from "../../../framework/AssetLoader";
-import {isSupportTouchEvent} from "../../../framework/utils";
+import { loadTexture } from "../../../framework/AssetLoader";
+import { isSupportTouchEvent } from "../../../framework/utils";
 
 import Sprite from "../internal/Sprite";
 import Button from "../internal/Button";
@@ -11,7 +11,7 @@ import SelectCharacterButton from "../sprite/button/SelectCharacterButton";
 import HomeButton from "../sprite/button/HomeButton";
 import SoundButton from "../sprite/button/SoundButton";
 
-import {Ids} from "../../resources/image";
+import { Ids } from "../../resources/image";
 
 /**
  * @class
@@ -31,10 +31,14 @@ class MenuBoard extends Container {
     private _homeButton: HomeButton;
     private _soundButton: SoundButton;
     private _onePlayerGameStartButton: Button;
-    private _twoPlayerGameStartButton: Button;
+    private _multiPlayerGameStartButton: Button;
     private _howToPlayButton: HowToPlayButton;
     private _creditButton: CreditButton;
     private _selectCharacterButton: SelectCharacterButton;
+
+    public get soundButton(): SoundButton {
+        return this._soundButton;
+    }
 
     constructor(width: number, height: number) {
         super();
@@ -51,11 +55,11 @@ class MenuBoard extends Container {
         this._onePlayerGameStartButton = new Button(loadTexture(Ids.BUTTON_MENU_SINGLE_PLAY_GAME_START));
         this._onePlayerGameStartButton.position.set(-1 * width * 0.5, height * 0.05);
 
-        this._twoPlayerGameStartButton = new Button(loadTexture(Ids.BUTTON_MENU_MULTI_PLAY_GAME_START));
-        this._twoPlayerGameStartButton.position.set(-1 * width * 0.25, height * 0.05);
+        this._multiPlayerGameStartButton = new Button(loadTexture(Ids.BUTTON_MENU_MULTI_PLAY_GAME_START));
+        this._multiPlayerGameStartButton.position.set(-1 * width * 0.25, height * 0.05);
 
         this._howToPlayButton = new HowToPlayButton();
-        this._howToPlayButton.position.set(0, height * 0.05);
+        this._howToPlayButton.position.set(width * 0, height * 0.05);
 
         this._creditButton = new CreditButton();
         this._creditButton.position.set(width * 0.25, height * 0.05);
@@ -66,7 +70,7 @@ class MenuBoard extends Container {
         this.addChild(
             this._backGround,
             this._onePlayerGameStartButton,
-            this._twoPlayerGameStartButton,
+            this._multiPlayerGameStartButton,
             this._howToPlayButton,
             this._creditButton,
             this._selectCharacterButton,
@@ -90,9 +94,9 @@ class MenuBoard extends Container {
         this._onePlayerGameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
     }
 
-    public setOnTwoPlayerGameStartClickListener(fn: (event: interaction.InteractionEvent) => void) {
-        this._twoPlayerGameStartButton.interactive = true;
-        this._twoPlayerGameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
+    public setOnMultiPlayerGameStartClickListener(fn: (event: interaction.InteractionEvent) => void) {
+        this._multiPlayerGameStartButton.interactive = true;
+        this._multiPlayerGameStartButton.on(isSupportTouchEvent() ? 'touchstart' : 'click', fn);
     }
 
     public setOnSelectHowToPlayListener(fn: (event: interaction.InteractionEvent) => void) {
