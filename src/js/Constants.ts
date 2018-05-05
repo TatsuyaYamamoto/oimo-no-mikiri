@@ -114,15 +114,15 @@ export const DEFAULT_LANGUAGE = SUPPORTED_LANGUAGES.EN;
  * @type {string}
  */
 export const APP_SERVER_BASE_URL = process.env.NODE_ENV === 'production' ?
-    "http://api.sokontokoro-factory.net/lovelive/" :
-    "http://api.sokontokoro-factory.net/lovelive-test/";
+    "https://api.sokontokoro-factory.net/lovelive/" :
+    "https://api.sokontokoro-factory.net/lovelive-test/";
 
 /**
  * External URLs.
  */
 export const URL = {
-    OIMO_NO_MIKIRI: "http://games.sokontokoro-factory.net/oimo/",
-    SOKONTOKORO_HOME: 'http://sokontokoro-factory.net',
+    OIMO_NO_MIKIRI: "https://games.sokontokoro-factory.net/oimo/",
+    SOKONTOKORO_HOME: 'https://www.sokontokoro-factory.net/',
     TWITTER_HOME_T28: "https://twitter.com/t28_tatsuya",
     TWITTER_HOME_SANZASHI: "https://twitter.com/xxsanzashixx",
     TWITTER_TWEET_PAGE: "https://twitter.com/intent/tweet",
