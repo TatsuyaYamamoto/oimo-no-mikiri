@@ -17,6 +17,7 @@ import {SKIP_BRAND_LOGO_ANIMATION} from "../Constants";
 
 import {Category, TimingVariable, trackPageView, trackTiming, VirtualPageViews} from "../helper/tracker";
 import {isIOS} from "../../framework/utils";
+import { resumeContext } from '../../framework/MusicPlayer';
 
 export enum Events {
     COMPLETE_PRELOAD = "InitialViewState@COMPLETE_LOAD",
@@ -48,11 +49,7 @@ class InitialViewState extends ViewContainer {
 
         // TODO: check logged-in.
 
-        if (isIOS()) {
-            this._showIosInitInfo();
-        } else {
-            this._startPreload();
-        }
+        this.showUserGestureInfo();
     }
 
     /**
@@ -67,22 +64,26 @@ class InitialViewState extends ViewContainer {
         ]);
     }
 
-    private _showIosInitInfo = () =>{
+    private showUserGestureInfo = () =>{
         this._tapInfoText = new Text(t(StringIds.TAP_DISPLAY_INFO), {
             fontSize: 40,
             stroke: '#ffffff',
             strokeThickness: 2,
         });
         this._tapInfoText.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        this.addClickWindowEventListener(this._onIosInitClicked);
+        this.addClickWindowEventListener(this.onClickedAsFirstUserGesture);
 
         this.applicationLayer.addChild(
             this._tapInfoText,
         );
     };
 
-    private _onIosInitClicked = () => {
-        this.removeClickWindowEventListener(this._onIosInitClicked);
+    private onClickedAsFirstUserGesture = () => {
+        // For google chrome.
+        // @see https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+        resumeContext();
+
+        this.removeClickWindowEventListener(this.onClickedAsFirstUserGesture);
         this.applicationLayer.removeChildren();
 
         this._startPreload();

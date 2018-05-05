@@ -70,3 +70,7 @@ export function toggleSound(turn?: "on" | "off"): boolean {
 export function isMute(): boolean {
     return PixiSound.context.muted;
 }
+
+export function resumeContext(): Promise<void> {
+  return PixiSound.context.audioContext.resume();
+}
