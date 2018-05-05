@@ -16,6 +16,9 @@ import {
     GOOGLE_ANALYTICS_ACCOUNT_ID
 } from "./Constants";
 
+// base style sheet
+import '../css/index.css';
+
 // Network fetch module
 import 'whatwg-fetch';
 
