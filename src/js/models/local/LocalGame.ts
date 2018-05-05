@@ -54,16 +54,7 @@ class LocalGame extends Game {
 
         return wins;
     }
-
-    public get winner(): Actor {
-        let playerWins = this.getWins(Actor.PLAYER);
-        let opponentWins = this.getWins(Actor.OPPONENT);
-
-        return playerWins > opponentWins ?
-            Actor.PLAYER :
-            Actor.OPPONENT;
-    }
-
+    
     public get bestTime(): number {
         let time = 99999;
 

@@ -52,12 +52,22 @@ abstract class Game extends EventEmitter {
 
 
     public get winner(): Actor {
-        let playerWins = this.getWins(Actor.PLAYER);
-        let opponentWins = this.getWins(Actor.OPPONENT);
+        if(!isSingleMode(this.mode)){
+            let playerWins = this.getWins(Actor.PLAYER);
+            let opponentWins = this.getWins(Actor.OPPONENT);
 
-        return playerWins > opponentWins ?
-            Actor.PLAYER :
-            Actor.OPPONENT;
+            return playerWins > opponentWins ?
+                Actor.PLAYER :
+                Actor.OPPONENT;
+        }
+
+        let winner = Actor.PLAYER;
+        this._battles.forEach((b)=>{
+            if(b.winner === Actor.OPPONENT){
+                winner = Actor.OPPONENT;
+            }
+        });
+        return winner;
     }
 
     public get mode() {
