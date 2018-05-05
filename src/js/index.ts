@@ -16,9 +16,6 @@ import {
     GOOGLE_ANALYTICS_ACCOUNT_ID
 } from "./Constants";
 
-// base style sheet
-import '../css/index.css';
-
 // Network fetch module
 import 'whatwg-fetch';
 
@@ -31,11 +28,19 @@ initTracker(GOOGLE_ANALYTICS_ACCOUNT_ID);
 initFirebase();
 
 /**
- * Rendering target on html.
+ * Game rendering target on html.
  *
  * @type {HTMLElement}
  */
 const mainElement: HTMLElement = document.getElementById('main');
+
+/**
+ * First gesture guide rendering target on html.
+ *
+ * @type {HTMLElement}
+ * @see https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+ */
+const firstGestureGuideElement: HTMLElement = document.getElementById('first-gesture-guide');
 
 /**
  * Application root instance.
@@ -48,6 +53,9 @@ const app = new ApplicationState();
  * Initialize the application.
  */
 function init() {
+    mainElement.style.display = "block";
+    firstGestureGuideElement.style.display = "none";
+
     // set framework configuration
     config.supportedLanguages = Object.keys(SUPPORTED_LANGUAGES).map((key) => SUPPORTED_LANGUAGES[key]);
     config.defaultLanguage = DEFAULT_LANGUAGE;
@@ -65,7 +73,7 @@ function init() {
 }
 
 // Fire init() on page loaded.
-window.addEventListener('load', init);
+window.addEventListener('click', init, {once: true});
 
 window.onerror = function (msg, file, line, column, err) {
     trackError(err);

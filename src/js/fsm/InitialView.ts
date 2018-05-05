@@ -49,7 +49,11 @@ class InitialViewState extends ViewContainer {
 
         // TODO: check logged-in.
 
-        this.showUserGestureInfo();
+        // Resume AudioContext because Pixi-sound module starts before user's gesture.
+        // @see https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+        resumeContext();
+
+        this._startPreload();
     }
 
     /**
@@ -63,31 +67,6 @@ class InitialViewState extends ViewContainer {
             Events.COMPLETE_LOGO_ANIMATION,
         ]);
     }
-
-    private showUserGestureInfo = () =>{
-        this._tapInfoText = new Text(t(StringIds.TAP_DISPLAY_INFO), {
-            fontSize: 40,
-            stroke: '#ffffff',
-            strokeThickness: 2,
-        });
-        this._tapInfoText.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
-        this.addClickWindowEventListener(this.onClickedAsFirstUserGesture);
-
-        this.applicationLayer.addChild(
-            this._tapInfoText,
-        );
-    };
-
-    private onClickedAsFirstUserGesture = () => {
-        // For google chrome.
-        // @see https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
-        resumeContext();
-
-        this.removeClickWindowEventListener(this.onClickedAsFirstUserGesture);
-        this.applicationLayer.removeChildren();
-
-        this._startPreload();
-    };
 
     /**
      *
