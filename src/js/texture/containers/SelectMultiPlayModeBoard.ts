@@ -16,7 +16,7 @@ export type ClickEventType = "offline" | "online" | "back";
  */
 class MenuBoardBackGround extends Sprite {
     constructor() {
-        super(loadTexture(Ids.MENU_BOARD));
+        super(loadTexture(Ids.SELECT_MULTI_MODE_BOARD));
     }
 }
 
@@ -33,7 +33,7 @@ class SelectMultiPlayModeBoard extends Container {
         this.background.position.set(0);
 
         this.backButton = new Button(loadTexture(Ids.BUTTON_MENU_BACK));
-        this.backButton.position.set(-1 * width * 0.65, -1 * height * 0.3);
+        this.backButton.position.set(-1 * width * 0.75, -1 * height * 0.37);
 
         this.offlineButton = new Button(loadTexture(Ids.BUTTON_MENU_OFFLINE_GAME));
         this.offlineButton.position.set(-1 * width * 0.2, height * 0.05);

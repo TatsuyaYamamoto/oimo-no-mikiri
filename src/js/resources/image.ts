@@ -50,6 +50,7 @@ export enum Ids {
     LOGO_GAME_OVER,
     MENU_BOARD,
     SELECT_LEVEL_BOARD,
+    SELECT_MULTI_MODE_BOARD,
     SIGNAL,
 }
 
@@ -100,6 +101,7 @@ const manifest: ImageManifest = {
         [Ids.LOGO_GAME_OVER]: 'image_logo_gameover.png',
         [Ids.MENU_BOARD]: 'image_menu_board.png',
         [Ids.SELECT_LEVEL_BOARD]: 'image_select_level_board.png',
+        [Ids.SELECT_MULTI_MODE_BOARD]: 'image_select_multi_mode_board.png',
         [Ids.SIGNAL]: 'image_signal.png',
     },
     ja: {}

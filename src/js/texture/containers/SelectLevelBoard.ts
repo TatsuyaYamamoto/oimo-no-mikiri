@@ -38,16 +38,16 @@ class SelectLevelBoard extends Container {
         this._background.position.set(0);
 
         this._beginnerButton = new BeginnerLevelButton();
-        this._beginnerButton.position.set(-1 * width * 0.3, 0);
+        this._beginnerButton.position.set(-1 * width * 0.3, height * 0.05);
 
         this._noviceButton = new NoviceLevelButton();
-        this._noviceButton.position.set(0, 0);
+        this._noviceButton.position.set(0, height * 0.05);
 
         this._expertButton = new ExpertLevelButton();
-        this._expertButton.position.set(width * 0.3, 0);
+        this._expertButton.position.set(width * 0.3, height * 0.05);
 
         this.backButton = new Button(loadTexture(Ids.BUTTON_MENU_BACK));
-        this.backButton.position.set(-1 * width * 0.65, -1 * height * 0.3);
+        this.backButton.position.set(-1 * width * 0.75, -1 * height * 0.37);
 
         this.addChild(
             this._background,
