@@ -37,6 +37,30 @@ export enum Ids {
     GAME_RESULT_TWEET_ZERO_POINT,
     MULTI_GAME_RESULT_TWEET_HANAMARU_WIN,
     MULTI_GAME_RESULT_TWEET_RUBY_WIN,
+
+    INVITE_MULTI_PLAY_MESSAGE,
+
+    MODAL_CREATE_ROOM_TITLE,
+    MODAL_CREATE_ROOM_TEXT,
+    MODAL_CREATE_ROOM_BUTTON_COPY,
+    MODAL_CREATE_ROOM_BUTTON_COPY_SUCCESS,
+    MODAL_CREATE_ROOM_BUTTON_TWEET,
+    MODAL_JOIN_ROOM_TITLE,
+    MODAL_JOIN_ROOM_TEXT,
+    MODAL_GAME_READY_TITLE,
+    MODAL_REJECT_JOIN_FULFILLED_TEXT,
+    MODAL_REJECT_JOIN_NO_GAME_TEXT,
+    MODAL_WAIT_RESTART_TEXT,
+    MODAL_CONFIRM_RESTART_TEXT,
+    MODAL_MEMBER_LEFT_TEXT,
+    MODAL_CONFIRM_CLOSE_GAME_TITLE,
+    MODAL_CONFIRM_CLOSE_GAME_TEXT,
+    MODAL_CONFIRM_CLOSE_GAME_BUTTON_CONFIRM,
+    MODAL_CONFIRM_CLOSE_GAME_BUTTON_CANCEL,
+    MODAL_CANCEL,
+    MODAL_ERROR_UNEXPECTED,
+}
+
 export default {
     en: {
         translation: {
@@ -86,6 +110,29 @@ In multi play mode,
             [Ids.GAME_RESULT_TWEET_ZERO_POINT]: `はなまる「もういいずら、ぴよこ万十食べるずら」{{wins}}人抜き、、、、`,
             [Ids.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN]: `はなまる「{{winnerWins}}対{{loserWins}}で、まるの勝ちずら！」`,
             [Ids.MULTI_GAME_RESULT_TWEET_RUBY_WIN]: `るびぃ「{{winnerWins}}対{{loserWins}}で、ルビィの勝ち！」`,
+
+            [Ids.INVITE_MULTI_PLAY_MESSAGE]: `Let's bake a sweet potato with me, zura~!`,
+
+            [Ids.MODAL_CREATE_ROOM_TITLE]: `Created new room!`,
+            [Ids.MODAL_CREATE_ROOM_TEXT]: `You can battle with another player who accessed with invite URL.`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_COPY]: `Copy URL`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_COPY_SUCCESS]: `Success to copy.`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_TWEET]: `Invite with Twitter`,
+            [Ids.MODAL_JOIN_ROOM_TITLE]: `Join online game!`,
+            [Ids.MODAL_JOIN_ROOM_TEXT]: `ID: {{roomId}}`,
+            [Ids.MODAL_GAME_READY_TITLE]: `Ready!`,
+            [Ids.MODAL_REJECT_JOIN_FULFILLED_TEXT]: `You couldn't join. Provided ID' member is decided.`,
+            [Ids.MODAL_REJECT_JOIN_NO_GAME_TEXT]: `Couldn't join because of invalid Room ID.`,
+            [Ids.MODAL_WAIT_RESTART_TEXT]: `Waiting for the opponent's operation.`,
+            [Ids.MODAL_CONFIRM_RESTART_TEXT]: `You are asked for rematch!`,
+            [Ids.MODAL_MEMBER_LEFT_TEXT]: `The opponent left room. Back to title.`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_TITLE]: `You want to cancel this game?`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_TEXT]: `Another player can't join to a canceled game.`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CONFIRM]: `Keep this game.`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CANCEL]: `OK, I cancel.`,
+
+            [Ids.MODAL_CANCEL]: `Cancel`,
+            [Ids.MODAL_ERROR_UNEXPECTED]: `Unexpected error occurred.`,
         }
     },
     ja: {
@@ -125,6 +172,31 @@ In multi play mode,
             [Ids.CREDIT_ON_JIN]: '効果音: On-Jin ～音人～',
             [Ids.CREDIT_LOVELIVE]: 'プロジェクト ラブライブ！',
             [Ids.CREDIT_KIRBY]: '思い出: 星のカービィ',
+
+            [Ids.INVITE_MULTI_PLAY_MESSAGE]: `おいも一緒に焼くずらー！`,
+
+            [Ids.MODAL_CREATE_ROOM_TITLE]: `ルームを作成しました！`,
+            [Ids.MODAL_CREATE_ROOM_TEXT]:
+`招待用URLからゲームにアクセスすることで、あなたと対戦が行えます。
+このダイアログを閉じてしまうとルームが削除されてしまいます。リロードやツイート時は気を付けてください。`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_COPY]: `URLをコピーする`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_COPY_SUCCESS]: `コピーが完了しました`,
+            [Ids.MODAL_CREATE_ROOM_BUTTON_TWEET]: `Twitterで招待する`,
+            [Ids.MODAL_JOIN_ROOM_TITLE]: `ゲームに参加します！`,
+            [Ids.MODAL_JOIN_ROOM_TEXT]: `ID: {{roomId}}`,
+            [Ids.MODAL_GAME_READY_TITLE]: `準備完了`,
+            [Ids.MODAL_REJECT_JOIN_FULFILLED_TEXT]: `対戦メンバーが決定済みのため、ゲームに参加できませんでした。`,
+            [Ids.MODAL_REJECT_JOIN_NO_GAME_TEXT]: `作成されていない、または削除済みのゲームでした。`,
+            [Ids.MODAL_WAIT_RESTART_TEXT]: `作対戦相手を入力待っています！`,
+            [Ids.MODAL_CONFIRM_RESTART_TEXT]: `対戦相手がもう1度ゲームを始めようとしています！`,
+            [Ids.MODAL_MEMBER_LEFT_TEXT]: `メンバーがルームを退出しました！タイトル画面に戻ります。`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_TITLE]: `ゲームをキャンセルしますか？`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_TEXT]: `キャンセルすると対戦相手の受付が行えなくなります。`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CONFIRM]: `やっぱりしない！`,
+            [Ids.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CANCEL]: `キャンセルする...。`,
+
+            [Ids.MODAL_CANCEL]: `キャンセル`,
+            [Ids.MODAL_ERROR_UNEXPECTED]: `予期しないエラーが発生してしまいました。`,
         }
     }
 }

@@ -1,7 +1,11 @@
+import { t } from "../../framework/i18n";
+
 import SweetAlert from "sweetalert2";
 import * as tippy from "tippy.js";
 import { copyTextToClipboard } from "../../framework/utils";
 import { showTweetView } from "./network";
+
+import { Ids as StringIds } from "../resources/string";
 
 export function closeModal() {
     SweetAlert.close();
@@ -11,8 +15,8 @@ export function openCreateRoomModal(gameId: string) {
     const url = `${location.protocol}//${location.host}${location.pathname}?gameId=${gameId}`;
 
     SweetAlert({
-        title: "ルームを作成しました！",
-        text: `招待用URLからゲームにアクセスすることで、対戦が行えます。`,
+        title: t(StringIds.MODAL_CREATE_ROOM_TITLE),
+        text: t(StringIds.MODAL_CREATE_ROOM_TEXT),
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -23,17 +27,17 @@ export function openCreateRoomModal(gameId: string) {
     baseButton.style.cssText = "padding: 0.4em;";
 
     const copyButton = <HTMLButtonElement>baseButton.cloneNode();
-    copyButton.textContent = "URLをコピーする";
+    copyButton.textContent = t(StringIds.MODAL_CREATE_ROOM_BUTTON_COPY);
     copyButton.id = "button-create-room-copy-url";
     copyButton.classList.add("swal2-confirm");
-    copyButton.setAttribute("title", "コピーが完了しました");
+    copyButton.setAttribute("title", t(StringIds.MODAL_CREATE_ROOM_BUTTON_COPY_SUCCESS));
 
     const tweetButton = <HTMLButtonElement>baseButton.cloneNode();
-    tweetButton.textContent = "Twitterで招待する";
+    tweetButton.textContent = t(StringIds.MODAL_CREATE_ROOM_BUTTON_TWEET);
     tweetButton.classList.add("swal2-confirm");
 
     const cancelButton = <HTMLButtonElement>baseButton.cloneNode();
-    cancelButton.textContent = "キャンセル";
+    cancelButton.textContent = t(StringIds.MODAL_CANCEL);
     cancelButton.classList.add("swal2-cancel");
 
     const alertActions = document.querySelectorAll(".swal2-actions")[0];
@@ -55,7 +59,7 @@ export function openCreateRoomModal(gameId: string) {
             copyTextToClipboard(url);
         });
         tweetButton.addEventListener("click", () => {
-            showTweetView("ゲームしよう！", url);
+            showTweetView(t(StringIds.INVITE_MULTI_PLAY_MESSAGE), url);
         });
         cancelButton.addEventListener("click", () => {
             resolve("cancel")
@@ -65,8 +69,8 @@ export function openCreateRoomModal(gameId: string) {
 
 export function openJoinRoomModal(roomId) {
     return SweetAlert({
-        title: `ゲームに参加します！`,
-        text: `ID: ${roomId}`,
+        title: t(StringIds.MODAL_JOIN_ROOM_TITLE),
+        text: t(StringIds.MODAL_JOIN_ROOM_TEXT, {roomId}),
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -75,7 +79,7 @@ export function openJoinRoomModal(roomId) {
 
 export function openReadyRoomModal() {
     return SweetAlert({
-        title: `準備完了`,
+        title: t(StringIds.MODAL_GAME_READY_TITLE),
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -83,14 +87,14 @@ export function openReadyRoomModal() {
 }
 
 export function openRejectJoinRoomModal(type) {
-    let text = "予期しないエラーが発生してしまいました。";
+    let text = t(StringIds.MODAL_ERROR_UNEXPECTED);
 
     switch (type) {
         case "already_fulfilled":
-            text = "対戦メンバーが決定済みのため、ゲームに参加できませんでした。";
+            text = t(StringIds.MODAL_REJECT_JOIN_FULFILLED_TEXT);
             break;
         case "no_game":
-            text = "作成されていない、または削除済みのゲームでした。";
+            text = t(StringIds.MODAL_REJECT_JOIN_NO_GAME_TEXT);
             break;
     }
 
@@ -104,7 +108,7 @@ export function openRejectJoinRoomModal(type) {
 
 export function openWaitingRestartModal() {
     return SweetAlert({
-        title: `対戦相手を入力待っています！`,
+        text: t(StringIds.MODAL_WAIT_RESTART_TEXT),
         showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -113,7 +117,7 @@ export function openWaitingRestartModal() {
 
 export function openRestartConfirmModal() {
     return SweetAlert({
-        title: `対戦相手がもう1度ゲームを始めようとしています！`,
+        text: t(StringIds.MODAL_CONFIRM_RESTART_TEXT),
         showConfirmButton: true,
         showCancelButton: true,
         allowOutsideClick: false,
@@ -123,9 +127,8 @@ export function openRestartConfirmModal() {
 
 export function openMemberLeftModal() {
     return SweetAlert({
-        title: `メンバーがルームを退出しました！`,
-        text: "タイトル画面に戻ります。",
-        showConfirmButton: true,
+        text: t(StringIds.MODAL_MEMBER_LEFT_TEXT),
+        showConfirmButton: false,
         allowOutsideClick: false,
         allowEscapeKey: false,
     });
@@ -133,14 +136,14 @@ export function openMemberLeftModal() {
 
 export function openConfirmCloseGameModal() {
     return SweetAlert({
-        title: `ゲームをキャンセルしますか？`,
-        text: "キャンセルすると対戦相手の受付が行えなくなります。",
+        title: t(StringIds.MODAL_CONFIRM_CLOSE_GAME_TITLE),
+        text: t(StringIds.MODAL_CONFIRM_CLOSE_GAME_TEXT),
         showConfirmButton: true,
         confirmButtonColor: '#3085d6',
-        confirmButtonText: "やっぱりしない！",
+        confirmButtonText: t(StringIds.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CONFIRM),
         showCancelButton: true,
         cancelButtonColor: '#d33',
-        cancelButtonText: "キャンセルする...。",
+        cancelButtonText: t(StringIds.MODAL_CONFIRM_CLOSE_GAME_BUTTON_CANCEL),
         reverseButtons: true,
         allowOutsideClick: false,
         allowEscapeKey: false,
