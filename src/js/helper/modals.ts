@@ -53,11 +53,9 @@ export function openCreateRoomModal(gameId: string) {
     return new Promise((resolve, reject) => {
         copyButton.addEventListener("click", () => {
             copyTextToClipboard(url);
-            resolve("copy");
         });
         tweetButton.addEventListener("click", () => {
             showTweetView("ゲームしよう！", url);
-            resolve("tweet")
         });
         cancelButton.addEventListener("click", () => {
             resolve("cancel")
