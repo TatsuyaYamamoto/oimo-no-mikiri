@@ -135,7 +135,16 @@ export const GOOGLE_ANALYTICS_ACCOUNT_ID = process.env.NODE_ENV === 'production'
     "UA-64858827-7" :   // For oimo production tracking.
     "UA-64858827-8";    // For test tracking.
 
-export const FIREBASE_OPTIONS = process.env.NODE_ENV === 'production' ? {} : {
+export const FIREBASE_OPTIONS = process.env.NODE_ENV === 'production' ? {
+    // Production config
+    "apiKey": "AIzaSyDvNopvc3Tr9WcfTUQK772aSmerv0UeRb0",
+    "authDomain": "oimo-no-mikiri.firebaseapp.com",
+    "databaseURL": "https://oimo-no-mikiri.firebaseio.com",
+    "projectId": "oimo-no-mikiri",
+    "storageBucket": "oimo-no-mikiri.appspot.com",
+    "messagingSenderId": "379161325988"
+} : {
+    // Development config
     "apiKey": "AIzaSyB16fI2MRL411jYOCjW1eL7hTuwOvlq3w8",
     "databaseURL": "https://oimo-no-mikiri-development.firebaseio.com",
     "storageBucket": "oimo-no-mikiri-development.appspot.com",
