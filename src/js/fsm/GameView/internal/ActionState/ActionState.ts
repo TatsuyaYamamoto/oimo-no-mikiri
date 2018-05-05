@@ -1,5 +1,7 @@
 import { dispatchEvent } from "../../../../../framework/EventUtils";
 import Deliverable from "../../../../../framework/Deliverable";
+import { vibrate } from '../../../../../framework/utils';
+import { play } from "../../../../../framework/MusicPlayer";
 
 import AbstractGameState from "../GameViewState";
 import { Events } from "../../GameView";
@@ -9,9 +11,10 @@ import FalseStartCheck from "../../../../texture/sprite/text/FalseStartCheck";
 
 import Actor from '../../../../models/Actor';
 
-import { play } from "../../../../../framework/MusicPlayer";
+import { VIBRATE_TIME } from '../../../../Constants';
 
 import { Ids as SoundIds } from '../../../../resources/sound';
+
 
 export interface EnterParams extends Deliverable {
     signalTime: number,
@@ -121,6 +124,7 @@ abstract class ActionState extends AbstractGameState {
         this._signalSprite.show();
 
         play(SoundIds.SOUND_HARISEN);
+        vibrate(VIBRATE_TIME.SIGNAL);
     };
 
     /**

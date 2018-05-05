@@ -77,6 +77,14 @@ export const BASIC_IMAGE_HEIGHT = BASIC_IMAGE_WIDTH / ASPECT_RATIO;
  */
 export const DEFAULT_ROUND_SIZE = 5;
 
+export const VIBRATE_TIME = {
+    SIGNAL: 0,
+    TRY_TO_ATTACK: 20,
+    ATTACK: 100,
+    FALSE_START: 20,
+    DRAW: 100,
+};
+
 /**
  * Skip ready state animation before game action if true.
  *

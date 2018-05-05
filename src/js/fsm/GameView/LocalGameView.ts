@@ -1,6 +1,8 @@
 import AutoBind from "autobind-decorator";
 
 import { addEvents, dispatchEvent, removeEvents } from "../../../framework/EventUtils";
+import { play } from "../../../framework/MusicPlayer";
+import { vibrate } from "../../../framework/utils";
 
 import GameView, { EnterParams, Events, InnerStates } from "./GameView";
 
@@ -25,11 +27,12 @@ import ResultState, { EnterParams as ResultStateEnterParams } from "./internal/R
 
 import Actor from "../../models/Actor";
 import { isSingleMode } from "../../models/Game";
+import { BattleEvents } from "../../models/Battle";
 
 import { Action, Category, trackEvent } from "../../helper/tracker";
 import { Ids as SoundIds } from "../../resources/sound";
-import { play } from "../../../framework/MusicPlayer";
-import { BattleEvents } from "../../models/Battle";
+
+import { VIBRATE_TIME } from "../../Constants";
 
 @AutoBind
 class LocalGameView extends GameView {
@@ -116,16 +119,19 @@ class LocalGameView extends GameView {
         this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
             offEvents();
             play(SoundIds.SOUND_ATTACK);
+            vibrate(VIBRATE_TIME.ATTACK);
             this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner});
         });
         this.game.currentBattle.on(BattleEvents.FALSE_STARTED, ({winner, attacker}) => {
             offEvents();
             play(SoundIds.SOUND_FALSE_START);
+            vibrate(VIBRATE_TIME.FALSE_START);
             this.to<ResultStateEnterParams>(InnerStates.RESULT, {winner, falseStarter: attacker});
         });
         this.game.currentBattle.on(BattleEvents.DRAW, () => {
             offEvents();
             play(SoundIds.SOUND_DRAW);
+            vibrate(VIBRATE_TIME.DRAW);
             this.to<ResultStateEnterParams>(InnerStates.RESULT);
         });
 

@@ -24,6 +24,8 @@ import {
 import { Ids as SoundIds } from "../../resources/sound";
 import { play } from "../../../framework/MusicPlayer";
 import { BattleEvents } from "../../models/Battle";
+import { vibrate } from '../../../framework/utils';
+import { VIBRATE_TIME } from '../../Constants';
 
 @AutoBind
 class OnlineGameView extends GameView {
@@ -125,15 +127,18 @@ class OnlineGameView extends GameView {
 
         this.game.currentBattle.on(BattleEvents.SUCCEED_ATTACK, (winner) => {
             play(SoundIds.SOUND_ATTACK);
+            vibrate(VIBRATE_TIME.ATTACK);
             showResult({winner});
         });
         this.game.currentBattle.on(BattleEvents.FALSE_STARTED, ({winner, attacker}) => {
             play(SoundIds.SOUND_FALSE_START);
+            vibrate(VIBRATE_TIME.FALSE_START);
             showResult({winner, falseStarter: attacker});
         });
         this.game.currentBattle.on(BattleEvents.DRAW, () => {
             hideConnecting();
             play(SoundIds.SOUND_DRAW);
+            vibrate(VIBRATE_TIME.DRAW);
             showResult({});
         });
 
@@ -212,6 +217,11 @@ class OnlineGameView extends GameView {
         showConnecting();
 
         super.onAttacked(e);
+
+        const {attacker} = e.detail;
+        if(attacker === Actor.PLAYER){
+            vibrate(VIBRATE_TIME.TRY_TO_ATTACK);
+        }
     }
 
     /**

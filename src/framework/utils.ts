@@ -98,3 +98,16 @@ export function timeout(ms: number): Promise<void> {
         setTimeout(() => resolve(), ms);
     });
 }
+
+export function vibrate (patternMillis: number | number[]) {
+    if(!navigator.vibrate){
+        console.warn("Vibrate API is not supporting.");
+        return;
+    }
+
+    const isSucceed = navigator.vibrate(patternMillis)
+
+    if(!isSucceed){
+        console.error("Failed to vibrate.");
+    }
+}
