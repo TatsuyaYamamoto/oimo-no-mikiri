@@ -112,15 +112,26 @@ class LocalGame extends Game {
     public isFixed(): boolean {
         // Is already lost on 1player-mode?
         if (isSingleMode(this.mode)) {
-            let isLost = false;
+            let isFixed = false;
 
             this._battles.forEach((b) => {
                 if (b.winner === Actor.OPPONENT) {
-                    isLost = true;
+                    isFixed = true;
                 }
             });
 
-            return isLost;
+            if(isFixed){
+                return true;
+            }
+
+            let fixedBattleCount = 0;
+            this._battles.forEach((b) => {
+                if(b.isFixed()){
+                    fixedBattleCount ++;
+                }
+            });
+
+            return this._roundSize === fixedBattleCount;
         }
 
         // Player or opponent won required time?
