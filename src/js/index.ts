@@ -18,6 +18,7 @@ import {
 
 // Network fetch module
 import 'whatwg-fetch';
+import { isSupportTouchEvent } from '../framework/utils';
 
 // Brand logo text font
 require('../fonts/PixelMplus10-Regular.css');
@@ -73,7 +74,7 @@ function init() {
 }
 
 // Fire init() on page loaded.
-window.addEventListener('click', init, {once: true});
+window.addEventListener(isSupportTouchEvent() ? 'touchstart' : 'click', init, {once: true});
 
 window.onerror = function (msg, file, line, column, err) {
     trackError(err);
