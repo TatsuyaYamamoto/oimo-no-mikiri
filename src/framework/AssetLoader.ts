@@ -7,14 +7,14 @@
  * User can get assets cached in {@link AssetsCache} with {@link loadTexture} and {@link loadSound}.
  */
 
-import { Texture, loaders } from 'pixi.js';
+import { Texture, loaders } from "pixi.js";
 import Sound from "pixi-sound/lib/Sound";
 
 import { getCurrentLanguage } from "./i18n";
 import config from "./config";
 
-const IMAGE_BASE_DIR = 'assets/image/';
-const SOUND_BASE_DIR = 'assets/sound/';
+const IMAGE_BASE_DIR = "assets/image/";
+const SOUND_BASE_DIR = "assets/sound/";
 
 /**
  * Cache space of loaded resources.
@@ -28,23 +28,23 @@ const AssetsCache: { string: Asset } = Object.create(null);
  * Texture and Sound resource interface loaded with PIXI Loader.
  */
 export interface Asset extends loaders.Resource {
-    sound: Sound
+  sound: Sound;
 }
 
 /**
  * Image manifest interface that the loader requires.
  */
 export interface ImageManifest {
-    [language: string]: {
-        [key: number]: any
-    };
+  [language: string]: {
+    [key: number]: any;
+  };
 }
 
 /**
  * Sound manifest interface that the loader requires.
  */
 export interface SoundManifest {
-    [key: number]: any
+  [key: number]: any;
 }
 
 /**
@@ -52,61 +52,65 @@ export interface SoundManifest {
  * It should be set manifest before executing {@link this#load}.
  */
 class AssetLoader extends loaders.Loader {
-    constructor() {
-        super();
-        this.on("complete", this.setAssets);
-    }
+  constructor() {
+    super();
+    this.on("complete", this.setAssets);
+  }
 
-    /**
-     * Set image asset manifest for loader.
-     *
-     * @param {ImageManifest} imageManifest
-     */
-    public setImageManifest(imageManifest: ImageManifest): void {
-        // Concat manifests with base and current language.
-        const targetManifest = Object.assign({},
-            imageManifest[config.defaultLanguage],
-            imageManifest[getCurrentLanguage()],
-        );
+  /**
+   * Set image asset manifest for loader.
+   *
+   * @param {ImageManifest} imageManifest
+   */
+  public setImageManifest(imageManifest: ImageManifest): void {
+    // Concat manifests with base and current language.
+    const targetManifest = Object.assign(
+      {},
+      imageManifest[config.defaultLanguage],
+      imageManifest[getCurrentLanguage()]
+    );
 
-        // add each asset info to loader.
-        const assetIds = Object.keys(targetManifest);
-        assetIds.forEach(id => this.add({
-            name: `image@${id}`,
-            url: `${IMAGE_BASE_DIR}${targetManifest[id]}`
-        }));
-    }
+    // add each asset info to loader.
+    const assetIds = Object.keys(targetManifest);
+    assetIds.forEach(id =>
+      this.add({
+        name: `image@${id}`,
+        url: `${IMAGE_BASE_DIR}${targetManifest[id]}`
+      })
+    );
+  }
 
-    /**
-     * Set sound manifest for loader.
-     *
-     * @param {SoundManifest} soundManifest
-     */
-    public setSoundManifest(soundManifest: SoundManifest): void {
+  /**
+   * Set sound manifest for loader.
+   *
+   * @param {SoundManifest} soundManifest
+   */
+  public setSoundManifest(soundManifest: SoundManifest): void {
+    // add each asset info to loader.
+    const assetIds = Object.keys(soundManifest);
+    assetIds.forEach(id =>
+      this.add({
+        name: `sound@${id}`,
+        url: `${SOUND_BASE_DIR}${soundManifest[id]}`
+      })
+    );
+  }
 
-        // add each asset info to loader.
-        const assetIds = Object.keys(soundManifest);
-        assetIds.forEach(id => this.add({
-            name: `sound@${id}`,
-            url: `${SOUND_BASE_DIR}${soundManifest[id]}`
-        }));
-    }
+  /**
+   * Fire on complete load resources.
+   *
+   * @param {AssetLoader} loader
+   * @param {{[string]: Asset}} assets
+   * @private
+   */
+  private setAssets(loader: AssetLoader, assets: { [key: string]: Asset }) {
+    const assetIds = Object.keys(assets);
 
-    /**
-     * Fire on complete load resources.
-     *
-     * @param {AssetLoader} loader
-     * @param {{[string]: Asset}} assets
-     * @private
-     */
-    private setAssets(loader: AssetLoader, assets: { [key: string]: Asset }) {
-        const assetIds = Object.keys(assets);
-
-        assetIds.forEach((id) => {
-            const asset = assets[id];
-            AssetsCache[asset.name] = asset;
-        });
-    }
+    assetIds.forEach(id => {
+      const asset = assets[id];
+      AssetsCache[asset.name] = asset;
+    });
+  }
 }
 
 /**
@@ -116,7 +120,7 @@ class AssetLoader extends loaders.Loader {
  * @returns {Texture}
  */
 export function loadTexture(id: string | number): Texture {
-    return AssetsCache[`image@${id}`].texture;
+  return AssetsCache[`image@${id}`].texture;
 }
 
 /**
@@ -126,9 +130,9 @@ export function loadTexture(id: string | number): Texture {
  * @returns {PIXI.Texture[]}
  */
 export function loadFrames(id: string | number): Texture[] {
-    return Object.keys(AssetsCache[`image@${id}`].textures).map(textureKey => {
-        return AssetsCache[`image@${id}`].textures[textureKey];
-    });
+  return Object.keys(AssetsCache[`image@${id}`].textures).map(textureKey => {
+    return AssetsCache[`image@${id}`].textures[textureKey];
+  });
 }
 
 /**
@@ -138,7 +142,7 @@ export function loadFrames(id: string | number): Texture[] {
  * @return {Sound}
  */
 export function loadSound(id: string | number): Sound {
-    return AssetsCache[`sound@${id}`].sound;
+  return AssetsCache[`sound@${id}`].sound;
 }
 
 export default AssetLoader;

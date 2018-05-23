@@ -10,8 +10,8 @@
  * These language configs is supported language string only, for example "en" or "jp".
  * If it's detected with locale string, for example en-US or ja-JP, this module deletes locale section.
  */
-import * as i18next from 'i18next';
-import * as Detector from 'i18next-browser-languagedetector';
+import * as i18next from "i18next";
+import * as Detector from "i18next-browser-languagedetector";
 
 import config from "./config";
 
@@ -29,20 +29,23 @@ let i18n: i18next.i18n = null;
  * @param {i18next.InitOptions} options
  * @param {i18next.Callback} callback
  */
-export function initI18n(options?: i18next.InitOptions,
-                         callback?: i18next.Callback): void {
+export function initI18n(
+  options?: i18next.InitOptions,
+  callback?: i18next.Callback
+): void {
+  const opts = Object.assign(
+    {},
+    {
+      fallbackLng: config.defaultLanguage,
+      debug: false
+    },
+    options
+  );
 
-    const opts = Object.assign({}, {
-        fallbackLng: config.defaultLanguage,
-        debug: false,
-    }, options);
+  i18n = i18next.use(Detector).init(opts, callback);
 
-    i18n = i18next
-        .use(Detector)
-        .init(opts, callback);
-
-    const detectedLang = i18n.language.substr(0, 2); // extract language string only.
-    changeLanguage(detectedLang);
+  const detectedLang = i18n.language.substr(0, 2); // extract language string only.
+  changeLanguage(detectedLang);
 }
 
 /**
@@ -54,7 +57,7 @@ export function initI18n(options?: i18next.InitOptions,
  * @see i18n#t
  */
 export function t(key, options?): string {
-    return i18n.t(key, options);
+  return i18n.t(key, options);
 }
 
 /**
@@ -64,12 +67,15 @@ export function t(key, options?): string {
  * @param {i18next.Callback} callback
  * @see i18next#changeLanguage
  */
-export function changeLanguage(language: string, callback?: i18next.Callback): void {
-    if (isDefinedLanguage(language)) {
-        i18n.changeLanguage(language, callback);
-    } else {
-        i18n.changeLanguage(config.defaultLanguage, callback);
-    }
+export function changeLanguage(
+  language: string,
+  callback?: i18next.Callback
+): void {
+  if (isDefinedLanguage(language)) {
+    i18n.changeLanguage(language, callback);
+  } else {
+    i18n.changeLanguage(config.defaultLanguage, callback);
+  }
 }
 
 /**
@@ -79,13 +85,11 @@ export function changeLanguage(language: string, callback?: i18next.Callback): v
  * @return {string}
  */
 export function getCurrentLanguage(): string {
-    // Step against rewriting directly by user.
-    // remove locale if it exists.
-    const lang = i18n.language.substr(0, 2);
+  // Step against rewriting directly by user.
+  // remove locale if it exists.
+  const lang = i18n.language.substr(0, 2);
 
-    return isDefinedLanguage(lang) ?
-        lang :
-        config.defaultLanguage;
+  return isDefinedLanguage(lang) ? lang : config.defaultLanguage;
 }
 
 /**
@@ -96,5 +100,5 @@ export function getCurrentLanguage(): string {
  * @private
  */
 function isDefinedLanguage(targetLanguage: string): boolean {
-    return config.supportedLanguages.some((l) => l === targetLanguage);
+  return config.supportedLanguages.some(l => l === targetLanguage);
 }

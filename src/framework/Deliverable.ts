@@ -3,8 +3,6 @@
  * @see {State}
  * @interface
  */
-interface Deliverable {
-
-}
+interface Deliverable {}
 
 export default Deliverable;

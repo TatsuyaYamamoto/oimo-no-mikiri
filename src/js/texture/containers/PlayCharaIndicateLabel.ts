@@ -1,48 +1,46 @@
-import {Container, Graphics, TextStyleOptions} from 'pixi.js';
+import { Container, Graphics, TextStyleOptions } from "pixi.js";
 
 import VerticalText from "../sprite/text/VerticalText";
 import Text from "../internal/Text";
 
 const labelTextStyle: TextStyleOptions = {
-    fontFamily: 'g_brushtappitsu_freeH',
-    fontSize: 35,
+  fontFamily: "g_brushtappitsu_freeH",
+  fontSize: 35
 };
 
 class PlayerCharacterIndicateBoard extends Container {
-    private _text: VerticalText;
-    private _rectangle: Graphics;
+  private _text: VerticalText;
+  private _rectangle: Graphics;
 
-    constructor(text: string, isVertical = true) {
-        super();
-        this._text = isVertical ?
-            new VerticalText(text, labelTextStyle) :
-            new Text(text, labelTextStyle);
-        this._text.anchor.set(0.5, 0);
+  constructor(text: string, isVertical = true) {
+    super();
+    this._text = isVertical
+      ? new VerticalText(text, labelTextStyle)
+      : new Text(text, labelTextStyle);
+    this._text.anchor.set(0.5, 0);
 
-        const margin = isVertical ?
-            this._text.width * 0.25 :
-            this._text.height * 0.25;
-        const rectangleWidth = margin + this._text.width + margin;
-        const rectangleHeight = margin + this._text.height + margin;
+    const margin = isVertical
+      ? this._text.width * 0.25
+      : this._text.height * 0.25;
+    const rectangleWidth = margin + this._text.width + margin;
+    const rectangleHeight = margin + this._text.height + margin;
 
-        this._rectangle = new Graphics();
-        this._rectangle.beginFill(0xffffff, 1);
-        this._rectangle.drawRect(
-            -1 * rectangleWidth / 2,
-            -1 * margin,
-            rectangleWidth,
-            rectangleHeight);
-        this._rectangle.endFill();
+    this._rectangle = new Graphics();
+    this._rectangle.beginFill(0xffffff, 1);
+    this._rectangle.drawRect(
+      -1 * rectangleWidth / 2,
+      -1 * margin,
+      rectangleWidth,
+      rectangleHeight
+    );
+    this._rectangle.endFill();
 
-        this.addChild(
-            this._rectangle,
-            this._text,
-        );
-    }
+    this.addChild(this._rectangle, this._text);
+  }
 
-    set text(text: string) {
-        this._text.text = text;
-    }
+  set text(text: string) {
+    this._text.text = text;
+  }
 }
 /*
 class BattleResultLabelBoard extends Container {

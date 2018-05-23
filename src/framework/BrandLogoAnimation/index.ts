@@ -1,1 +1,1 @@
-export { default } from './BrandLogoAnimation';
+export { default } from "./BrandLogoAnimation";

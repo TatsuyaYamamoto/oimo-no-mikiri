@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 import State from "./State";
 import config from "./config";
@@ -32,73 +32,75 @@ import ViewContainer from "./ViewContainer";
  * @class
  */
 abstract class Application extends PIXI.Application implements State {
-    private _stateMachine: StateMachine<ViewContainer>;
+  private _stateMachine: StateMachine<ViewContainer>;
 
-    constructor(options: PIXI.ApplicationOptions) {
-        super(Object.assign({
-            backgroundColor: config.rendererBackgroundColor,
-            autoStart: false,
-        }, options));
+  constructor(options: PIXI.ApplicationOptions) {
+    super(
+      Object.assign(
+        {
+          backgroundColor: config.rendererBackgroundColor,
+          autoStart: false
+        },
+        options
+      )
+    );
 
-        // setup tick callback function.
-        this.ticker.add(() => this.update(this.ticker.elapsedMS));
+    // setup tick callback function.
+    this.ticker.add(() => this.update(this.ticker.elapsedMS));
 
-        this._stateMachine = new StateMachine<ViewContainer>();
-    }
+    this._stateMachine = new StateMachine<ViewContainer>();
+  }
 
-    protected get stateMachine(): StateMachine<ViewContainer> {
-        return this._stateMachine;
-    }
+  protected get stateMachine(): StateMachine<ViewContainer> {
+    return this._stateMachine;
+  }
 
-    /**
-     * Start application.
-     *
-     * @see PIXI.Application#start
-     * @override
-     */
-    public start(): void {
-        super.start();  // start application tick.
-        this.onEnter(); // enter application state.
-    }
+  /**
+   * Start application.
+   *
+   * @see PIXI.Application#start
+   * @override
+   */
+  public start(): void {
+    super.start(); // start application tick.
+    this.onEnter(); // enter application state.
+  }
 
-    /**
-     * Stop application.
-     * @see PIXI.Application#stop
-     * @override
-     */
-    public stop(): void {
-        super.stop();   // stop application tick.
-        this.onExit();  // exit application state.
-    }
+  /**
+   * Stop application.
+   * @see PIXI.Application#stop
+   * @override
+   */
+  public stop(): void {
+    super.stop(); // stop application tick.
+    this.onExit(); // exit application state.
+  }
 
-    /**
-     * @param {number} elapsedMS    Time elapsed in milliseconds from last frame to this frame.
-     *                              If the platform supports DOMHighResTimeStamp, this value will have a precision of 1 µs.
-     * @inheritDoc
-     * @override
-     */
-    update(elapsedMS: number): void {
-    }
+  /**
+   * @param {number} elapsedMS    Time elapsed in milliseconds from last frame to this frame.
+   *                              If the platform supports DOMHighResTimeStamp, this value will have a precision of 1 µs.
+   * @inheritDoc
+   * @override
+   */
+  update(elapsedMS: number): void {}
 
-    /**
-     * @inheritDoc
-     * @override
-     */
-    onEnter(): void {
-    }
+  /**
+   * @inheritDoc
+   * @override
+   */
+  onEnter(): void {}
 
-    /**
-     * @inheritDoc
-     * @override
-     */
-    onExit(): void {
-    }
+  /**
+   * @inheritDoc
+   * @override
+   */
+  onExit(): void {}
 
-    protected to<T>(stateTag: string, params?: T): void{
-        this.stateMachine.change(stateTag, params);
-        this.stage.removeChildren();
-        this.stage.addChild(this.stateMachine.current);
-    }
+  protected to<T>(stateTag: string, params?: T): void {
+    this.stateMachine.change(stateTag, params);
+    this.stage.removeChildren();
+    this.stage.addChild(this.stateMachine.current);
+  }
 }
 
 export default Application;

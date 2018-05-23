@@ -1,14 +1,14 @@
 /**
  * @fileOverview convenience functions related to network, WebAPI and browser location.
  */
-import { t } from '../../framework/i18n';
+import { t } from "../../framework/i18n";
 import { getRandomInteger } from "../../framework/utils";
 
 import Mode from "../models/Mode";
 import Actor from "../models/Actor";
 
-import { Ids as StringIds } from '../resources/string';
-import { APP_SERVER_BASE_URL, URL } from '../Constants';
+import { Ids as StringIds } from "../resources/string";
+import { APP_SERVER_BASE_URL, URL } from "../Constants";
 
 /**
  * Convenience function to change browser location.
@@ -16,7 +16,7 @@ import { APP_SERVER_BASE_URL, URL } from '../Constants';
  * @param {string} href
  */
 export function goTo(href: string): void {
-    window.location.href = href;
+  window.location.href = href;
 }
 
 /**
@@ -26,33 +26,58 @@ export function goTo(href: string): void {
  * @param {number} wins
  */
 export function tweetGameResult(bestTime: number, wins: number): void {
-    let tweetText = getRandomInteger(0, 1) === 0 ?
-        t(StringIds.GAME_RESULT_TWEET1, {bestTime, wins}) :
-        t(StringIds.GAME_RESULT_TWEET2, {bestTime, wins});
+  let tweetText =
+    getRandomInteger(0, 1) === 0
+      ? t(StringIds.GAME_RESULT_TWEET1, { bestTime, wins })
+      : t(StringIds.GAME_RESULT_TWEET2, { bestTime, wins });
 
-    if (wins === 0) {
-        tweetText = t(StringIds.GAME_RESULT_TWEET_ZERO_POINT, {wins});
-    }
+  if (wins === 0) {
+    tweetText = t(StringIds.GAME_RESULT_TWEET_ZERO_POINT, { wins });
+  }
 
-    if (wins === 5) {
-        tweetText = t(StringIds.GAME_RESULT_TWEET_COMPLETE, {bestTime, wins});
-    }
+  if (wins === 5) {
+    tweetText = t(StringIds.GAME_RESULT_TWEET_COMPLETE, { bestTime, wins });
+  }
 
-    goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
+  goTo(
+    `${
+      URL.TWITTER_TWEET_PAGE
+    }?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${
+      URL.OIMO_NO_MIKIRI
+    }`
+  );
 }
 
 export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
-    if (winner == Actor.PLAYER) {
-        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN, {winnerWins, loserWins});
-        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
-        return;
-    }
+  if (winner == Actor.PLAYER) {
+    const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN, {
+      winnerWins,
+      loserWins
+    });
+    goTo(
+      `${
+        URL.TWITTER_TWEET_PAGE
+      }?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${
+        URL.OIMO_NO_MIKIRI
+      }`
+    );
+    return;
+  }
 
-    if (winner === Actor.OPPONENT) {
-        const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_RUBY_WIN, {winnerWins, loserWins});
-        goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${URL.OIMO_NO_MIKIRI}`);
-        return;
-    }
+  if (winner === Actor.OPPONENT) {
+    const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_RUBY_WIN, {
+      winnerWins,
+      loserWins
+    });
+    goTo(
+      `${
+        URL.TWITTER_TWEET_PAGE
+      }?hashtags=おいものみきり+%23そこんところ工房&text=${tweetText}&url=${
+        URL.OIMO_NO_MIKIRI
+      }`
+    );
+    return;
+  }
 }
 
 /**
@@ -66,43 +91,51 @@ export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
  * @return {Promise<Response>}
  * @see https://github.com/TatsuyaYamamoto/lovelive-ranking/blob/master-javaee/src/main/java/net/sokontokoro_factory/lovelive/persistence/entity/ScoreEntity.java
  */
-export function postPlayLog(bestTime: number, mode: Mode, straightWins: number): Promise<Response> {
-    // TODO: implements Mode.MULTI_ONLINE case
-    const numberLevel = mode === Mode.MULTI_LOCAL ? 4 :
-        mode === Mode.SINGLE_BEGINNER ? 1 :
-            mode === Mode.SINGLE_NOVICE ? 2 : 3;
+export function postPlayLog(
+  bestTime: number,
+  mode: Mode,
+  straightWins: number
+): Promise<Response> {
+  // TODO: implements Mode.MULTI_ONLINE case
+  const numberLevel =
+    mode === Mode.MULTI_LOCAL
+      ? 4
+      : mode === Mode.SINGLE_BEGINNER
+        ? 1
+        : mode === Mode.SINGLE_NOVICE
+          ? 2
+          : 3;
 
-    const point = `${bestTime}${numberLevel}${straightWins}`;
+  const point = `${bestTime}${numberLevel}${straightWins}`;
 
-    return fetch(`${APP_SERVER_BASE_URL}scores/oimo/playlog/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({point})
-    })
+  return fetch(`${APP_SERVER_BASE_URL}scores/oimo/playlog/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ point })
+  });
 }
 
-
 export function showTweetView(text: string, url?: string) {
-    // TODO Support URL scheme.
+  // TODO Support URL scheme.
 
-    tweetByWebIntent({
-        text,
-        url,
-        hashtags: ["おいものみきり", "そこんところ工房"],
-    })
+  tweetByWebIntent({
+    text,
+    url,
+    hashtags: ["おいものみきり", "そこんところ工房"]
+  });
 }
 
 /**
  * @see https://dev.twitter.com/web/tweet-button/web-intent
  */
 type webIntentParams = {
-    text?: string;
-    url?: string;
-    hashtags?: string[];
-    via?: string;
-}
+  text?: string;
+  url?: string;
+  hashtags?: string[];
+  via?: string;
+};
 
 let WindowObjectReference = null;
 
@@ -110,18 +143,18 @@ let WindowObjectReference = null;
  * @see https://dev.twitter.com/web/tweet-button/web-intent
  */
 export function tweetByWebIntent(params: webIntentParams) {
-    const endpoint = "https://twitter.com/intent/tweet";
-    const hashtags = encodeURIComponent(params.hashtags.join(","));
-    const text = encodeURIComponent(params.text);
-    const url = encodeURIComponent(params.url);
+  const endpoint = "https://twitter.com/intent/tweet";
+  const hashtags = encodeURIComponent(params.hashtags.join(","));
+  const text = encodeURIComponent(params.text);
+  const url = encodeURIComponent(params.url);
 
-    const intentUrl = `${endpoint}?text=${text}&url=${url}&hashtags=${hashtags}`;
+  const intentUrl = `${endpoint}?text=${text}&url=${url}&hashtags=${hashtags}`;
 
-    console.log(intentUrl);
+  console.log(intentUrl);
 
-    if(!WindowObjectReference|| WindowObjectReference.closed) {
-        WindowObjectReference = window.open(intentUrl, "TwitterIntentWindowName", );
-    } else {
-        WindowObjectReference.focus();
-    }
+  if (!WindowObjectReference || WindowObjectReference.closed) {
+    WindowObjectReference = window.open(intentUrl, "TwitterIntentWindowName");
+  } else {
+    WindowObjectReference.focus();
+  }
 }

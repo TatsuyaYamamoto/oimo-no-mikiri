@@ -1,197 +1,204 @@
-import {filters} from 'pixi.js';
-import * as anime from 'animejs'
+import { filters } from "pixi.js";
+import * as anime from "animejs";
 
 import Deliverable from "../../../../framework/Deliverable";
-import {dispatchEvent} from "../../../../framework/EventUtils";
+import { dispatchEvent } from "../../../../framework/EventUtils";
 
-import {Events} from "../GameView";
+import { Events } from "../GameView";
 import AbstractGameState from "./GameViewState";
 
 import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
 import Character from "../../../texture/sprite/character/Character";
 
-import Actor from '../../../models/Actor';
+import Actor from "../../../models/Actor";
 
 export interface EnterParams extends Deliverable {
-    winner?: Actor,
-    falseStarter?: Actor,
+  winner?: Actor;
+  falseStarter?: Actor;
 }
 
 class ResultState extends AbstractGameState {
-    private _battleResultLabelBoard: BattleResultLabelBoard;
+  private _battleResultLabelBoard: BattleResultLabelBoard;
 
-    protected _hueFilter: filters.ColorMatrixFilter;
-    protected _brightnessFilter: filters.ColorMatrixFilter;
+  protected _hueFilter: filters.ColorMatrixFilter;
+  protected _brightnessFilter: filters.ColorMatrixFilter;
 
-    /**
-     * @override
-     */
-    onEnter(params: EnterParams = {}): void {
-        super.onEnter(params);
+  /**
+   * @override
+   */
+  onEnter(params: EnterParams = {}): void {
+    super.onEnter(params);
 
-        this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-        this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-        this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
+    this.player.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
+    this.opponent.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+    this.oimo.position.set(this.viewWidth * 0.5, this.viewHeight * 0.6);
 
-        const type = params.winner ?
-            params.winner === Actor.PLAYER ?
-                'playerWin' : 'opponentWin' :
-            params.falseStarter ?
-                'falseStart' : 'draw';
-        const name = params.winner ?
-            params.winner === Actor.PLAYER ? this.player.name : this.opponent.name :
-            null;
-        this._battleResultLabelBoard = new BattleResultLabelBoard(this.viewWidth, this.viewHeight, type, name);
-        this._battleResultLabelBoard.position.set(this.viewWidth * 0.5, this.viewHeight * 0.5);
+    const type = params.winner
+      ? params.winner === Actor.PLAYER
+        ? "playerWin"
+        : "opponentWin"
+      : params.falseStarter
+        ? "falseStart"
+        : "draw";
+    const name = params.winner
+      ? params.winner === Actor.PLAYER
+        ? this.player.name
+        : this.opponent.name
+      : null;
+    this._battleResultLabelBoard = new BattleResultLabelBoard(
+      this.viewWidth,
+      this.viewHeight,
+      type,
+      name
+    );
+    this._battleResultLabelBoard.position.set(
+      this.viewWidth * 0.5,
+      this.viewHeight * 0.5
+    );
 
-        this._hueFilter = new filters.ColorMatrixFilter();
-        this._brightnessFilter = new filters.ColorMatrixFilter();
-        this.background.filters = [this._hueFilter, this._brightnessFilter];
+    this._hueFilter = new filters.ColorMatrixFilter();
+    this._brightnessFilter = new filters.ColorMatrixFilter();
+    this.background.filters = [this._hueFilter, this._brightnessFilter];
 
-        this.whiteLayer.alpha = 0;
+    this.whiteLayer.alpha = 0;
 
-        this.backGroundLayer.addChild(
-            this.background,
-        );
+    this.backGroundLayer.addChild(this.background);
 
-        this.applicationLayer.addChild(
-            this.player,
-            this.opponent,
-            this.oimo,
-            this.whiteLayer,
-        );
+    this.applicationLayer.addChild(
+      this.player,
+      this.opponent,
+      this.oimo,
+      this.whiteLayer
+    );
 
-
-        if (params.falseStarter) {
-            this._showFalseStart();
-            return;
-        }
-
-        if (params.winner === Actor.PLAYER) {
-            this._showPlayerWon();
-            return;
-        }
-
-        if (params.winner === Actor.OPPONENT) {
-            this._showOpponentWon();
-            return;
-        }
-
-        this._showDraw();
+    if (params.falseStarter) {
+      this._showFalseStart();
+      return;
     }
 
-    private _showPlayerWon(): void {
-        this.whiteOut(
-            () => {
-                this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-                this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-
-                this.oimo.visible = false;
-
-                this.player.playSuccessAttack();
-                this.opponent.playTryAttack();
-            },
-            () => {
-                this.player.playWin();
-                this.opponent.playLose();
-
-                this.applicationLayer.addChild(this._battleResultLabelBoard);
-
-                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-            });
+    if (params.winner === Actor.PLAYER) {
+      this._showPlayerWon();
+      return;
     }
 
-    private _showOpponentWon(): void {
-        this.whiteOut(
-            () => {
-                this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
-                this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
-
-                this.oimo.visible = false;
-
-                this.player.playTryAttack();
-                this.opponent.playSuccessAttack();
-            },
-            () => {
-                this.player.playLose();
-                this.opponent.playWin();
-
-                this.applicationLayer.addChild(this._battleResultLabelBoard);
-
-                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-            });
+    if (params.winner === Actor.OPPONENT) {
+      this._showOpponentWon();
+      return;
     }
 
-    private _showDraw(): void {
-        this.applicationLayer.addChild(this._battleResultLabelBoard);
+    this._showDraw();
+  }
 
-        Promise
-            .all([
-                this.vibrate(this.player),
-                this.vibrate(this.opponent),
-            ])
-            .then(() => {
-                setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-            });
-    }
+  private _showPlayerWon(): void {
+    this.whiteOut(
+      () => {
+        this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+        this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
 
-    private _showFalseStart(): void {
-        this._hueFilter.hue(180);
-        this._brightnessFilter.brightness(0.5);
+        this.oimo.visible = false;
+
+        this.player.playSuccessAttack();
+        this.opponent.playTryAttack();
+      },
+      () => {
+        this.player.playWin();
+        this.opponent.playLose();
 
         this.applicationLayer.addChild(this._battleResultLabelBoard);
 
         setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
-    }
+      }
+    );
+  }
 
-    protected vibrate = (target: Character): Promise<void> => {
-        const center = target.position.x;
-        const right = target.position.x + this.viewWidth * 0.005;
-        const left = target.position.x - this.viewWidth * 0.005;
-        const periodTimeMillis = 100;
+  private _showOpponentWon(): void {
+    this.whiteOut(
+      () => {
+        this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
+        this.opponent.position.set(this.viewWidth * 0.2, this.viewHeight * 0.6);
 
-        const timeLine = anime.timeline({
-            targets: target.position,
-            easing: 'linear',
-            loop: 3,
-        });
+        this.oimo.visible = false;
 
-        timeLine
-            .add({x: right, duration: periodTimeMillis / 4})
-            .add({x: center, duration: periodTimeMillis / 4})
-            .add({x: left, duration: periodTimeMillis / 4})
-            .add({x: center, duration: periodTimeMillis / 4});
+        this.player.playTryAttack();
+        this.opponent.playSuccessAttack();
+      },
+      () => {
+        this.player.playLose();
+        this.opponent.playWin();
 
-        return timeLine.finished;
-    };
+        this.applicationLayer.addChild(this._battleResultLabelBoard);
 
-    protected whiteOut = (onStartRefresh: Function, onComplete: Function) => {
+        setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+      }
+    );
+  }
 
-        const timeLine = anime.timeline({
-            targets: this.whiteLayer,
-            easing: 'linear',
-        });
+  private _showDraw(): void {
+    this.applicationLayer.addChild(this._battleResultLabelBoard);
 
-        timeLine
-        // Start white out.
-            .add({
-                alpha: 1,
-                duration: 100,
-            })
-            // Refresh white out.
-            .add({
-                begin: onStartRefresh,
-                alpha: 0,
-                duration: 300,
-            })
-            // Show result animation.
-            .add({
-                duration: 300,
-                complete: onComplete
-            });
+    Promise.all([this.vibrate(this.player), this.vibrate(this.opponent)]).then(
+      () => {
+        setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+      }
+    );
+  }
 
-        timeLine.play();
-    };
+  private _showFalseStart(): void {
+    this._hueFilter.hue(180);
+    this._brightnessFilter.brightness(0.5);
+
+    this.applicationLayer.addChild(this._battleResultLabelBoard);
+
+    setTimeout(() => dispatchEvent(Events.REQUEST_READY), 3000);
+  }
+
+  protected vibrate = (target: Character): Promise<void> => {
+    const center = target.position.x;
+    const right = target.position.x + this.viewWidth * 0.005;
+    const left = target.position.x - this.viewWidth * 0.005;
+    const periodTimeMillis = 100;
+
+    const timeLine = anime.timeline({
+      targets: target.position,
+      easing: "linear",
+      loop: 3
+    });
+
+    timeLine
+      .add({ x: right, duration: periodTimeMillis / 4 })
+      .add({ x: center, duration: periodTimeMillis / 4 })
+      .add({ x: left, duration: periodTimeMillis / 4 })
+      .add({ x: center, duration: periodTimeMillis / 4 });
+
+    return timeLine.finished;
+  };
+
+  protected whiteOut = (onStartRefresh: Function, onComplete: Function) => {
+    const timeLine = anime.timeline({
+      targets: this.whiteLayer,
+      easing: "linear"
+    });
+
+    timeLine
+      // Start white out.
+      .add({
+        alpha: 1,
+        duration: 100
+      })
+      // Refresh white out.
+      .add({
+        begin: onStartRefresh,
+        alpha: 0,
+        duration: 300
+      })
+      // Show result animation.
+      .add({
+        duration: 300,
+        complete: onComplete
+      });
+
+    timeLine.play();
+  };
 }
 
 export default ResultState;
