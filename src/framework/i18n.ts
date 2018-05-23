@@ -56,6 +56,7 @@ export function initI18n(
  * @return {string}
  * @see i18n#t
  */
+// tslint:disable-next-line:function-name
 export function t(key, options?): string {
   return i18n.t(key, options);
 }

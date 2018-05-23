@@ -37,7 +37,7 @@ export function dispatchEvent(type: string, detail?: object): void {
  *
  * @param events
  */
-export function addEvents(events: { [key: string]: (Event) => void }): void {
+export function addEvents(events: { [key: string]: (event) => void }): void {
   Object.keys(events).forEach(key => {
     eventTarget.addEventListener(key, events[key]);
     cacheEvents[key] = events[key];

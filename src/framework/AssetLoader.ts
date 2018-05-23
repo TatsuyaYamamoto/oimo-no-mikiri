@@ -22,7 +22,7 @@ const SOUND_BASE_DIR = "assets/sound/";
  * @type {any}
  * @private
  */
-const AssetsCache: { string: Asset } = Object.create(null);
+const assetsCache: { string: Asset } = Object.create(null);
 
 /**
  * Texture and Sound resource interface loaded with PIXI Loader.
@@ -108,7 +108,7 @@ class AssetLoader extends loaders.Loader {
 
     assetIds.forEach(id => {
       const asset = assets[id];
-      AssetsCache[asset.name] = asset;
+      assetsCache[asset.name] = asset;
     });
   }
 }
@@ -120,7 +120,7 @@ class AssetLoader extends loaders.Loader {
  * @returns {Texture}
  */
 export function loadTexture(id: string | number): Texture {
-  return AssetsCache[`image@${id}`].texture;
+  return assetsCache[`image@${id}`].texture;
 }
 
 /**
@@ -130,8 +130,8 @@ export function loadTexture(id: string | number): Texture {
  * @returns {PIXI.Texture[]}
  */
 export function loadFrames(id: string | number): Texture[] {
-  return Object.keys(AssetsCache[`image@${id}`].textures).map(textureKey => {
-    return AssetsCache[`image@${id}`].textures[textureKey];
+  return Object.keys(assetsCache[`image@${id}`].textures).map(textureKey => {
+    return assetsCache[`image@${id}`].textures[textureKey];
   });
 }
 
@@ -142,7 +142,7 @@ export function loadFrames(id: string | number): Texture[] {
  * @return {Sound}
  */
 export function loadSound(id: string | number): Sound {
-  return AssetsCache[`sound@${id}`].sound;
+  return assetsCache[`sound@${id}`].sound;
 }
 
 export default AssetLoader;

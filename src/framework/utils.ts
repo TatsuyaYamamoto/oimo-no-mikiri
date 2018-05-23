@@ -26,12 +26,14 @@ export function getCurrentViewSize(): { width: number; height: number } {
   const aspectRatio = config.basicImageWidth / config.basicImageHeight;
 
   // horizontally long then expected ratio.
-  if (aspectRatio < currentWindowAspectRatio)
+  if (aspectRatio < currentWindowAspectRatio) {
     width = window.innerHeight * aspectRatio;
+  }
 
   // vertically long then expected ratio.
-  if (currentWindowAspectRatio < aspectRatio)
+  if (currentWindowAspectRatio < aspectRatio) {
     height = window.innerWidth / aspectRatio;
+  }
 
   return { width, height };
 }
