@@ -3,7 +3,7 @@ import Deliverable from "../../../../../framework/Deliverable";
 import { vibrate } from "../../../../../framework/utils";
 import { play } from "../../../../../framework/MusicPlayer";
 
-import AbstractGameState from "../GameViewState";
+import GameViewState from "../GameViewState";
 import { Events } from "../../GameView";
 
 import Signal from "../../../../texture/sprite/Signal";
@@ -20,7 +20,7 @@ export interface EnterParams extends Deliverable {
   isFalseStarted?: { player?: boolean; opponent?: boolean };
 }
 
-abstract class ActionState extends AbstractGameState {
+abstract class ActionState extends GameViewState {
   private _signalTime: number;
   private _isSignaled: boolean;
   private _attackTimeMap: Map<Actor, number>;
@@ -148,8 +148,8 @@ abstract class ActionState extends AbstractGameState {
     this._attackTimeMap.set(actor, attackTime);
 
     dispatchEvent(Events.ATTACK, {
-      attacker: actor,
-      attackTime
+      attackTime,
+      attacker: actor
     });
   };
 

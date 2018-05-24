@@ -5,9 +5,9 @@ import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 
 import { Events } from "../GameView";
-import AbstractGameState from "./GameViewState";
+import GameViewState from "./GameViewState";
 
-import BattleResultLabelBoard from "../../../texture/containers/BattleResultLabel";
+import BattleResultLabel from "../../../texture/containers/BattleResultLabel";
 import Character from "../../../texture/sprite/character/Character";
 
 import Actor from "../../../models/Actor";
@@ -17,8 +17,8 @@ export interface EnterParams extends Deliverable {
   falseStarter?: Actor;
 }
 
-class ResultState extends AbstractGameState {
-  private _battleResultLabelBoard: BattleResultLabelBoard;
+class ResultState extends GameViewState {
+  private _battleResultLabelBoard: BattleResultLabel;
 
   protected _hueFilter: filters.ColorMatrixFilter;
   protected _brightnessFilter: filters.ColorMatrixFilter;
@@ -45,7 +45,7 @@ class ResultState extends AbstractGameState {
         ? this.player.name
         : this.opponent.name
       : null;
-    this._battleResultLabelBoard = new BattleResultLabelBoard(
+    this._battleResultLabelBoard = new BattleResultLabel(
       this.viewWidth,
       this.viewHeight,
       type,
@@ -72,24 +72,24 @@ class ResultState extends AbstractGameState {
     );
 
     if (params.falseStarter) {
-      this._showFalseStart();
+      this.showFalseStart();
       return;
     }
 
     if (params.winner === Actor.PLAYER) {
-      this._showPlayerWon();
+      this.showPlayerWon();
       return;
     }
 
     if (params.winner === Actor.OPPONENT) {
-      this._showOpponentWon();
+      this.showOpponentWon();
       return;
     }
 
-    this._showDraw();
+    this.showDraw();
   }
 
-  private _showPlayerWon(): void {
+  private showPlayerWon(): void {
     this.whiteOut(
       () => {
         this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
@@ -111,7 +111,7 @@ class ResultState extends AbstractGameState {
     );
   }
 
-  private _showOpponentWon(): void {
+  private showOpponentWon(): void {
     this.whiteOut(
       () => {
         this.player.position.set(this.viewWidth * 0.8, this.viewHeight * 0.6);
@@ -133,7 +133,7 @@ class ResultState extends AbstractGameState {
     );
   }
 
-  private _showDraw(): void {
+  private showDraw(): void {
     this.applicationLayer.addChild(this._battleResultLabelBoard);
 
     Promise.all([this.vibrate(this.player), this.vibrate(this.opponent)]).then(
@@ -143,7 +143,7 @@ class ResultState extends AbstractGameState {
     );
   }
 
-  private _showFalseStart(): void {
+  private showFalseStart(): void {
     this._hueFilter.hue(180);
     this._brightnessFilter.brightness(0.5);
 

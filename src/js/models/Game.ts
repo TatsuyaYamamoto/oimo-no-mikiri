@@ -45,6 +45,7 @@ abstract class Game extends EventEmitter {
     let wins = 0;
     this._battles.forEach(b => {
       if (b.winner === Actor.PLAYER) {
+        // tslint:disable-next-line:no-increment-decrement
         wins++;
       }
     });
@@ -53,8 +54,8 @@ abstract class Game extends EventEmitter {
 
   public get winner(): Actor {
     if (!isSingleMode(this.mode)) {
-      let playerWins = this.getWins(Actor.PLAYER);
-      let opponentWins = this.getWins(Actor.OPPONENT);
+      const playerWins = this.getWins(Actor.PLAYER);
+      const opponentWins = this.getWins(Actor.OPPONENT);
 
       return playerWins > opponentWins ? Actor.PLAYER : Actor.OPPONENT;
     }
@@ -93,6 +94,7 @@ abstract class Game extends EventEmitter {
 
     this._battles.forEach(b => {
       if (b.winner === actor) {
+        // tslint:disable-next-line:no-increment-decrement
         wins++;
       }
     });

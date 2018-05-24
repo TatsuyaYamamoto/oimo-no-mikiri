@@ -1,7 +1,7 @@
 import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 
-import AbstractTopState from "./TopViewState";
+import TopViewState from "./TopViewState";
 import { Events } from "../TopView";
 
 import UsageTextArea from "../../../texture/containers/UsageTextArea";
@@ -18,7 +18,7 @@ import { trackPageView, VirtualPageViews } from "../../../helper/tracker";
 
 import { Ids as SoundIds } from "../../../resources/sound";
 
-class HowToPlayState extends AbstractTopState {
+class HowToPlayState extends TopViewState {
   private _usageTextArea: UsageTextArea;
 
   private _oimo: Oimo;

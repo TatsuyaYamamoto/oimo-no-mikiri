@@ -1,11 +1,10 @@
 import Game, { isSingleMode } from "../Game";
-import Battle, { default as LocalBattle } from "./LocalBattle";
+import { default as LocalBattle } from "./LocalBattle";
 import Actor from "../Actor";
 import Mode from "../Mode";
 
 import { GAME_PARAMETERS, DEFAULT_ROUND_SIZE } from "../../Constants";
 import { GameEvents } from "../online/OnlineGame";
-import { database } from "firebase";
 import OnlineBattle from "../online/OnlineBattle";
 
 class LocalGame extends Game {
@@ -28,9 +27,9 @@ class LocalGame extends Game {
 
     const { reaction_rate, reaction_rate_tuning } = GAME_PARAMETERS;
 
-    const { mode, currentRound } = this;
-
-    return reaction_rate[mode][currentRound] * reaction_rate_tuning * 1000;
+    return (
+      reaction_rate[this.mode][this.currentRound] * reaction_rate_tuning * 1000
+    );
   }
 
   public getWins(actor: Actor): number {
@@ -38,6 +37,7 @@ class LocalGame extends Game {
 
     this._battles.forEach(b => {
       if (b.winner === actor) {
+        // tslint:disable-next-line:no-increment-decrement
         wins++;
       }
     });
@@ -73,6 +73,7 @@ class LocalGame extends Game {
     let wins = 0;
     this._battles.forEach(b => {
       if (b.winner === Actor.PLAYER) {
+        // tslint:disable-next-line:no-increment-decrement
         wins++;
       }
     });
@@ -109,6 +110,7 @@ class LocalGame extends Game {
       let fixedBattleCount = 0;
       this._battles.forEach(b => {
         if (b.isFixed()) {
+          // tslint:disable-next-line:no-increment-decrement
           fixedBattleCount++;
         }
       });

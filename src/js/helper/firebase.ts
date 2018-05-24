@@ -7,7 +7,7 @@ export function init() {
 
   database()
     .ref(".info/connected")
-    .on("value", function(snapshot) {
+    .on("value", snapshot => {
       const user = auth().currentUser;
       if (!user) {
         return;

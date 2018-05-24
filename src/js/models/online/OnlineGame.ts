@@ -2,7 +2,6 @@ import { database, auth } from "firebase";
 
 import Mode from "../Mode";
 import Game from "../Game";
-import Battle from "../Battle";
 import Actor from "../Actor";
 import OnlineBattle from "./OnlineBattle";
 import { isUndefined } from "util";
@@ -112,7 +111,7 @@ class OnlineGame extends Game {
       });
 
     const joinInTransaction = () =>
-      this.transaction(function(current) {
+      this.transaction(current => {
         if (!current) {
           return current;
         }
@@ -182,9 +181,9 @@ class OnlineGame extends Game {
     await this.transaction(current => {
       if (current && current.currentRound !== 1) {
         Object.assign(current, {
+          members,
           currentRound: 1,
           battles: {},
-          members,
           updatedAt: now
         });
       }

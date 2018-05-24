@@ -5,7 +5,7 @@ import config from "../framework/config";
 import { initI18n } from "../framework/i18n";
 
 import ApplicationState from "./fsm/ApplicationState";
-import resources from "./resources/string";
+import { default as resources } from "./resources/string";
 import { init as initTracker, trackError } from "./helper/tracker";
 import { init as initFirebase } from "./helper/firebase";
 import {

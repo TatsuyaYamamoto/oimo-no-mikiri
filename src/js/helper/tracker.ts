@@ -9,6 +9,7 @@
  *
  * @param accountId
  */
+// tslint:disable:no-parameter-reassignment
 export function init(accountId) {
   console.log(
     `Initialize GA tracker. AccountID: ${accountId}, location path: ${
@@ -39,6 +40,7 @@ export function init(accountId) {
   ga("create", accountId, "auto");
   ga("send", "pageview");
 }
+// tslint:enable:no-parameter-reassignment
 
 /**
  * Tracking ViewPage paths

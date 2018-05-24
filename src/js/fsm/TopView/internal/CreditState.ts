@@ -2,7 +2,7 @@ import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 import { t } from "../../../../framework/i18n";
 
-import AbstractTopState from "./TopViewState";
+import TopViewState from "./TopViewState";
 import { Events } from "../TopView";
 
 import CreditItem from "../../../texture/sprite/text/CreditItem";
@@ -16,7 +16,7 @@ import { Ids as StringIds } from "../../../resources/string";
 
 import { URL } from "../../../Constants";
 
-class CreditState extends AbstractTopState {
+class CreditState extends TopViewState {
   private _t28Credit: CreditItem;
   private _sanzashiCredit: CreditItem;
   private _onjinCredit: CreditItem;

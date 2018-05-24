@@ -49,7 +49,7 @@ export function tweetGameResult(bestTime: number, wins: number): void {
 }
 
 export function tweetMultiPlayResult(winner: Actor, winnerWins, loserWins) {
-  if (winner == Actor.PLAYER) {
+  if (winner === Actor.PLAYER) {
     const tweetText = t(StringIds.MULTI_GAME_RESULT_TWEET_HANAMARU_WIN, {
       winnerWins,
       loserWins
@@ -137,7 +137,7 @@ type webIntentParams = {
   via?: string;
 };
 
-let WindowObjectReference = null;
+let windowObjectReference = null;
 
 /**
  * @see https://dev.twitter.com/web/tweet-button/web-intent
@@ -152,9 +152,9 @@ export function tweetByWebIntent(params: webIntentParams) {
 
   console.log(intentUrl);
 
-  if (!WindowObjectReference || WindowObjectReference.closed) {
-    WindowObjectReference = window.open(intentUrl, "TwitterIntentWindowName");
+  if (!windowObjectReference || windowObjectReference.closed) {
+    windowObjectReference = window.open(intentUrl, "TwitterIntentWindowName");
   } else {
-    WindowObjectReference.focus();
+    windowObjectReference.focus();
   }
 }

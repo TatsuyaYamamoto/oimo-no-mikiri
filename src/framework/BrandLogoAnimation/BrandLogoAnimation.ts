@@ -82,8 +82,8 @@ class BrandLogoAnimation extends Container {
 
     // set promise that fire on complete all animation.
     this._promise = Promise.all([
-      new Promise(resolve => this._defineHammerTimeLineItems(resolve)),
-      new Promise(resolve => this._defineCharacterTimeLineItems(resolve))
+      new Promise(resolve => this.defineHammerTimeLineItems(resolve)),
+      new Promise(resolve => this.defineCharacterTimeLineItems(resolve))
     ]);
   }
 
@@ -99,7 +99,7 @@ class BrandLogoAnimation extends Container {
     return this._promise;
   }
 
-  _defineHammerTimeLineItems(onComplete) {
+  private defineHammerTimeLineItems(onComplete) {
     this._hammerTimeLine
       .add({
         targets: this._hammer,
@@ -170,7 +170,7 @@ class BrandLogoAnimation extends Container {
       });
   }
 
-  _defineCharacterTimeLineItems(onComplete) {
+  private defineCharacterTimeLineItems(onComplete) {
     // 各文字の最終的なx方向の位置を計算
     const positions = this._characters.map((c, index, array) => {
       const cellTotal = array.length + 5;
@@ -189,7 +189,7 @@ class BrandLogoAnimation extends Container {
         targets: this._characters // 'そこんところ' only
           .filter(c => c.text !== "工" && c.text !== "房")
           .map(c => c.scale),
-        delay: function(el, i, l) {
+        delay: (el, i, l) => {
           return (
             ((TIMELINE.EXPANSION + TIMELINE.SHRINK) * i + 50) * DURATION_SCALE
           );
@@ -220,7 +220,7 @@ class BrandLogoAnimation extends Container {
         targets: this._characters,
         x: (el, i, l) => this.x + this._width * positions[i],
         duration: TIMELINE.CHARACTER_EXTEND * DURATION_SCALE,
-        delay: function(el, i, l) {
+        delay: (el, i, l) => {
           return TIMELINE.CHARACTER_WAITING * DURATION_SCALE;
         },
         easing: "linear"

@@ -1,10 +1,10 @@
-import AutoBind from "autobind-decorator";
+import { default as AutoBind } from "autobind-decorator";
 
 import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 
 import { Events } from "../TopView";
-import AbstractTopState from "./TopViewState";
+import TopViewState from "./TopViewState";
 
 import MenuBoard from "../../../texture/containers/MenuBoard";
 import SelectLevelBoard from "../../../texture/containers/SelectLevelBoard";
@@ -26,7 +26,7 @@ import { URL } from "../../../Constants";
 import { Ids as SoundIds } from "../../../resources/sound";
 
 @AutoBind
-class MenuState extends AbstractTopState {
+class MenuState extends TopViewState {
   private _menuBoard: MenuBoard;
   private _selectLevelBoard: SelectLevelBoard;
   private _selectMultiPlayModeBoard: SelectMultiPlayModeBoard;

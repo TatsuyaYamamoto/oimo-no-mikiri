@@ -6,16 +6,14 @@ import {
 import ViewContainer from "../../framework/ViewContainer";
 import Deliverable from "../../framework/Deliverable";
 import AssetLoader from "../../framework/AssetLoader";
-import { t } from "../../framework/i18n";
 
 import { Events as ApplicationEvents } from "./ApplicationState";
 
 import LoadingAnimationContainer from "../texture/containers/LoadingAnimationContainer";
 import Text from "../texture/internal/Text";
 
-import imageManifest from "../resources/image";
-import soundManifest from "../resources/sound";
-import { Ids as StringIds } from "../resources/string";
+import { default as imageManifest } from "../resources/image";
+import { default as soundManifest } from "../resources/sound";
 
 import { SKIP_BRAND_LOGO_ANIMATION } from "../Constants";
 

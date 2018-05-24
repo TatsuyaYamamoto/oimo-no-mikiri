@@ -4,7 +4,7 @@ import Deliverable from "../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 import { t } from "../../../../framework/i18n";
 
-import AbstractTopState from "./TopViewState";
+import TopViewState from "./TopViewState";
 import { Events } from "../TopView";
 
 import TitleLogo from "../../../texture/sprite/TitleLogo";
@@ -20,7 +20,7 @@ import { Ids as StringIds } from "../../../resources/string";
 
 const { version } = require("../../../../../package.json");
 
-class TitleState extends AbstractTopState {
+class TitleState extends TopViewState {
   private _titleLogo: TitleLogo;
   private _appVersion: Text;
   private _tapInfoText: Text;

@@ -1,4 +1,4 @@
-import AutoBind from "autobind-decorator";
+import { default as AutoBind } from "autobind-decorator";
 
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";

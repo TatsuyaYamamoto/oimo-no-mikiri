@@ -3,7 +3,7 @@ import { Texture, Sprite, Container } from "pixi.js";
 import Deliverable from "../../../../../framework/Deliverable";
 import { dispatchEvent } from "../../../../../framework/EventUtils";
 
-import AbstractGameState from "../GameViewState";
+import GameViewState from "../GameViewState";
 import { Events } from "../../GameView";
 
 import RestartButton from "../../../../texture/sprite/button/RestartButton";
@@ -28,7 +28,7 @@ export interface EnterParams extends Deliverable {
   mode: Mode;
 }
 
-abstract class OverState extends AbstractGameState {
+abstract class OverState extends GameViewState {
   private _gameOverLogo: GameOverLogo;
   private _restartButton: RestartButton;
   private _backToTopButton: BackToTopButton;

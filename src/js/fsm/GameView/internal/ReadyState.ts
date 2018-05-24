@@ -4,7 +4,7 @@ import { filters } from "pixi.js";
 import { dispatchEvent } from "../../../../framework/EventUtils";
 import Deliverable from "../../../../framework/Deliverable";
 
-import AbstractGameState from "./GameViewState";
+import GameViewState from "./GameViewState";
 import { Events } from "../GameView";
 
 import PlayerCloseUp from "../../../texture/sprite/character/PlayerCloseUp";
@@ -27,7 +27,7 @@ const ANIMATION_TIME_LINE = {
   END_DECREASING_BRIGHTNESS: 5000
 };
 
-class ReadyState extends AbstractGameState {
+class ReadyState extends GameViewState {
   private _playerCharacterCloseup: PlayerCloseUp;
   private _opponentCharacterCloseup: OpponentCloseUp;
 

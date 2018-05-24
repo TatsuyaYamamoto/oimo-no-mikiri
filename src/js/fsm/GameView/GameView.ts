@@ -1,8 +1,6 @@
 import ViewContainer from "../../../framework/ViewContainer";
 import Deliverable from "../../../framework/Deliverable";
 
-import { EnterParams as ResultStateEnterParams } from "./internal/ResultState";
-
 import Player from "../../texture/sprite/character/Player";
 import Opponent from "../../texture/sprite/character/Opponent";
 
@@ -11,12 +9,11 @@ import Ruby from "../../texture/sprite/character/Ruby";
 
 import Uchicchi from "../../texture/sprite/character/Uchicchi";
 import Shitake from "../../texture/sprite/character/Shitake";
-import LittleDaemon from "../../texture/sprite/character/LittleDeamon";
+import LittleDeamon from "../../texture/sprite/character/LittleDeamon";
 import Wataame from "../../texture/sprite/character/Wataame";
 import EnemyRuby from "../../texture/sprite/character/EnemyRuby";
 
 import Game, { isSingleMode } from "../../models/Game";
-import { BattleEvents } from "../../models/Battle";
 
 import { trackPageView, VirtualPageViews } from "../../helper/tracker";
 import { play, playOnLoop, stop } from "../../../framework/MusicPlayer";
@@ -66,9 +63,8 @@ abstract class GameView extends ViewContainer {
   public get opponent(): Opponent {
     if (isSingleMode(this.game.mode)) {
       return this._opponents[this._game.currentRound];
-    } else {
-      return this._opponent;
     }
+    return this._opponent;
   }
 
   public get game(): Game {
@@ -101,7 +97,7 @@ abstract class GameView extends ViewContainer {
     if (isSingleMode(this.game.mode)) {
       this._opponents = {};
       this._opponents[1] = new Wataame();
-      this._opponents[2] = new LittleDaemon();
+      this._opponents[2] = new LittleDeamon();
       this._opponents[3] = new Shitake();
       this._opponents[4] = new Uchicchi();
       this._opponents[5] = new EnemyRuby();

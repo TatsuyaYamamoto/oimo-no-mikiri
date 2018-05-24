@@ -1,14 +1,14 @@
-import AutoBind from "autobind-decorator";
+import { default as AutoBind } from "autobind-decorator";
 
 import Application from "../../framework/Application";
 import { getCurrentViewSize, getScale } from "../../framework/utils";
 import { addEvents, removeEvents } from "../../framework/EventUtils";
 
-import InitialViewState from "./InitialView";
+import { default as InitialViewState } from "./InitialView";
 import { EnterParams as GameViewEnterParams } from "./GameView/GameView";
 import LocalGameView from "./GameView/LocalGameView";
 import OnlineGameView from "./GameView/OnlineGameView";
-import TopViewState from "./TopView";
+import { default as TopViewState } from "./TopView";
 
 import { toggleSound } from "../../framework/MusicPlayer";
 import { isOnlineMode } from "../models/Game";

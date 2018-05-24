@@ -1,6 +1,6 @@
 import { t } from "../../framework/i18n";
 
-import SweetAlert from "sweetalert2";
+import { default as SweetAlert } from "sweetalert2";
 import * as tippy from "tippy.js";
 import { copyTextToClipboard } from "../../framework/utils";
 import { showTweetView } from "./network";

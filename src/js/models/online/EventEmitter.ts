@@ -49,7 +49,7 @@ abstract class EventEmitter {
       return;
     }
 
-    this._callbacks[eventType].forEach(function(callback) {
+    this._callbacks[eventType].forEach(callback => {
       callback(params);
     });
   }
