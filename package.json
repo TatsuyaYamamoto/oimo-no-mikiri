@@ -6,12 +6,15 @@
   "scripts": {
     "start": "webpack-dev-server --progress --colors --watch",
     "clean": "rimraf dist",
-    "minify:image": "imagemin dist/assets/image/*.png --out-dir=dist/assets/image",
+    "minify:image":
+      "imagemin dist/assets/image/*.png --out-dir=dist/assets/image",
     "build": "npm run clean && webpack",
-    "build:pro": "npm run clean && NODE_ENV=production webpack && npm run minify:image",
+    "build:pro":
+      "npm run clean && NODE_ENV=production webpack && npm run minify:image",
     "deploy:dev": "node scripts/deploy.js",
     "lint": "tslint --format stylish --project .",
-    "format": "prettier --write 'src/**/*.{ts,tsx}'"
+    "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "precommit": "pretty-quick --staged"
   },
   "repository": {
     "type": "git",
@@ -20,10 +23,7 @@
   "sFactory": {
     "deployPath": "oimo"
   },
-  "keywords": [
-    "lovelive",
-    "oimo"
-  ],
+  "keywords": ["lovelive", "oimo"],
   "author": "Tatsuya Yamamoto",
   "license": "ISC",
   "bugs": {
