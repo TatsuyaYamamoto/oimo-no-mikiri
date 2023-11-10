@@ -1,0 +1,429 @@
+@startuml{oimo-no-mikiri-sequence.png}
+
+title おいものみきりオンラインモードシーケンス
+hide footbox
+
+actor Client1 as client1
+actor Client2 as client2
+participant Hosting as hosting
+participant FireBaseFunctions as functions
+database FireBaseDatabase as db
+database FireBaseAuth as auth
+
+group ログイン
+    client1 -> auth: ログイン
+end
+
+group 新規ルーム作成
+
+    client1 -> hosting: ゲームページにアクセス
+    activate client1
+    client1 -> client1: メニュー画面表示
+    client1 -> client1: オンラインモードを選択
+    client1 -> client1: オンラインモードメニュー画面表示
+    client1 -> client1: ルーム作成を選択
+
+    client1 -> functions: POST: /createRoom
+    activate functions
+    functions -> functions: client1のUIDを取得
+    functions -> functions: roomId作成
+    functions -> db: userドキュメント作成
+    note right
+    {
+        users: {
+            [clinet1_id]: {
+                roomId: [roomId],
+                connecting: true
+            }
+        }
+    }
+    end note
+    functions -> db: roomドキュメント作成
+    note right
+    {
+        rooms: {
+            [roomId]: {
+                members: {
+                    [clinet1_id]: true,
+                }
+            }
+        }
+    }
+    end note
+
+    functions --> client1: POST: /createRoom
+    note left
+    {
+        roomId: [roomId]
+    }
+    end note
+    deactivate functions
+
+    client1 -> client1: ルームメンバー待機画面表示
+    deactivate client1
+end
+
+group ルーム参加
+    alt RoomIdを展開
+        client1 -> client2: RoomIdを任意の方法で通知
+        client2 -> hosting: ゲームページにアクセス
+        client2 -> client2: メニュー画面表示
+        client2 -> client2: オンラインモードを選択
+        client2 -> client2: オンラインモードメニュー画面表示
+        client2 -> client2: RoomIdを入力
+
+    else RoomId付きゲームURLを展開
+        client1 -> client2: URLを任意の方法で通知
+        client2 -> hosting: ゲームページにアクセス
+        client2 -> client2: オンラインモードメニュー画面表示
+    end
+
+    client2 -> functions: POST: /joinRoom
+    activate functions
+
+    functions -> functions: roomId受付可能か確認
+    alt RoomIdを展開
+        functions --> client2: POST: /joinRoom Accept.
+    else RoomId付きゲームURLを展開
+        functions --> client2: POST: /joinRoom BadRequest.
+    end
+
+    functions -> db: userドキュメント作成
+    note right
+    {
+        users: {
+            [clinet1_id]: {
+                roomId: [roomId],
+                connecting: true,
+                status: "room_ready"
+            },
+            [clinet2_id]: {
+                roomId: [roomId],
+                connecting: true,
+                status: "room_ready"
+            }
+        },
+        rooms: {
+            [roomId]: {
+                members: {
+                    [clinet1_id]: true,
+                    [clinet2_id]: true,
+                }
+            }
+        }
+    }
+    end note
+    deactivate functions
+
+    db --> client1: Status.ROOM_READY検知
+    client1 -> client1: 準備完了ダイアログ表示
+    db --> client2: Status.ROOM_READY検知
+    client2 -> client2: 準備完了ダイアログ表示
+end
+
+group ゲーム
+    client1 -> functions: POST /game/start
+    functions -> db: 更新
+    note right
+    {
+        users: {
+            [clinet1_id]: {
+                roomId: [roomId],
+                connecting: true,
+                status: "waiting_game_ready"
+            }
+        }
+    }
+    end note
+
+    client2 -> functions: POST /game/start
+    functions -> db: 更新
+    note right
+    {
+        users: {
+            [clinet1_id]: {
+                ...
+                status: "game_ready"
+            },
+            [clinet2_id]: {
+                ...
+                status: "game_ready"
+            }
+        },
+        room: {
+            members: ...
+            game: {
+                roundSize: 5
+            },
+            currentBattle: {},
+            results: {}
+        }
+    }
+    end note
+    db --> client1: Status.GAME_READY検知
+    db --> client2: Status.GAME_READY検知
+
+    functions -> functions: Status.GAME_READY検知
+    functions -> db: 更新
+    note right
+    {
+        users: {
+            [clinet1_id]: {
+                ...
+                status: "battle_ready"
+            },
+            [clinet2_id]: {
+                ...
+                status: "battle_ready"
+            }
+        },
+        rooms: {
+            [roomId]: {
+                members: ...
+                gameResult: {},
+                roundSize: 5,
+                currentBattle: {
+                    round: 1,
+                    signalTime: 3500
+                },
+                battleResults: {}
+            }
+        }
+    }
+    end note
+
+
+    loop for each battle
+        group 準備状態
+
+            alt ゲーム状態確認
+            else ゲーム結果確定
+                db --> client1: Status.GAME_RESULT_FIX 検知
+                client1 -> functions: GET /game/result
+                functions --> client1:
+
+                db --> client1: Status.GAME_RESULT_FIX 検知
+                client2 -> functions: GET /game/result
+                functions --> client2:
+
+                ref over client1, client2
+                    ゲーム終了状態へ
+                end ref
+            else 次バトルあり
+                db --> client1: Status.BATTLE_READY 検知
+                client1 -> functions: GET /battle
+                functions --> client1:
+
+                db --> client2: Status.BATTLE_READY 検知
+                client2 -> functions: GET /battle
+                functions --> client2:
+
+                ref over client1, client2
+                    アタック状態へ
+                end ref
+            end
+        end
+
+        group アタック状態
+            alt
+            else Client1が勝つ
+                client1 -> functions: POST: /attack
+                activate functions
+                functions --> client1: Accept
+                functions -> functions: signalTimeと比較
+                functions -> db: battleドキュメント更新
+                note right
+                {
+                    battles: {
+                        [battleId]: {
+                            signalTime: 12345,
+                            winnerId: null,
+                            attackTime:{
+                                [clinet1_id]: 20000
+                            },
+                            falseStated: {}
+                        }
+                    }
+                }
+                end note
+                functions -> functions: setTimeout
+                ... Functions#setTimeout() ...
+                functions -> functions: setTimeout#execute
+                functions -> db: battleドキュメント更新
+                note right
+                {
+                    battles: {
+                        [battleId]: {
+                            signalTime: 12345,
+                            winnerId: [clinet1_id],
+                            attackTime:{
+                                [clinet1_id]: 20000
+                            },
+                            falseStated: {}
+                        }
+                    }
+                }
+                end note
+                deactivate functions
+
+                alt Client2が遅れて攻撃
+                    client2 -> functions: POST: /attack
+                    activate functions
+                    functions --> client2: BadRequest
+                    deactivate functions
+                end
+
+                db --> client1: battleResult変更検知
+                db --> client2: battleResult変更検知
+
+            else Client1がお手つきをする
+                client1 -> functions: POST: /attack
+                activate functions
+                functions --> client1: Accept
+                functions -> functions: signalTimeと比較
+
+                alt お手つきによる勝敗判定
+                    else 1回目
+                        functions -> db: battleドキュメント更新
+                        note right
+                        {
+                            battles: {
+                                [battleId]: {
+                                    signalTime: 12345,
+                                    winnerId: null,
+                                    acceptable: false,
+                                    attackTime:{},
+                                    falseStated: {
+                                        [clinet1_id]: true
+                                    }
+                                }
+                            }
+                        }
+                        end note
+                    else 2回目のため敗戦
+                        functions -> db: battleドキュメント更新
+                        note right
+                        {
+                            battles: {
+                                [battleId]: {
+                                    signalTime: 12345,
+                                    winnerId: [clinet2_id],
+                                    acceptable: false,
+                                    attackTime:{},
+                                    falseStated: {
+                                        [clinet1_id]: true
+                                    }
+                                }
+                            }
+                        }
+                        end note
+                end
+                deactivate functions
+
+                alt Client2が遅れて攻撃
+                    client2 -> functions: POST: /attack
+                    activate functions
+                    functions --> functions: check acceptable
+                    functions --> client2: BadRequest
+                    deactivate functions
+                end
+
+                db --> client1: お手つき通知 or 勝敗通知
+                db --> client2: お手つき通知 or 勝敗通知
+
+
+            else 引き分ける
+                client1 -> functions: POST: /attack
+                activate functions
+                functions --> client1: Accept
+                functions -> functions: signalTimeと比較
+                functions -> db: battleドキュメント更新
+                note right
+                {
+                    battles: {
+                        [battleId]: {
+                            signalTime: 12345,
+                            winnerId: null,
+                            acceptable: true,
+                            attackTime:{
+                                [clinet1_id]: 20000
+                            },
+                            falseStated: {}
+                        }
+                    }
+                }
+                end note
+                functions -> functions: setTimeout
+
+                client2 -> functions: POST: /attack
+                functions --> client2: Accept
+                functions -> functions: clearTimeout
+                functions -> db: battleドキュメント更新
+                note right
+                {
+                    battles: {
+                        [battleId]: {
+                            signalTime: 12345,
+                            winnerId: null,
+                            acceptable: true,
+                            attackTime:{
+                                [clinet1_id]: 20000,
+                                [clinet2_id]: 20010
+                            },
+                            falseStated: {}
+                        }
+                    }
+                }
+                end note
+                deactivate functions
+
+                db --> client1: 引き分け通知
+                db --> client2: 引き分け通知
+            end
+
+            deactivate functions
+        end
+
+        functions -> functions: 状態確認
+        activate functions
+        functions -> db: battleドキュメント更新
+        deactivate functions
+    end
+
+    group ゲーム終了状態
+        client1 -> client1: ゲーム結果表示
+        client2 -> client2: ゲーム結果表示
+        alt
+        else もう一度ゲームを行う
+            client1 -> functions: POST: /startGame
+            activate functions
+            functions -> db: battleドキュメント更新
+            deactivate functions
+
+            client2 -> functions: POST: /startGame
+            activate functions
+            functions -> db: battleドキュメント更新
+            deactivate functions
+
+            db --> client1: battleドキュメント変更検知
+            db --> client2: battleドキュメント変更検知
+
+        else ゲームを終了する
+            alt
+            else もう一度ゲームを行う
+                client1 -> functions: POST: /startGame
+                activate functions
+                functions -> db: battleドキュメント更新
+                deactivate functions
+            end
+            client2 -> functions: POST: /endGame
+            activate functions
+            functions -> db: battleドキュメント削除
+            deactivate functions
+
+            db --> client1: battleドキュメント変更検知
+        end
+    end
+end
+
+@enduml
