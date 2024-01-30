@@ -1,3 +1,7 @@
+move to https://github.com/TatsuyaYamamoto/school-idol-game-project/tree/master/packages/oimo-no-mikiri
+
+---
+
 # Oimo no mikiri/おいものみきり
 
 Hosted at [https://games.sokontokoro-factory.net/oimo/]().
